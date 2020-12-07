@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Run All Tests" type="CompoundRunConfigurationType">
+    <toRun name="Run Contract Tests" type="JUnit" />
+    <toRun name="Run Test CorDapp Contract Tests" type="JUnit" />
+    <toRun name="Run Workflow Tests" type="JUnit" />
+    <toRun name="Run Test CorDapp Workflow Tests" type="JUnit" />
+    <method v="2" />
+  </configuration>
+</component>
