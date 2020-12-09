@@ -49,7 +49,7 @@ object CordaClaimSchema {
         @Column(name = "property", nullable = false)
         val property: String = "",
 
-        @Column(name = "value", nullable = false)
+        @Column(name = "value", nullable = false, columnDefinition = "clob")
         val value: String = "",
 
         @Column(name = "value_class", nullable = false)
