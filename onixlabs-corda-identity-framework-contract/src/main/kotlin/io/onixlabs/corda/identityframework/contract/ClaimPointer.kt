@@ -16,6 +16,8 @@
 
 package io.onixlabs.corda.identityframework.contract
 
+import io.onixlabs.corda.core.contract.Resolvable
+import io.onixlabs.corda.core.contract.TransactionResolution
 import net.corda.core.contracts.ContractState
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.contracts.StateRef

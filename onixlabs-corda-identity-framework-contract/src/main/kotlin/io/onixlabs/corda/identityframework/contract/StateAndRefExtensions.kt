@@ -16,7 +16,10 @@
 
 package io.onixlabs.corda.identityframework.contract
 
-import net.corda.core.contracts.*
+import net.corda.core.contracts.ContractState
+import net.corda.core.contracts.LinearState
+import net.corda.core.contracts.StateAndRef
+import net.corda.core.contracts.UniqueIdentifier
 import net.corda.core.identity.AbstractParty
 
 /**
@@ -85,14 +88,3 @@ fun <T : ContractState> StateAndRef<T>.reject(
     metadata: Map<String, String> = emptyMap(),
     linearId: UniqueIdentifier = UniqueIdentifier()
 ): Attestation<T> = attest(attestor, AttestationStatus.REJECTED, metadata, linearId)
-
-/**
- * Casts a [StateAndRef] of an unknown [ContractState] to a [StateAndRef] of type [T].
- *
- * @param T The underlying [ContractState] type to cast to.
- * @return Returns a [StateAndRef] of type [T].
- * @throws ClassCastException if the unknown [ContractState] type cannot be cast to [T].
- */
-inline fun <reified T : ContractState> StateAndRef<*>.cast(): StateAndRef<T> = with(state) {
-    StateAndRef(TransactionState(T::class.java.cast(data), contract, notary, encumbrance, constraint), ref)
-}

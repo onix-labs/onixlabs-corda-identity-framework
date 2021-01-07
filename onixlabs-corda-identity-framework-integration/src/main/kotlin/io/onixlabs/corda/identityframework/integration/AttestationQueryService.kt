@@ -16,10 +16,10 @@
 
 package io.onixlabs.corda.identityframework.integration
 
+import io.onixlabs.corda.core.contract.cast
 import io.onixlabs.corda.identityframework.contract.Attestation
 import io.onixlabs.corda.identityframework.contract.AttestationPointer
 import io.onixlabs.corda.identityframework.contract.AttestationStatus
-import io.onixlabs.corda.identityframework.contract.cast
 import io.onixlabs.corda.identityframework.workflow.DEFAULT_PAGE_SPECIFICATION
 import io.onixlabs.corda.identityframework.workflow.FindAttestationFlow
 import io.onixlabs.corda.identityframework.workflow.FindAttestationsFlow

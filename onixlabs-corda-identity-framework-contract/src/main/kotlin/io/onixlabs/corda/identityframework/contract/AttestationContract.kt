@@ -16,6 +16,7 @@
 
 package io.onixlabs.corda.identityframework.contract
 
+import io.onixlabs.corda.core.contract.isPointingTo
 import net.corda.core.contracts.*
 import net.corda.core.transactions.LedgerTransaction
 import java.security.PublicKey

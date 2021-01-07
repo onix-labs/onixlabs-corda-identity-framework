@@ -16,6 +16,8 @@
 
 package io.onixlabs.corda.identityframework.contract
 
+import io.onixlabs.corda.core.contract.ChainState
+import io.onixlabs.corda.core.contract.Hashable
 import io.onixlabs.corda.identityframework.contract.CordaClaimSchema.CordaClaimEntity
 import io.onixlabs.corda.identityframework.contract.CordaClaimSchema.CordaClaimSchemaV1
 import net.corda.core.contracts.BelongsToContract

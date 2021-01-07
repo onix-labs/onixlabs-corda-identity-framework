@@ -16,6 +16,9 @@
 
 package io.onixlabs.corda.identityframework.contract
 
+import io.onixlabs.corda.core.contract.Hashable
+import io.onixlabs.corda.core.contract.Resolvable
+import io.onixlabs.corda.core.contract.TransactionResolution
 import net.corda.core.contracts.*
 import net.corda.core.crypto.SecureHash
 import net.corda.core.messaging.CordaRPCOps
