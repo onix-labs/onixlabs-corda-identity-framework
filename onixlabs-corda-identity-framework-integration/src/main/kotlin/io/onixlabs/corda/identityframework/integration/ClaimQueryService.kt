@@ -17,8 +17,9 @@
 package io.onixlabs.corda.identityframework.integration
 
 import io.onixlabs.corda.core.contract.cast
+import io.onixlabs.corda.core.integration.RPCService
+import io.onixlabs.corda.core.workflow.DEFAULT_PAGE_SPECIFICATION
 import io.onixlabs.corda.identityframework.contract.CordaClaim
-import io.onixlabs.corda.identityframework.workflow.DEFAULT_PAGE_SPECIFICATION
 import io.onixlabs.corda.identityframework.workflow.FindClaimFlow
 import io.onixlabs.corda.identityframework.workflow.FindClaimsFlow
 import net.corda.core.contracts.StateAndRef
@@ -32,7 +33,7 @@ import net.corda.core.utilities.getOrThrow
 import java.time.Duration
 import java.time.Instant
 
-class ClaimQueryService(rpc: CordaRPCOps) : Service(rpc) {
+class ClaimQueryService(rpc: CordaRPCOps) : RPCService(rpc) {
 
     /**
      * Finds a single claim.

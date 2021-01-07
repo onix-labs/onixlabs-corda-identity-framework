@@ -17,6 +17,7 @@
 package io.onixlabs.corda.identityframework.workflow
 
 import co.paralleluniverse.fibers.Suspendable
+import io.onixlabs.corda.core.workflow.currentStep
 import io.onixlabs.corda.identityframework.contract.Attestation
 import io.onixlabs.corda.identityframework.contract.CordaClaim
 import net.corda.core.contracts.ContractState
@@ -25,24 +26,7 @@ import net.corda.core.flows.*
 import net.corda.core.identity.Party
 import net.corda.core.transactions.SignedTransaction
 import net.corda.core.transactions.TransactionBuilder
-import net.corda.core.utilities.ProgressTracker
 import java.security.PublicKey
-
-/**
- * Gets the preferred notary from the network map cache. In this case it's the first listed notary.
- * TODO : Need to amend this to use a node service address from node.conf for later versions of Corda.
- */
-val FlowLogic<*>.preferredNotary: Party get() = serviceHub.networkMapCache.notaryIdentities.first()
-
-/**
- * Sets and logs the current progress tracker step.
- *
- * @param step The progress tracker step.
- */
-fun FlowLogic<*>.currentStep(step: ProgressTracker.Step) {
-    progressTracker?.currentStep = step
-    logger.info(step.label)
-}
 
 /**
  * Checks whether there are sufficient sessions for counter-parties of the specified contract states.

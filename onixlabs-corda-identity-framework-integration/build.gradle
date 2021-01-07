@@ -4,6 +4,7 @@ dependencies {
 
     // Corda Development Dependencies
     implementation "$corda_group:corda-core:$corda_release_version"
+    implementation "$onixlabs_group:onixlabs-corda-core-integration:$onixlabs_corda_core_release_version"
 
     // CorDapp Dependencies
     implementation project(":onixlabs-corda-identity-framework-contract")

@@ -16,6 +16,9 @@
 
 package io.onixlabs.corda.identityframework.workflow
 
+import io.onixlabs.corda.core.workflow.DEFAULT_PAGE_SPECIFICATION
+import io.onixlabs.corda.core.workflow.FindStateFlow
+import io.onixlabs.corda.core.workflow.andWithExpressions
 import io.onixlabs.corda.identityframework.contract.CordaClaim
 import io.onixlabs.corda.identityframework.contract.CordaClaimSchema.CordaClaimEntity
 import net.corda.core.contracts.StateRef
@@ -66,7 +69,7 @@ class FindClaimFlow<T : CordaClaim<*>>(
         contractStateTypes = setOf(contractStateType),
         relevancyStatus = relevancyStatus,
         status = stateStatus
-    ).withExpressions(
+    ).andWithExpressions(
         linearId?.let { CordaClaimEntity::linearId.equal(it.id) },
         externalId?.let { CordaClaimEntity::externalId.equal(it) },
         issuer?.let { CordaClaimEntity::issuer.equal(it) },

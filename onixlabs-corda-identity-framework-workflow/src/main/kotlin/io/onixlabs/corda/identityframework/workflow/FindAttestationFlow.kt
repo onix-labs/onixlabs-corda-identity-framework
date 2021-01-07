@@ -16,6 +16,9 @@
 
 package io.onixlabs.corda.identityframework.workflow
 
+import io.onixlabs.corda.core.workflow.DEFAULT_PAGE_SPECIFICATION
+import io.onixlabs.corda.core.workflow.FindStateFlow
+import io.onixlabs.corda.core.workflow.andWithExpressions
 import io.onixlabs.corda.identityframework.contract.Attestation
 import io.onixlabs.corda.identityframework.contract.AttestationPointer
 import io.onixlabs.corda.identityframework.contract.AttestationSchema.AttestationEntity
@@ -73,7 +76,7 @@ class FindAttestationFlow<T : Attestation<*>>(
         contractStateTypes = setOf(contractStateType),
         relevancyStatus = relevancyStatus,
         status = stateStatus
-    ).withExpressions(
+    ).andWithExpressions(
         linearId?.let { AttestationEntity::linearId.equal(it.id) },
         externalId?.let { AttestationEntity::externalId.equal(it) },
         attestor?.let { AttestationEntity::attestor.equal(it) },

@@ -17,6 +17,8 @@
 package io.onixlabs.corda.identityframework.workflow
 
 import co.paralleluniverse.fibers.Suspendable
+import io.onixlabs.corda.core.workflow.currentStep
+import io.onixlabs.corda.core.workflow.getPreferredNotary
 import io.onixlabs.corda.identityframework.contract.CordaClaim
 import net.corda.core.flows.*
 import net.corda.core.identity.Party
@@ -87,7 +89,14 @@ class IssueClaimFlow(
         override fun call(): SignedTransaction {
             currentStep(ISSUING)
             val sessions = initiateFlows(observers, claim)
-            return subFlow(IssueClaimFlow(claim, notary ?: preferredNotary, sessions, ISSUING.childProgressTracker()))
+            return subFlow(
+                IssueClaimFlow(
+                    claim,
+                    notary ?: getPreferredNotary(),
+                    sessions,
+                    ISSUING.childProgressTracker()
+                )
+            )
         }
     }
 

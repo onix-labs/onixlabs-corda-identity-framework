@@ -16,6 +16,7 @@
 
 package io.onixlabs.corda.identityframework.integration
 
+import io.onixlabs.corda.core.integration.RPCService
 import io.onixlabs.corda.identityframework.contract.CordaClaim
 import io.onixlabs.corda.identityframework.contract.amend
 import io.onixlabs.corda.identityframework.workflow.AmendClaimFlow
@@ -36,7 +37,7 @@ import net.corda.core.transactions.SignedTransaction
  *
  * @param rpc The Corda RPC instance that the service will bind to.
  */
-class ClaimCommandService(rpc: CordaRPCOps) : Service(rpc) {
+class ClaimCommandService(rpc: CordaRPCOps) : RPCService(rpc) {
 
     /**
      * Issues a claim.

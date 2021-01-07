@@ -16,6 +16,7 @@
 
 package io.onixlabs.corda.identityframework.integration
 
+import io.onixlabs.corda.core.integration.RPCService
 import io.onixlabs.corda.identityframework.contract.*
 import io.onixlabs.corda.identityframework.workflow.AmendAttestationFlow
 import io.onixlabs.corda.identityframework.workflow.IssueAttestationFlow
@@ -36,7 +37,7 @@ import net.corda.core.transactions.SignedTransaction
  *
  * @param rpc The Corda RPC instance that the service will bind to.
  */
-class AttestationCommandService(rpc: CordaRPCOps) : Service(rpc) {
+class AttestationCommandService(rpc: CordaRPCOps) : RPCService(rpc) {
 
     /**
      * Issues an attestation.
