@@ -18,6 +18,7 @@ package io.onixlabs.corda.identityframework.contract
 
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.declaredMemberProperties
+import kotlin.reflect.full.memberProperties
 
 /**
  * Checks a collection of [AbstractClaim] instances for duplicate keys.
@@ -37,7 +38,7 @@ fun Iterable<AbstractClaim<*>>.checkForDuplicateKeys(
  * @return Returns a string representation of the current object, like a Kotlin data class.
  */
 internal fun Any.toDataClassString(): String {
-    val properties = javaClass.kotlin.declaredMemberProperties
+    val properties = javaClass.kotlin.memberProperties
         .filter { it.visibility == KVisibility.PUBLIC }
         .joinToString(", ") { "${it.name} = ${it.get(this).toString()}" }
 

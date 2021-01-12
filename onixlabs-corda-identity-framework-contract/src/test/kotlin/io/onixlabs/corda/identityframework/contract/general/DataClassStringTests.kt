@@ -31,4 +31,14 @@ class DataClassStringTests {
 
         assertEquals(expected, actual)
     }
+
+    @Test
+    fun `toDataClassString called on GreetingClaim should produce the expected result`() {
+        val claim = GreetingClaim("John")
+
+        val expected = "GreetingClaim(greeter = John, property = Greeting, value = Hello, World!)"
+        val actual = claim.toString()
+
+        assertEquals(expected, actual)
+    }
 }
