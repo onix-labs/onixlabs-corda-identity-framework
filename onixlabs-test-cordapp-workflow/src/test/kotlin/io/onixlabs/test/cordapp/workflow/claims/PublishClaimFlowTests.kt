@@ -14,40 +14,40 @@
  * limitations under the License.
  */
 
-package io.onixlabs.corda.identityframework.workflow.claims
+package io.onixlabs.test.cordapp.workflow.claims
 
-import io.onixlabs.corda.identityframework.contract.CordaClaim
-import io.onixlabs.corda.identityframework.workflow.FlowTest
 import io.onixlabs.corda.identityframework.workflow.IssueClaimFlow
-import io.onixlabs.corda.identityframework.workflow.Pipeline
-import io.onixlabs.corda.identityframework.workflow.SendClaimFlow
+import io.onixlabs.corda.identityframework.workflow.PublishClaimFlow
+import io.onixlabs.test.cordapp.contract.GreetingClaim
+import io.onixlabs.test.cordapp.workflow.FlowTest
+import io.onixlabs.test.cordapp.workflow.Pipeline
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.transactions.SignedTransaction
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 import kotlin.test.assertEquals
 
-class SendClaimFlowTests : FlowTest() {
+class PublishClaimFlowTests : FlowTest() {
 
     private lateinit var transaction: SignedTransaction
-    private lateinit var claim: StateAndRef<CordaClaim<String>>
+    private lateinit var claim: StateAndRef<GreetingClaim>
 
     override fun initialize() {
         Pipeline
             .create(network)
-            .run(nodeB) {
-                IssueClaimFlow.Initiator(CLAIM_2)
+            .run(nodeA) {
+                IssueClaimFlow.Initiator(GREETING_CLAIM)
             }
-            .run(nodeB) {
-                claim = it.tx.outRefsOfType<CordaClaim<String>>().single()
-                SendClaimFlow.Initiator(claim, observers = setOf(partyA, partyC))
+            .run(nodeA) {
+                claim = it.tx.outRefsOfType<GreetingClaim>().single()
+                PublishClaimFlow.Initiator(claim, observers = setOf(partyC))
 
             }
             .finally { transaction = it }
     }
 
     @Test
-    fun `SendClaimFlow should record a transaction for the claim issuer, claim holder and observers`() {
+    fun `PublishClaimFlow should record a transaction for the claim issuer, claim holder and observers`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             it.transaction {
                 val recordedTransaction = it.services.validatedTransactions.getTransaction(transaction.id)
@@ -59,14 +59,14 @@ class SendClaimFlowTests : FlowTest() {
     }
 
     @Test
-    fun `SendClaimFlow should record a CordaClaim for the claim issuer, claim holder and observers`() {
+    fun `PublishClaimFlow should record a CordaClaim for the claim issuer, claim holder and observers`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             it.transaction {
                 val recordedTransaction = it.services.validatedTransactions.getTransaction(transaction.id)
                     ?: fail("Failed to find a recorded transaction with id: ${transaction.id}.")
 
                 val recordedClaim = recordedTransaction
-                    .tx.outRefsOfType<CordaClaim<String>>().singleOrNull()
+                    .tx.outRefsOfType<GreetingClaim>().singleOrNull()
                     ?: fail("Failed to find a recorded claim.")
 
                 assertEquals(claim, recordedClaim)

@@ -27,12 +27,12 @@ import net.corda.core.transactions.SignedTransaction
 import net.corda.core.utilities.ProgressTracker
 
 /**
- * Represents the flow for receiving a claim.
+ * Represents the flow handler for published attestations.
  *
- * @param session The counter-party who is sending the claim transaction.
+ * @param session The counter-party who is publishing the attestation transaction.
  * @param progressTracker The progress tracker which tracks the progress of this flow.
  */
-class ReceiveClaimFlow(
+class PublishAttestationFlowHandler(
     private val session: FlowSession,
     override val progressTracker: ProgressTracker = tracker()
 ) : FlowLogic<SignedTransaction>() {
@@ -49,15 +49,15 @@ class ReceiveClaimFlow(
     }
 
     /**
-     * Represents the flow handler for receiving a claim.
+     * Represents the initiated flow handler for published attestations.
      *
-     * @param session The counter-party who is sending the claim transaction.
+     * @param session The counter-party who is publishing the attestation transaction.
      */
-    @InitiatedBy(SendClaimFlow.Initiator::class)
+    @InitiatedBy(PublishAttestationFlow.Initiator::class)
     private class Handler(private val session: FlowSession) : FlowLogic<SignedTransaction>() {
 
         private companion object {
-            object RECEIVING : ProgressTracker.Step("Receiving claim transaction.") {
+            object RECEIVING : ProgressTracker.Step("Receiving attestation transaction.") {
                 override fun childProgressTracker() = tracker()
             }
         }
@@ -67,7 +67,7 @@ class ReceiveClaimFlow(
         @Suspendable
         override fun call(): SignedTransaction {
             currentStep(RECEIVING)
-            return subFlow(ReceiveClaimFlow(session, RECEIVING.childProgressTracker()))
+            return subFlow(PublishAttestationFlowHandler(session, RECEIVING.childProgressTracker()))
         }
     }
 }

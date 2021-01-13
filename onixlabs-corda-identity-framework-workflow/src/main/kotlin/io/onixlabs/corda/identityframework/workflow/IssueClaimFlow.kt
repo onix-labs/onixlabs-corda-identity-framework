@@ -100,27 +100,4 @@ class IssueClaimFlow(
             )
         }
     }
-
-    /**
-     * Represents the handler of the [Initiator] flow.
-     *
-     * @property session The counter-party session who is initiating the flow.
-     */
-    @InitiatedBy(Initiator::class)
-    private class Handler(private val session: FlowSession) : FlowLogic<SignedTransaction>() {
-
-        private companion object {
-            object OBSERVING : ProgressTracker.Step("Observing issued claim.") {
-                override fun childProgressTracker(): ProgressTracker = IssueClaimFlowHandler.tracker()
-            }
-        }
-
-        override val progressTracker = ProgressTracker(OBSERVING)
-
-        @Suspendable
-        override fun call(): SignedTransaction {
-            currentStep(OBSERVING)
-            return subFlow(IssueClaimFlowHandler(session, progressTracker = OBSERVING.childProgressTracker()))
-        }
-    }
 }

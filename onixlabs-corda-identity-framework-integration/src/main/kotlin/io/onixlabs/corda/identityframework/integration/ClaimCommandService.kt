@@ -21,8 +21,8 @@ import io.onixlabs.corda.identityframework.contract.CordaClaim
 import io.onixlabs.corda.identityframework.contract.amend
 import io.onixlabs.corda.identityframework.workflow.AmendClaimFlow
 import io.onixlabs.corda.identityframework.workflow.IssueClaimFlow
+import io.onixlabs.corda.identityframework.workflow.PublishClaimFlow
 import io.onixlabs.corda.identityframework.workflow.RevokeClaimFlow
-import io.onixlabs.corda.identityframework.workflow.SendClaimFlow
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.contracts.UniqueIdentifier
 import net.corda.core.identity.AbstractParty
@@ -108,18 +108,18 @@ class ClaimCommandService(rpc: CordaRPCOps) : RPCService(rpc) {
     }
 
     /**
-     * Sends a claim.
+     * Publishes a claim.
      *
      * @param T The underlying claim value type.
-     * @param claim The claim to be consumed.
+     * @param claim The claim to be published.
      * @param observers Additional observers of the transaction.
      */
-    fun <T : Any> sendClaim(
+    fun <T : Any> publishClaim(
         claim: StateAndRef<CordaClaim<T>>,
         observers: Set<Party>
     ): FlowProgressHandle<SignedTransaction> {
         return rpc.startTrackedFlow(
-            SendClaimFlow::Initiator,
+            PublishClaimFlow::Initiator,
             claim,
             observers
         )

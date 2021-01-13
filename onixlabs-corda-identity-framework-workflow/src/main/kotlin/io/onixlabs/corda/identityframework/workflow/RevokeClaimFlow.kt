@@ -88,27 +88,4 @@ class RevokeClaimFlow(
             return subFlow(RevokeClaimFlow(claim, sessions, REVOKING.childProgressTracker()))
         }
     }
-
-    /**
-     * Represents the handler of the [Initiator] flow.
-     *
-     * @property session The counter-party session who is initiating the flow.
-     */
-    @InitiatedBy(Initiator::class)
-    private class Handler(private val session: FlowSession) : FlowLogic<SignedTransaction>() {
-
-        private companion object {
-            object OBSERVING : ProgressTracker.Step("Observing revoked claim.") {
-                override fun childProgressTracker(): ProgressTracker = RevokeClaimFlowHandler.tracker()
-            }
-        }
-
-        override val progressTracker = ProgressTracker(OBSERVING)
-
-        @Suspendable
-        override fun call(): SignedTransaction {
-            currentStep(OBSERVING)
-            return subFlow(RevokeClaimFlowHandler(session, progressTracker = OBSERVING.childProgressTracker()))
-        }
-    }
 }

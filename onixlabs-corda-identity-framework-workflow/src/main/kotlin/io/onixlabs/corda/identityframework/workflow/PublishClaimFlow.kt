@@ -20,7 +20,7 @@ import co.paralleluniverse.fibers.Suspendable
 import io.onixlabs.corda.core.workflow.currentStep
 import io.onixlabs.corda.core.workflow.findTransaction
 import io.onixlabs.corda.core.workflow.initiateFlows
-import io.onixlabs.corda.identityframework.contract.Attestation
+import io.onixlabs.corda.identityframework.contract.CordaClaim
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.flows.*
 import net.corda.core.identity.Party
@@ -28,14 +28,14 @@ import net.corda.core.transactions.SignedTransaction
 import net.corda.core.utilities.ProgressTracker
 
 /**
- * Represents the flow for sending an attestation.
+ * Represents the flow for publishing a claim.
  *
- * @param attestation The attestation to send to the specified counter-parties.
+ * @param claim The claim to publish to the specified counter-parties.
  * @param sessions The flow sessions for the counter-parties who will receive the attestation.
  * @param progressTracker The progress tracker which tracks the progress of this flow.
  */
-class SendAttestationFlow(
-    private val attestation: StateAndRef<Attestation<*>>,
+class PublishClaimFlow(
+    private val claim: StateAndRef<CordaClaim<*>>,
     private val sessions: Set<FlowSession>,
     override val progressTracker: ProgressTracker = tracker()
 ) : FlowLogic<SignedTransaction>() {
@@ -50,7 +50,7 @@ class SendAttestationFlow(
     @Suspendable
     override fun call(): SignedTransaction {
         currentStep(INITIALIZING)
-        val transaction = findTransaction(attestation)
+        val transaction = findTransaction(claim)
 
         currentStep(SENDING)
         sessions.forEach { subFlow(SendTransactionFlow(it, transaction)) }
@@ -59,31 +59,37 @@ class SendAttestationFlow(
     }
 
     /**
-     * Represents the initiating flow for sending an attestation.
+     * Represents the initiating flow for publishing a claim.
      *
-     * @param attestation The attestation to send to the specified counter-parties.
+     * @param claim The claim to publish to the specified counter-parties.
      * @param observers The counter-parties who will observer the attestation.
      */
     @StartableByRPC
     @StartableByService
     @InitiatingFlow(FLOW_VERSION_1)
     class Initiator(
-        private val attestation: StateAndRef<Attestation<*>>,
+        private val claim: StateAndRef<CordaClaim<*>>,
         private val observers: Set<Party>
     ) : FlowLogic<SignedTransaction>() {
 
         private companion object {
-            object SENDING : ProgressTracker.Step("Sending attestation transaction.") {
+            object PUBLISHING : ProgressTracker.Step("Publishing claim transaction.") {
                 override fun childProgressTracker() = tracker()
             }
         }
 
-        override val progressTracker = ProgressTracker(SENDING)
+        override val progressTracker = ProgressTracker(PUBLISHING)
 
         @Suspendable
         override fun call(): SignedTransaction {
-            currentStep(SENDING)
-            return subFlow(SendAttestationFlow(attestation, initiateFlows(observers), SENDING.childProgressTracker()))
+            currentStep(PUBLISHING)
+            return subFlow(
+                PublishClaimFlow(
+                    claim,
+                    initiateFlows(observers),
+                    PUBLISHING.childProgressTracker()
+                )
+            )
         }
     }
 }

@@ -18,9 +18,11 @@ package io.onixlabs.corda.identityframework.workflow
 
 import co.paralleluniverse.fibers.Suspendable
 import io.onixlabs.corda.core.workflow.currentStep
+import io.onixlabs.corda.identityframework.workflow.RevokeAttestationFlow.Initiator
 import net.corda.core.crypto.SecureHash
 import net.corda.core.flows.FlowLogic
 import net.corda.core.flows.FlowSession
+import net.corda.core.flows.InitiatedBy
 import net.corda.core.flows.ReceiveFinalityFlow
 import net.corda.core.node.StatesToRecord
 import net.corda.core.transactions.SignedTransaction
@@ -50,5 +52,28 @@ class RevokeAttestationFlowHandler(
     override fun call(): SignedTransaction {
         currentStep(RECORDING)
         return subFlow(ReceiveFinalityFlow(session, expectedTransactionId, statesToRecord))
+    }
+
+    /**
+     * Represents the initiated flow handler for revoking attestations.
+     *
+     * @property session The counter-party session who is initiating the flow.
+     */
+    @InitiatedBy(Initiator::class)
+    private class Handler(private val session: FlowSession) : FlowLogic<SignedTransaction>() {
+
+        private companion object {
+            object OBSERVING : ProgressTracker.Step("Observing revoked attestation.") {
+                override fun childProgressTracker(): ProgressTracker = RevokeAttestationFlowHandler.tracker()
+            }
+        }
+
+        override val progressTracker = ProgressTracker(OBSERVING)
+
+        @Suspendable
+        override fun call(): SignedTransaction {
+            currentStep(OBSERVING)
+            return subFlow(RevokeAttestationFlowHandler(session, progressTracker = OBSERVING.childProgressTracker()))
+        }
     }
 }

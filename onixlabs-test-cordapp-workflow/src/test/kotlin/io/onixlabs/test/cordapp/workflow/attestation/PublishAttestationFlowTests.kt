@@ -14,37 +14,41 @@
  * limitations under the License.
  */
 
-package io.onixlabs.corda.identityframework.workflow.attestation
+package io.onixlabs.test.cordapp.workflow.attestation
 
 import io.onixlabs.corda.identityframework.contract.Attestation
-import io.onixlabs.corda.identityframework.contract.CordaClaim
 import io.onixlabs.corda.identityframework.contract.accept
-import io.onixlabs.corda.identityframework.workflow.*
+import io.onixlabs.corda.identityframework.workflow.IssueAttestationFlow
+import io.onixlabs.corda.identityframework.workflow.IssueClaimFlow
+import io.onixlabs.corda.identityframework.workflow.PublishAttestationFlow
+import io.onixlabs.test.cordapp.contract.GreetingClaim
+import io.onixlabs.test.cordapp.workflow.FlowTest
+import io.onixlabs.test.cordapp.workflow.Pipeline
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.transactions.SignedTransaction
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 import kotlin.test.assertEquals
 
-class SendAttestationFlowTests : FlowTest() {
+class PublishAttestationFlowTests : FlowTest() {
 
     private lateinit var transaction: SignedTransaction
-    private lateinit var attestation: StateAndRef<Attestation<CordaClaim<String>>>
+    private lateinit var attestation: StateAndRef<Attestation<GreetingClaim>>
 
     override fun initialize() {
         Pipeline
             .create(network)
             .run(nodeA) {
-                IssueClaimFlow.Initiator(CLAIM_1, observers = setOf(partyC))
+                IssueClaimFlow.Initiator(GREETING_CLAIM, observers = setOf(partyC))
             }
             .run(nodeB) {
-                val issuedClaim = it.tx.outRefsOfType<CordaClaim<String>>().single()
+                val issuedClaim = it.tx.outRefsOfType<GreetingClaim>().single()
                 val attestation = issuedClaim.accept(partyB)
                 IssueAttestationFlow.Initiator(attestation)
             }
             .run(nodeB) {
-                attestation = it.tx.outRefsOfType<Attestation<CordaClaim<String>>>().single()
-                SendAttestationFlow.Initiator(attestation, setOf(partyC))
+                attestation = it.tx.outRefsOfType<Attestation<GreetingClaim>>().single()
+                PublishAttestationFlow.Initiator(attestation, setOf(partyC))
             }
             .finally { transaction = it }
     }
@@ -74,7 +78,7 @@ class SendAttestationFlowTests : FlowTest() {
                     ?: fail("Failed to find a recorded transaction with id: ${transaction.id}.")
 
                 val recordedAttestation = recordedTransaction
-                    .tx.outRefsOfType<Attestation<CordaClaim<String>>>().singleOrNull()
+                    .tx.outRefsOfType<Attestation<GreetingClaim>>().singleOrNull()
                     ?: fail("Failed to find a recorded attestation.")
 
                 assertEquals(attestation, recordedAttestation)

@@ -53,13 +53,13 @@ class ClaimIntegrationTests : IntegrationTest() {
             stateStatus = Vault.StateStatus.UNCONSUMED
         ) ?: fail("Failed to find amended claim.")
 
-        // Send the amended claim
-        nodeA.claims.commandService.sendClaim(
+        // Publish the amended claim
+        nodeA.claims.commandService.publishClaim(
             claim = amendedClaim,
             observers = setOf(partyB, partyC)
         ).returnValue.getOrThrow()
 
-        // Find the sent claim
+        // Find the published claim
         listOf(nodeA, nodeB, nodeC).forEach {
             it.claims.queryService.findClaim<CordaClaim<String>>(
                 linearId = ID,

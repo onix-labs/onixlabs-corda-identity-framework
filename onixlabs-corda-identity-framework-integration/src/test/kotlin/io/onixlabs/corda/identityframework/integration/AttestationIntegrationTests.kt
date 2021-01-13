@@ -67,18 +67,18 @@ class AttestationIntegrationTests : IntegrationTest() {
             stateStatus = Vault.StateStatus.UNCONSUMED
         ) ?: fail("Failed to find amended attestation.")
 
-        // Send the amended attestation
-        nodeA.attestations.commandService.sendAttestation(
+        // Publish the amended attestation
+        nodeA.attestations.commandService.publishAttestation(
             attestation = amendedAttestation,
             observers = setOf(partyB)
         ).returnValue.getOrThrow()
 
-        // Find the sent attestation
+        // Find the published attestation
         listOf(nodeA, nodeB, nodeC).forEach {
             it.attestations.queryService.findAttestation<Attestation<CordaClaim<String>>>(
                 pointerStateRef = issuedClaim.ref,
                 stateStatus = Vault.StateStatus.UNCONSUMED
-            ) ?: fail("Failed to find send attestation.")
+            ) ?: fail("Failed to find published attestation.")
         }
 
         // Revoke the attestation

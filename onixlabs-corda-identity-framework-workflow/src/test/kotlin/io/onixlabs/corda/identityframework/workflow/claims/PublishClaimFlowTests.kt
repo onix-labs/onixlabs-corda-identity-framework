@@ -14,52 +14,40 @@
  * limitations under the License.
  */
 
-package io.onixlabs.test.cordapp.workflow.attestation
+package io.onixlabs.corda.identityframework.workflow.claims
 
-import io.onixlabs.corda.identityframework.contract.Attestation
-import io.onixlabs.corda.identityframework.contract.accept
-import io.onixlabs.corda.identityframework.workflow.IssueAttestationFlow
+import io.onixlabs.corda.identityframework.contract.CordaClaim
+import io.onixlabs.corda.identityframework.workflow.FlowTest
 import io.onixlabs.corda.identityframework.workflow.IssueClaimFlow
-import io.onixlabs.corda.identityframework.workflow.SendAttestationFlow
-import io.onixlabs.test.cordapp.contract.GreetingClaim
-import io.onixlabs.test.cordapp.workflow.FlowTest
-import io.onixlabs.test.cordapp.workflow.Pipeline
+import io.onixlabs.corda.identityframework.workflow.Pipeline
+import io.onixlabs.corda.identityframework.workflow.PublishClaimFlow
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.transactions.SignedTransaction
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 import kotlin.test.assertEquals
 
-class SendAttestationFlowTests : FlowTest() {
+class PublishClaimFlowTests : FlowTest() {
 
     private lateinit var transaction: SignedTransaction
-    private lateinit var attestation: StateAndRef<Attestation<GreetingClaim>>
+    private lateinit var claim: StateAndRef<CordaClaim<String>>
 
     override fun initialize() {
         Pipeline
             .create(network)
-            .run(nodeA) {
-                IssueClaimFlow.Initiator(GREETING_CLAIM, observers = setOf(partyC))
+            .run(nodeB) {
+                IssueClaimFlow.Initiator(CLAIM_2)
             }
             .run(nodeB) {
-                val issuedClaim = it.tx.outRefsOfType<GreetingClaim>().single()
-                val attestation = issuedClaim.accept(partyB)
-                IssueAttestationFlow.Initiator(attestation)
-            }
-            .run(nodeB) {
-                attestation = it.tx.outRefsOfType<Attestation<GreetingClaim>>().single()
-                SendAttestationFlow.Initiator(attestation, setOf(partyC))
+                claim = it.tx.outRefsOfType<CordaClaim<String>>().single()
+                PublishClaimFlow.Initiator(claim, observers = setOf(partyA, partyC))
+
             }
             .finally { transaction = it }
     }
 
     @Test
-    fun `AmendAttestationFlow transaction should be signed by the initiator`() {
-        transaction.verifyRequiredSignatures()
-    }
-
-    @Test
-    fun `AmendAttestationFlow should record a transaction for the attestor and state participants`() {
+    fun `PublishClaimFlow should record a transaction for the claim issuer, claim holder and observers`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             it.transaction {
                 val recordedTransaction = it.services.validatedTransactions.getTransaction(transaction.id)
@@ -71,17 +59,17 @@ class SendAttestationFlowTests : FlowTest() {
     }
 
     @Test
-    fun `AmendAttestationFlow should record an Attestation for the attestor and state participants`() {
+    fun `PublishClaimFlow should record a CordaClaim for the claim issuer, claim holder and observers`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             it.transaction {
                 val recordedTransaction = it.services.validatedTransactions.getTransaction(transaction.id)
                     ?: fail("Failed to find a recorded transaction with id: ${transaction.id}.")
 
-                val recordedAttestation = recordedTransaction
-                    .tx.outRefsOfType<Attestation<GreetingClaim>>().singleOrNull()
-                    ?: fail("Failed to find a recorded attestation.")
+                val recordedClaim = recordedTransaction
+                    .tx.outRefsOfType<CordaClaim<String>>().singleOrNull()
+                    ?: fail("Failed to find a recorded claim.")
 
-                assertEquals(attestation, recordedAttestation)
+                assertEquals(claim, recordedClaim)
             }
         }
     }

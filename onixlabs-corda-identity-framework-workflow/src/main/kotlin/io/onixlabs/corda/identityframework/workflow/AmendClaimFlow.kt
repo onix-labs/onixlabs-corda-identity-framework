@@ -93,27 +93,4 @@ class AmendClaimFlow(
             return subFlow(AmendClaimFlow(oldClaim, newClaim, sessions, AMENDING.childProgressTracker()))
         }
     }
-
-    /**
-     * Represents the handler of the [Initiator] flow.
-     *
-     * @property session The counter-party session who is initiating the flow.
-     */
-    @InitiatedBy(Initiator::class)
-    private class Handler(private val session: FlowSession) : FlowLogic<SignedTransaction>() {
-
-        private companion object {
-            object OBSERVING : ProgressTracker.Step("Observing amended claim.") {
-                override fun childProgressTracker(): ProgressTracker = AmendClaimFlowHandler.tracker()
-            }
-        }
-
-        override val progressTracker = ProgressTracker(OBSERVING)
-
-        @Suspendable
-        override fun call(): SignedTransaction {
-            currentStep(OBSERVING)
-            return subFlow(AmendClaimFlowHandler(session, progressTracker = OBSERVING.childProgressTracker()))
-        }
-    }
 }

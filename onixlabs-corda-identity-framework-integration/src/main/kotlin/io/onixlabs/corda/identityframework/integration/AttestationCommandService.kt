@@ -20,8 +20,8 @@ import io.onixlabs.corda.core.integration.RPCService
 import io.onixlabs.corda.identityframework.contract.*
 import io.onixlabs.corda.identityframework.workflow.AmendAttestationFlow
 import io.onixlabs.corda.identityframework.workflow.IssueAttestationFlow
+import io.onixlabs.corda.identityframework.workflow.PublishAttestationFlow
 import io.onixlabs.corda.identityframework.workflow.RevokeAttestationFlow
-import io.onixlabs.corda.identityframework.workflow.SendAttestationFlow
 import net.corda.core.contracts.ContractState
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.contracts.UniqueIdentifier
@@ -138,18 +138,18 @@ class AttestationCommandService(rpc: CordaRPCOps) : RPCService(rpc) {
     }
 
     /**
-     * Sends an attestation.
+     * Publishes an attestation.
      *
      * @param T The underlying [ContractState] type.
-     * @param attestation The attestation to be sent.
+     * @param attestation The attestation to be published.
      * @param observers Observers of the attestation.
      */
-    fun <T : ContractState> sendAttestation(
+    fun <T : ContractState> publishAttestation(
         attestation: StateAndRef<Attestation<T>>,
         observers: Set<Party>
     ): FlowProgressHandle<SignedTransaction> {
         return rpc.startTrackedFlow(
-            SendAttestationFlow::Initiator,
+            PublishAttestationFlow::Initiator,
             attestation,
             observers
         )
