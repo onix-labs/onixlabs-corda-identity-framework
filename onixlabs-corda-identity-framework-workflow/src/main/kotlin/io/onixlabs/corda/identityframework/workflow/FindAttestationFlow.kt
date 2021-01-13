@@ -68,7 +68,7 @@ class FindAttestationFlow<T : Attestation<*>>(
     status: AttestationStatus? = null,
     previousStateRef: StateRef? = null,
     hash: SecureHash? = null,
-    stateStatus: Vault.StateStatus = Vault.StateStatus.ALL,
+    stateStatus: Vault.StateStatus = Vault.StateStatus.UNCONSUMED,
     relevancyStatus: Vault.RelevancyStatus = Vault.RelevancyStatus.ALL,
     override val pageSpecification: PageSpecification = DEFAULT_PAGE_SPECIFICATION
 ) : FindStateFlow<T>() {
