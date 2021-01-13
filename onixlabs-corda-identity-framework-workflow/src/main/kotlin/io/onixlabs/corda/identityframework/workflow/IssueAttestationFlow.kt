@@ -19,6 +19,7 @@ package io.onixlabs.corda.identityframework.workflow
 import co.paralleluniverse.fibers.Suspendable
 import io.onixlabs.corda.core.workflow.currentStep
 import io.onixlabs.corda.core.workflow.getPreferredNotary
+import io.onixlabs.corda.core.workflow.initiateFlows
 import io.onixlabs.corda.identityframework.contract.Attestation
 import net.corda.core.flows.*
 import net.corda.core.identity.Party

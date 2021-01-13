@@ -18,6 +18,8 @@ package io.onixlabs.corda.identityframework.workflow
 
 import co.paralleluniverse.fibers.Suspendable
 import io.onixlabs.corda.core.workflow.currentStep
+import io.onixlabs.corda.core.workflow.findTransaction
+import io.onixlabs.corda.core.workflow.initiateFlows
 import io.onixlabs.corda.identityframework.contract.CordaClaim
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.flows.*

@@ -21,7 +21,6 @@ import io.onixlabs.corda.core.workflow.currentStep
 import io.onixlabs.corda.identityframework.contract.Attestation
 import io.onixlabs.corda.identityframework.contract.CordaClaim
 import net.corda.core.contracts.ContractState
-import net.corda.core.contracts.StateAndRef
 import net.corda.core.flows.*
 import net.corda.core.identity.Party
 import net.corda.core.transactions.SignedTransaction
@@ -76,33 +75,6 @@ fun FlowLogic<*>.checkAttestationExists(attestation: Attestation<*>) {
     if (subFlow(FindAttestationsFlow<Attestation<*>>(hash = attestation.hash)).isNotEmpty()) {
         throw FlowException("An attestation with the specified hash already exists: ${attestation.hash}.")
     }
-}
-
-/**
- * Initiates flow sessions for the specified observers and contract state counter-parties.
- *
- * @param observers The observers from which to initiate flow sessions.
- * @param states The states from which to initiate flow sessions.
- * @return Returns a set of flow sessions for all specified counter-parties.
- */
-fun FlowLogic<*>.initiateFlows(observers: Iterable<Party>, vararg states: ContractState): Set<FlowSession> {
-    return (observers + states.flatMap { it.participants })
-        .map { serviceHub.identityService.requireWellKnownPartyFromAnonymous(it) }
-        .filter { it !in serviceHub.myInfo.legalIdentities }
-        .map { initiateFlow(it) }
-        .toSet()
-}
-
-/**
- * Finds a transaction in the vault given the specified [StateAndRef].
- *
- * @param stateAndRef The [StateAndRef] from which to obtain a transaction.
- * @return Returns the transaction for the specified [StateAndRef].
- * @throws FlowException if the transaction cannot be found.
- */
-fun FlowLogic<*>.findTransaction(stateAndRef: StateAndRef<*>): SignedTransaction {
-    return serviceHub.validatedTransactions.getTransaction(stateAndRef.ref.txhash)
-        ?: throw FlowException("Did not find a transaction with the specified hash: ${stateAndRef.ref.txhash}")
 }
 
 /**
