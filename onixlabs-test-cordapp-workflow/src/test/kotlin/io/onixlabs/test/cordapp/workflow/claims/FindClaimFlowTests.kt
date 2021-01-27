@@ -54,8 +54,7 @@ class FindClaimFlowTests : FlowTest() {
                     .create(network)
                     .run(it) {
                         FindClaimFlow<GreetingClaim>(
-                            linearId = claim.state.data.linearId,
-                            stateStatus = Vault.StateStatus.UNCONSUMED
+                            linearId = claim.state.data.linearId
                         )
                     }
                     .finally { assertEquals(claim, it) }
@@ -71,8 +70,7 @@ class FindClaimFlowTests : FlowTest() {
                     .create(network)
                     .run(it) {
                         FindClaimFlow<GreetingClaim>(
-                            externalId = claim.state.data.linearId.externalId,
-                            stateStatus = Vault.StateStatus.UNCONSUMED
+                            externalId = claim.state.data.linearId.externalId
                         )
                     }
                     .finally { assertEquals(claim, it) }
@@ -88,8 +86,7 @@ class FindClaimFlowTests : FlowTest() {
                     .create(network)
                     .run(it) {
                         FindClaimFlow<GreetingClaim>(
-                            issuer = claim.state.data.issuer,
-                            stateStatus = Vault.StateStatus.UNCONSUMED
+                            issuer = claim.state.data.issuer
                         )
                     }
                     .finally { assertEquals(claim, it) }
@@ -105,8 +102,7 @@ class FindClaimFlowTests : FlowTest() {
                     .create(network)
                     .run(it) {
                         FindClaimFlow<GreetingClaim>(
-                            holder = claim.state.data.holder,
-                            stateStatus = Vault.StateStatus.UNCONSUMED
+                            holder = claim.state.data.holder
                         )
                     }
                     .finally { assertEquals(claim, it) }
@@ -122,8 +118,7 @@ class FindClaimFlowTests : FlowTest() {
                     .create(network)
                     .run(it) {
                         FindClaimFlow<GreetingClaim>(
-                            property = claim.state.data.property,
-                            stateStatus = Vault.StateStatus.UNCONSUMED
+                            property = claim.state.data.property
                         )
                     }
                     .finally { assertEquals(claim, it) }
@@ -139,8 +134,7 @@ class FindClaimFlowTests : FlowTest() {
                     .create(network)
                     .run(it) {
                         FindClaimFlow<GreetingClaim>(
-                            value = claim.state.data.value,
-                            stateStatus = Vault.StateStatus.UNCONSUMED
+                            value = claim.state.data.value
                         )
                     }
                     .finally { assertEquals(claim, it) }
@@ -156,8 +150,7 @@ class FindClaimFlowTests : FlowTest() {
                     .create(network)
                     .run(it) {
                         FindClaimFlow<GreetingClaim>(
-                            previousStateRef = claim.state.data.previousStateRef,
-                            stateStatus = Vault.StateStatus.UNCONSUMED
+                            previousStateRef = claim.state.data.previousStateRef
                         )
                     }
                     .finally { assertEquals(claim, it) }
@@ -173,8 +166,7 @@ class FindClaimFlowTests : FlowTest() {
                     .create(network)
                     .run(it) {
                         FindClaimFlow<GreetingClaim>(
-                            isSelfIssued = claim.state.data.isSelfIssued,
-                            stateStatus = Vault.StateStatus.UNCONSUMED
+                            isSelfIssued = claim.state.data.isSelfIssued
                         )
                     }
                     .finally { assertEquals(claim, it) }
@@ -190,8 +182,7 @@ class FindClaimFlowTests : FlowTest() {
                     .create(network)
                     .run(it) {
                         FindClaimFlow<GreetingClaim>(
-                            hash = claim.state.data.hash,
-                            stateStatus = Vault.StateStatus.UNCONSUMED
+                            hash = claim.state.data.hash
                         )
                     }
                     .finally { assertEquals(claim, it) }

@@ -56,8 +56,7 @@ class FindAttestationFlowTests : FlowTest() {
                     .create(network)
                     .run(it) {
                         FindAttestationFlow<Attestation<GreetingClaim>>(
-                            linearId = attestation.state.data.linearId,
-                            stateStatus = Vault.StateStatus.UNCONSUMED
+                            linearId = attestation.state.data.linearId
                         )
                     }
                     .finally { assertEquals(attestation, it) }
@@ -73,8 +72,7 @@ class FindAttestationFlowTests : FlowTest() {
                     .create(network)
                     .run(it) {
                         FindAttestationFlow<Attestation<GreetingClaim>>(
-                            externalId = attestation.state.data.linearId.externalId,
-                            stateStatus = Vault.StateStatus.UNCONSUMED
+                            externalId = attestation.state.data.linearId.externalId
                         )
                     }
                     .finally { assertEquals(attestation, it) }
@@ -90,8 +88,7 @@ class FindAttestationFlowTests : FlowTest() {
                     .create(network)
                     .run(it) {
                         FindAttestationFlow<Attestation<GreetingClaim>>(
-                            attestor = attestation.state.data.attestor,
-                            stateStatus = Vault.StateStatus.UNCONSUMED
+                            attestor = attestation.state.data.attestor
                         )
                     }
                     .finally { assertEquals(attestation, it) }
@@ -107,8 +104,7 @@ class FindAttestationFlowTests : FlowTest() {
                     .create(network)
                     .run(it) {
                         FindAttestationFlow<Attestation<GreetingClaim>>(
-                            pointer = attestation.state.data.pointer,
-                            stateStatus = Vault.StateStatus.UNCONSUMED
+                            pointer = attestation.state.data.pointer
                         )
                     }
                     .finally { assertEquals(attestation, it) }
@@ -124,8 +120,7 @@ class FindAttestationFlowTests : FlowTest() {
                     .create(network)
                     .run(it) {
                         FindAttestationFlow<Attestation<GreetingClaim>>(
-                            pointerStateRef = claim.ref,
-                            stateStatus = Vault.StateStatus.UNCONSUMED
+                            pointerStateRef = claim.ref
                         )
                     }
                     .finally { assertEquals(attestation, it) }
@@ -141,8 +136,7 @@ class FindAttestationFlowTests : FlowTest() {
                     .create(network)
                     .run(it) {
                         FindAttestationFlow<Attestation<GreetingClaim>>(
-                            pointerStateClass = claim.state.data.javaClass,
-                            stateStatus = Vault.StateStatus.UNCONSUMED
+                            pointerStateClass = claim.state.data.javaClass
                         )
                     }
                     .finally { assertEquals(attestation, it) }
@@ -158,8 +152,7 @@ class FindAttestationFlowTests : FlowTest() {
                     .create(network)
                     .run(it) {
                         FindAttestationFlow<Attestation<GreetingClaim>>(
-                            pointerStateLinearId = claim.state.data.linearId,
-                            stateStatus = Vault.StateStatus.UNCONSUMED
+                            pointerStateLinearId = claim.state.data.linearId
                         )
                     }
                     .finally { assertEquals(attestation, it) }
@@ -175,8 +168,7 @@ class FindAttestationFlowTests : FlowTest() {
                     .create(network)
                     .run(it) {
                         FindAttestationFlow<Attestation<GreetingClaim>>(
-                            pointerHash = attestation.state.data.pointer.hash,
-                            stateStatus = Vault.StateStatus.UNCONSUMED
+                            pointerHash = attestation.state.data.pointer.hash
                         )
                     }
                     .finally { assertEquals(attestation, it) }
@@ -192,8 +184,7 @@ class FindAttestationFlowTests : FlowTest() {
                     .create(network)
                     .run(it) {
                         FindAttestationFlow<Attestation<GreetingClaim>>(
-                            status = attestation.state.data.status,
-                            stateStatus = Vault.StateStatus.UNCONSUMED
+                            status = attestation.state.data.status
                         )
                     }
                     .finally { assertEquals(attestation, it) }
@@ -209,8 +200,7 @@ class FindAttestationFlowTests : FlowTest() {
                     .create(network)
                     .run(it) {
                         FindAttestationFlow<Attestation<GreetingClaim>>(
-                            previousStateRef = attestation.state.data.previousStateRef,
-                            stateStatus = Vault.StateStatus.UNCONSUMED
+                            previousStateRef = attestation.state.data.previousStateRef
                         )
                     }
                     .finally { assertEquals(attestation, it) }
@@ -226,8 +216,7 @@ class FindAttestationFlowTests : FlowTest() {
                     .create(network)
                     .run(it) {
                         FindAttestationFlow<Attestation<GreetingClaim>>(
-                            hash = attestation.state.data.hash,
-                            stateStatus = Vault.StateStatus.UNCONSUMED
+                            hash = attestation.state.data.hash
                         )
                     }
                     .finally { assertEquals(attestation, it) }

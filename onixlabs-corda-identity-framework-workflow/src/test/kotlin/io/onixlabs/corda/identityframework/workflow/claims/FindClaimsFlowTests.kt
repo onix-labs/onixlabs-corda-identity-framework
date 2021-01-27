@@ -20,6 +20,7 @@ import io.onixlabs.corda.identityframework.contract.CordaClaim
 import io.onixlabs.corda.identityframework.contract.amend
 import io.onixlabs.corda.identityframework.workflow.*
 import net.corda.core.contracts.StateAndRef
+import net.corda.core.node.services.Vault
 import org.junit.jupiter.api.Test
 import java.time.Instant
 import kotlin.test.assertEquals
@@ -79,7 +80,12 @@ class FindClaimsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindClaimsFlow<CordaClaim<*>>(linearId = CLAIM_1.linearId) }
+                    .run(it) {
+                        FindClaimsFlow<CordaClaim<*>>(
+                            linearId = CLAIM_1.linearId,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(3, it.size) }
             }
         }
@@ -91,7 +97,12 @@ class FindClaimsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindClaimsFlow<CordaClaim<*>>(externalId = CLAIM_1.linearId.externalId) }
+                    .run(it) {
+                        FindClaimsFlow<CordaClaim<*>>(
+                            externalId = CLAIM_1.linearId.externalId,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(3, it.size) }
             }
         }
@@ -103,7 +114,12 @@ class FindClaimsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindClaimsFlow<CordaClaim<*>>(issuer = CLAIM_1.issuer) }
+                    .run(it) {
+                        FindClaimsFlow<CordaClaim<*>>(
+                            issuer = CLAIM_1.issuer,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(3, it.size) }
             }
         }
@@ -115,7 +131,12 @@ class FindClaimsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindClaimsFlow<CordaClaim<*>>(holder = CLAIM_1.holder) }
+                    .run(it) {
+                        FindClaimsFlow<CordaClaim<*>>(
+                            holder = CLAIM_1.holder,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(6, it.size) }
             }
         }
@@ -127,7 +148,12 @@ class FindClaimsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindClaimsFlow<CordaClaim<*>>(property = CLAIM_1.property) }
+                    .run(it) {
+                        FindClaimsFlow<CordaClaim<*>>(
+                            property = CLAIM_1.property,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(3, it.size) }
             }
         }
@@ -139,7 +165,12 @@ class FindClaimsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindClaimsFlow<CordaClaim<*>>(value = CLAIM_1.value) }
+                    .run(it) {
+                        FindClaimsFlow<CordaClaim<*>>(
+                            value = CLAIM_1.value,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(1, it.size) }
             }
         }
@@ -151,7 +182,12 @@ class FindClaimsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindClaimsFlow<CordaClaim<*>>(previousStateRef = claim.state.data.previousStateRef) }
+                    .run(it) {
+                        FindClaimsFlow<CordaClaim<*>>(
+                            previousStateRef = claim.state.data.previousStateRef,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(1, it.size) }
             }
         }
@@ -163,7 +199,12 @@ class FindClaimsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindClaimsFlow<CordaClaim<*>>(isSelfIssued = true) }
+                    .run(it) {
+                        FindClaimsFlow<CordaClaim<*>>(
+                            isSelfIssued = true,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(6, it.size) }
             }
         }
@@ -175,7 +216,12 @@ class FindClaimsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindClaimsFlow<CordaClaim<*>>(hash = CLAIM_1.hash) }
+                    .run(it) {
+                        FindClaimsFlow<CordaClaim<*>>(
+                            hash = CLAIM_1.hash,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(1, it.size) }
             }
         }

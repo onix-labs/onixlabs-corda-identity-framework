@@ -29,6 +29,7 @@ import io.onixlabs.test.cordapp.workflow.FlowTest
 import io.onixlabs.test.cordapp.workflow.Pipeline
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.contracts.UniqueIdentifier
+import net.corda.core.node.services.Vault
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -67,7 +68,12 @@ class FindAttestationsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindAttestationsFlow<Attestation<GreetingClaim>>(linearId = attestation.state.data.linearId) }
+                    .run(it) {
+                        FindAttestationsFlow<Attestation<GreetingClaim>>(
+                            linearId = attestation.state.data.linearId,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(3, it.size) }
             }
         }
@@ -79,7 +85,12 @@ class FindAttestationsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindAttestationsFlow<Attestation<GreetingClaim>>(externalId = attestation.state.data.linearId.externalId) }
+                    .run(it) {
+                        FindAttestationsFlow<Attestation<GreetingClaim>>(
+                            externalId = attestation.state.data.linearId.externalId,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(3, it.size) }
             }
         }
@@ -91,7 +102,12 @@ class FindAttestationsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindAttestationsFlow<Attestation<GreetingClaim>>(attestor = attestation.state.data.attestor) }
+                    .run(it) {
+                        FindAttestationsFlow<Attestation<GreetingClaim>>(
+                            attestor = attestation.state.data.attestor,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(3, it.size) }
             }
         }
@@ -103,7 +119,12 @@ class FindAttestationsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindAttestationsFlow<Attestation<GreetingClaim>>(pointer = attestation.state.data.pointer) }
+                    .run(it) {
+                        FindAttestationsFlow<Attestation<GreetingClaim>>(
+                            pointer = attestation.state.data.pointer,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(3, it.size) }
             }
         }
@@ -115,7 +136,12 @@ class FindAttestationsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindAttestationsFlow<Attestation<GreetingClaim>>(pointerStateRef = claim.ref) }
+                    .run(it) {
+                        FindAttestationsFlow<Attestation<GreetingClaim>>(
+                            pointerStateRef = claim.ref,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(3, it.size) }
             }
         }
@@ -127,7 +153,12 @@ class FindAttestationsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindAttestationsFlow<Attestation<GreetingClaim>>(pointerStateClass = claim.state.data.javaClass) }
+                    .run(it) {
+                        FindAttestationsFlow<Attestation<GreetingClaim>>(
+                            pointerStateClass = claim.state.data.javaClass,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(3, it.size) }
             }
         }
@@ -139,7 +170,12 @@ class FindAttestationsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindAttestationsFlow<Attestation<GreetingClaim>>(pointerStateLinearId = claim.state.data.linearId) }
+                    .run(it) {
+                        FindAttestationsFlow<Attestation<GreetingClaim>>(
+                            pointerStateLinearId = claim.state.data.linearId,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(3, it.size) }
             }
         }
@@ -151,7 +187,12 @@ class FindAttestationsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindAttestationsFlow<Attestation<GreetingClaim>>(pointerHash = attestation.state.data.pointer.hash) }
+                    .run(it) {
+                        FindAttestationsFlow<Attestation<GreetingClaim>>(
+                            pointerHash = attestation.state.data.pointer.hash,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(3, it.size) }
             }
         }
@@ -163,7 +204,12 @@ class FindAttestationsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindAttestationsFlow<Attestation<GreetingClaim>>(status = AttestationStatus.ACCEPTED) }
+                    .run(it) {
+                        FindAttestationsFlow<Attestation<GreetingClaim>>(
+                            status = AttestationStatus.ACCEPTED,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(2, it.size) }
             }
         }
@@ -175,7 +221,12 @@ class FindAttestationsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindAttestationsFlow<Attestation<GreetingClaim>>(status = AttestationStatus.REJECTED) }
+                    .run(it) {
+                        FindAttestationsFlow<Attestation<GreetingClaim>>(
+                            status = AttestationStatus.REJECTED,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(1, it.size) }
             }
         }
@@ -187,7 +238,12 @@ class FindAttestationsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindAttestationsFlow<Attestation<GreetingClaim>>(previousStateRef = attestation.state.data.previousStateRef) }
+                    .run(it) {
+                        FindAttestationsFlow<Attestation<GreetingClaim>>(
+                            previousStateRef = attestation.state.data.previousStateRef,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(1, it.size) }
             }
         }
@@ -199,7 +255,12 @@ class FindAttestationsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindAttestationsFlow<Attestation<GreetingClaim>>(hash = attestation.state.data.hash) }
+                    .run(it) {
+                        FindAttestationsFlow<Attestation<GreetingClaim>>(
+                            hash = attestation.state.data.hash,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(1, it.size) }
             }
         }

@@ -20,6 +20,7 @@ import io.onixlabs.corda.identityframework.contract.*
 import io.onixlabs.corda.identityframework.workflow.*
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.contracts.UniqueIdentifier
+import net.corda.core.node.services.Vault
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -58,7 +59,12 @@ class FindAttestationsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindAttestationsFlow<Attestation<CordaClaim<String>>>(linearId = attestation.state.data.linearId) }
+                    .run(it) {
+                        FindAttestationsFlow<Attestation<CordaClaim<String>>>(
+                            linearId = attestation.state.data.linearId,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(3, it.size) }
             }
         }
@@ -70,7 +76,12 @@ class FindAttestationsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindAttestationsFlow<Attestation<CordaClaim<String>>>(externalId = attestation.state.data.linearId.externalId) }
+                    .run(it) {
+                        FindAttestationsFlow<Attestation<CordaClaim<String>>>(
+                            externalId = attestation.state.data.linearId.externalId,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(3, it.size) }
             }
         }
@@ -82,7 +93,12 @@ class FindAttestationsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindAttestationsFlow<Attestation<CordaClaim<String>>>(attestor = attestation.state.data.attestor) }
+                    .run(it) {
+                        FindAttestationsFlow<Attestation<CordaClaim<String>>>(
+                            attestor = attestation.state.data.attestor,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(3, it.size) }
             }
         }
@@ -94,7 +110,12 @@ class FindAttestationsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindAttestationsFlow<Attestation<CordaClaim<String>>>(pointer = attestation.state.data.pointer) }
+                    .run(it) {
+                        FindAttestationsFlow<Attestation<CordaClaim<String>>>(
+                            pointer = attestation.state.data.pointer,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(3, it.size) }
             }
         }
@@ -106,7 +127,12 @@ class FindAttestationsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindAttestationsFlow<Attestation<CordaClaim<String>>>(pointerStateRef = claim.ref) }
+                    .run(it) {
+                        FindAttestationsFlow<Attestation<CordaClaim<String>>>(
+                            pointerStateRef = claim.ref,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(3, it.size) }
             }
         }
@@ -118,7 +144,12 @@ class FindAttestationsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindAttestationsFlow<Attestation<CordaClaim<String>>>(pointerStateClass = claim.state.data.javaClass) }
+                    .run(it) {
+                        FindAttestationsFlow<Attestation<CordaClaim<String>>>(
+                            pointerStateClass = claim.state.data.javaClass,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(3, it.size) }
             }
         }
@@ -130,7 +161,12 @@ class FindAttestationsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindAttestationsFlow<Attestation<CordaClaim<String>>>(pointerStateLinearId = claim.state.data.linearId) }
+                    .run(it) {
+                        FindAttestationsFlow<Attestation<CordaClaim<String>>>(
+                            pointerStateLinearId = claim.state.data.linearId,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(3, it.size) }
             }
         }
@@ -142,7 +178,12 @@ class FindAttestationsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindAttestationsFlow<Attestation<CordaClaim<String>>>(pointerHash = attestation.state.data.pointer.hash) }
+                    .run(it) {
+                        FindAttestationsFlow<Attestation<CordaClaim<String>>>(
+                            pointerHash = attestation.state.data.pointer.hash,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(3, it.size) }
             }
         }
@@ -154,7 +195,12 @@ class FindAttestationsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindAttestationsFlow<Attestation<CordaClaim<String>>>(status = AttestationStatus.ACCEPTED) }
+                    .run(it) {
+                        FindAttestationsFlow<Attestation<CordaClaim<String>>>(
+                            status = AttestationStatus.ACCEPTED,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(2, it.size) }
             }
         }
@@ -166,7 +212,12 @@ class FindAttestationsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindAttestationsFlow<Attestation<CordaClaim<String>>>(status = AttestationStatus.REJECTED) }
+                    .run(it) {
+                        FindAttestationsFlow<Attestation<CordaClaim<String>>>(
+                            status = AttestationStatus.REJECTED,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(1, it.size) }
             }
         }
@@ -178,7 +229,12 @@ class FindAttestationsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindAttestationsFlow<Attestation<CordaClaim<String>>>(previousStateRef = attestation.state.data.previousStateRef) }
+                    .run(it) {
+                        FindAttestationsFlow<Attestation<CordaClaim<String>>>(
+                            previousStateRef = attestation.state.data.previousStateRef,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(1, it.size) }
             }
         }
@@ -190,7 +246,12 @@ class FindAttestationsFlowTests : FlowTest() {
             it.transaction {
                 Pipeline
                     .create(network)
-                    .run(it) { FindAttestationsFlow<Attestation<CordaClaim<String>>>(hash = attestation.state.data.hash) }
+                    .run(it) {
+                        FindAttestationsFlow<Attestation<CordaClaim<String>>>(
+                            hash = attestation.state.data.hash,
+                            stateStatus = Vault.StateStatus.ALL
+                        )
+                    }
                     .finally { assertEquals(1, it.size) }
             }
         }
