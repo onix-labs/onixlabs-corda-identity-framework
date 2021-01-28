@@ -17,8 +17,8 @@
 package io.onixlabs.corda.identityframework.integration
 
 import io.onixlabs.corda.core.integration.RPCService
-import io.onixlabs.corda.identityframework.contract.CordaClaim
-import io.onixlabs.corda.identityframework.contract.amend
+import io.onixlabs.corda.identityframework.v1.contract.CordaClaim
+import io.onixlabs.corda.identityframework.v1.contract.amend
 import io.onixlabs.corda.identityframework.workflow.AmendClaimFlow
 import io.onixlabs.corda.identityframework.workflow.IssueClaimFlow
 import io.onixlabs.corda.identityframework.workflow.PublishClaimFlow

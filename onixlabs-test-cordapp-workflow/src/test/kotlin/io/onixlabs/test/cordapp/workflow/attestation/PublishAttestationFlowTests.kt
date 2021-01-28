@@ -16,8 +16,8 @@
 
 package io.onixlabs.test.cordapp.workflow.attestation
 
-import io.onixlabs.corda.identityframework.contract.Attestation
-import io.onixlabs.corda.identityframework.contract.accept
+import io.onixlabs.corda.identityframework.v1.contract.Attestation
+import io.onixlabs.corda.identityframework.v1.contract.accept
 import io.onixlabs.corda.identityframework.workflow.IssueAttestationFlow
 import io.onixlabs.corda.identityframework.workflow.IssueClaimFlow
 import io.onixlabs.corda.identityframework.workflow.PublishAttestationFlow

@@ -20,7 +20,7 @@ import co.paralleluniverse.fibers.Suspendable
 import io.onixlabs.corda.core.workflow.currentStep
 import io.onixlabs.corda.core.workflow.findTransaction
 import io.onixlabs.corda.core.workflow.initiateFlows
-import io.onixlabs.corda.identityframework.contract.Attestation
+import io.onixlabs.corda.identityframework.v1.contract.Attestation
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.flows.*
 import net.corda.core.identity.Party

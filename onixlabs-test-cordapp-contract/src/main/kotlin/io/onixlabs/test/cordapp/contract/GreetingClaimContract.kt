@@ -16,7 +16,7 @@
 
 package io.onixlabs.test.cordapp.contract
 
-import io.onixlabs.corda.identityframework.contract.CordaClaimContract
+import io.onixlabs.corda.identityframework.v1.contract.CordaClaimContract
 import net.corda.core.contracts.Contract
 import net.corda.core.contracts.ContractClassName
 import net.corda.core.contracts.requireThat

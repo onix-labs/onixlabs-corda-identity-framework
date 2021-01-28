@@ -16,10 +16,10 @@
 
 package io.onixlabs.test.cordapp.contract.attestations
 
-import io.onixlabs.corda.identityframework.contract.AttestationContract
-import io.onixlabs.corda.identityframework.contract.AttestationStatus
-import io.onixlabs.corda.identityframework.contract.accept
-import io.onixlabs.corda.identityframework.contract.reject
+import io.onixlabs.corda.identityframework.v1.contract.AttestationContract
+import io.onixlabs.corda.identityframework.v1.contract.AttestationStatus
+import io.onixlabs.corda.identityframework.v1.contract.accept
+import io.onixlabs.corda.identityframework.v1.contract.reject
 import io.onixlabs.test.cordapp.contract.*
 import net.corda.testing.node.ledger
 import org.junit.jupiter.api.Test

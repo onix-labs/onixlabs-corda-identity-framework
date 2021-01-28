@@ -20,10 +20,10 @@ import io.onixlabs.corda.core.workflow.DEFAULT_PAGE_SPECIFICATION
 import io.onixlabs.corda.core.workflow.DEFAULT_SORTING
 import io.onixlabs.corda.core.workflow.FindStatesFlow
 import io.onixlabs.corda.core.workflow.andWithExpressions
-import io.onixlabs.corda.identityframework.contract.Attestation
-import io.onixlabs.corda.identityframework.contract.AttestationPointer
-import io.onixlabs.corda.identityframework.contract.AttestationSchema.AttestationEntity
-import io.onixlabs.corda.identityframework.contract.AttestationStatus
+import io.onixlabs.corda.identityframework.v1.contract.Attestation
+import io.onixlabs.corda.identityframework.v1.contract.AttestationPointer
+import io.onixlabs.corda.identityframework.v1.contract.AttestationSchema.AttestationEntity
+import io.onixlabs.corda.identityframework.v1.contract.AttestationStatus
 import net.corda.core.contracts.ContractState
 import net.corda.core.contracts.StateRef
 import net.corda.core.contracts.UniqueIdentifier

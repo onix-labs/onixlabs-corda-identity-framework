@@ -1,0 +1,45 @@
+/**
+ * Copyright 2020 Matthew Layton
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package io.onixlabs.corda.identityframework.v1.contract
+
+import kotlin.reflect.KVisibility
+import kotlin.reflect.full.memberProperties
+
+/**
+ * Checks a collection of [AbstractClaim] instances for duplicate keys.
+ *
+ * @param isCaseSensitive Determines whether to perform case sensitive key checking.
+ * @param message The exception message to throw if the collection contains duplicate keys.
+ * @throws IllegalStateException if the collection contains duplicate keys.
+ */
+fun Iterable<AbstractClaim<*>>.checkForDuplicateKeys(
+    isCaseSensitive: Boolean = false,
+    message: String = "The claim collection contains duplicate keys."
+) = check(count() == distinctBy { if (isCaseSensitive) it.property else it.property.toLowerCase() }.size) { message }
+
+/**
+ * Formats any object like a Kotlin data class.
+ *
+ * @return Returns a string representation of the current object, like a Kotlin data class.
+ */
+internal fun Any.toDataClassString(): String {
+    val properties = javaClass.kotlin.memberProperties
+        .filter { it.visibility == KVisibility.PUBLIC }
+        .joinToString(", ") { "${it.name} = ${it.get(this).toString()}" }
+
+    return "${javaClass.simpleName}($properties)"
+}

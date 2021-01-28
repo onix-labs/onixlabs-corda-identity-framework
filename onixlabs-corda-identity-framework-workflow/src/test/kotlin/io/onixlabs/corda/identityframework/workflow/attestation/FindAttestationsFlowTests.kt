@@ -16,7 +16,7 @@
 
 package io.onixlabs.corda.identityframework.workflow.attestation
 
-import io.onixlabs.corda.identityframework.contract.*
+import io.onixlabs.corda.identityframework.v1.contract.*
 import io.onixlabs.corda.identityframework.workflow.*
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.contracts.UniqueIdentifier

@@ -65,7 +65,7 @@ abstract class FlowTest {
         _network = MockNetwork(
             MockNetworkParameters(
                 cordappsForAllNodes = listOf(
-                    TestCordapp.findCordapp("io.onixlabs.corda.identityframework.contract"),
+                    TestCordapp.findCordapp("io.onixlabs.corda.identityframework.v1.contract"),
                     TestCordapp.findCordapp("io.onixlabs.corda.identityframework.workflow"),
                     TestCordapp.findCordapp("io.onixlabs.test.cordapp.contract")
                 ),

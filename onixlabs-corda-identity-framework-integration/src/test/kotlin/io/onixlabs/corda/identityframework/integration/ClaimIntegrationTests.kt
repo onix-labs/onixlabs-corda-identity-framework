@@ -16,7 +16,7 @@
 
 package io.onixlabs.corda.identityframework.integration
 
-import io.onixlabs.corda.identityframework.contract.CordaClaim
+import io.onixlabs.corda.identityframework.v1.contract.CordaClaim
 import net.corda.core.node.services.Vault
 import net.corda.core.utilities.getOrThrow
 import org.junit.jupiter.api.Test

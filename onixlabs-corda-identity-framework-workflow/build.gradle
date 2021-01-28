@@ -21,7 +21,7 @@ dependencies {
     cordaCompile "$onixlabs_group:onixlabs-corda-core-workflow:$onixlabs_corda_core_release_version"
 
     // CorDapp Dependencies
-    cordapp project(":onixlabs-corda-identity-framework-contract")
+    cordapp project(":onixlabs-corda-identity-framework-v1-contract")
 
     // Test Dependencies
     testRuntimeOnly "$junit_group:junit-jupiter-engine:$junit_version"

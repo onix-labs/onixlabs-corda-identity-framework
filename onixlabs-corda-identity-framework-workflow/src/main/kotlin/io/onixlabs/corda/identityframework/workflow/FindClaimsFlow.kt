@@ -20,8 +20,8 @@ import io.onixlabs.corda.core.workflow.DEFAULT_PAGE_SPECIFICATION
 import io.onixlabs.corda.core.workflow.DEFAULT_SORTING
 import io.onixlabs.corda.core.workflow.FindStatesFlow
 import io.onixlabs.corda.core.workflow.andWithExpressions
-import io.onixlabs.corda.identityframework.contract.CordaClaim
-import io.onixlabs.corda.identityframework.contract.CordaClaimSchema.CordaClaimEntity
+import io.onixlabs.corda.identityframework.v1.contract.CordaClaim
+import io.onixlabs.corda.identityframework.v1.contract.CordaClaimSchema.CordaClaimEntity
 import net.corda.core.contracts.StateRef
 import net.corda.core.contracts.UniqueIdentifier
 import net.corda.core.crypto.SecureHash

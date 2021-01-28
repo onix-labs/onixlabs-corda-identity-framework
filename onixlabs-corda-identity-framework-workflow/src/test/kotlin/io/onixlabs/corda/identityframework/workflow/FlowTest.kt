@@ -16,7 +16,7 @@
 
 package io.onixlabs.corda.identityframework.workflow
 
-import io.onixlabs.corda.identityframework.contract.CordaClaim
+import io.onixlabs.corda.identityframework.v1.contract.CordaClaim
 import net.corda.core.contracts.TypeOnlyCommandData
 import net.corda.core.contracts.UniqueIdentifier
 import net.corda.core.crypto.NullKeys.NULL_PARTY
@@ -85,7 +85,7 @@ abstract class FlowTest {
         _network = MockNetwork(
             MockNetworkParameters(
                 cordappsForAllNodes = listOf(
-                    TestCordapp.findCordapp("io.onixlabs.corda.identityframework.contract"),
+                    TestCordapp.findCordapp("io.onixlabs.corda.identityframework.v1.contract"),
                     TestCordapp.findCordapp("io.onixlabs.corda.identityframework.workflow"),
                     TestCordapp.findCordapp("net.corda.testing.internal.vault"),
                     TestCordapp.findCordapp("net.corda.testing.contracts")

@@ -14,7 +14,7 @@ buildscript {
         junit_version = '5.3.1'
 
         onixlabs_group = 'io.onixlabs'
-        onixlabs_corda_core_release_version = '1.0.0-rc3'
+        onixlabs_corda_core_release_version = '1.0.0-rc4'
 
         cordapp_platform_version = 8
         cordapp_signing_enabled = false
@@ -40,7 +40,7 @@ buildscript {
 }
 
 group 'io.onixlabs'
-version '1.0.0-rc5'
+version '1.0.0-rc6'
 
 subprojects {
     repositories {

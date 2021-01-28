@@ -16,7 +16,7 @@
 
 package io.onixlabs.test.cordapp.workflow.claims
 
-import io.onixlabs.corda.identityframework.contract.amend
+import io.onixlabs.corda.identityframework.v1.contract.amend
 import io.onixlabs.corda.identityframework.workflow.AmendClaimFlow
 import io.onixlabs.corda.identityframework.workflow.IssueClaimFlow
 import io.onixlabs.corda.identityframework.workflow.RevokeClaimFlow

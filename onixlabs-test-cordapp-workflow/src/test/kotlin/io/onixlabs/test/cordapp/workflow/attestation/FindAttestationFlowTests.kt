@@ -16,8 +16,8 @@
 
 package io.onixlabs.test.cordapp.workflow.attestation
 
-import io.onixlabs.corda.identityframework.contract.Attestation
-import io.onixlabs.corda.identityframework.contract.accept
+import io.onixlabs.corda.identityframework.v1.contract.Attestation
+import io.onixlabs.corda.identityframework.v1.contract.accept
 import io.onixlabs.corda.identityframework.workflow.FindAttestationFlow
 import io.onixlabs.corda.identityframework.workflow.IssueAttestationFlow
 import io.onixlabs.corda.identityframework.workflow.IssueClaimFlow
@@ -25,7 +25,6 @@ import io.onixlabs.test.cordapp.contract.GreetingClaim
 import io.onixlabs.test.cordapp.workflow.FlowTest
 import io.onixlabs.test.cordapp.workflow.Pipeline
 import net.corda.core.contracts.StateAndRef
-import net.corda.core.node.services.Vault
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 

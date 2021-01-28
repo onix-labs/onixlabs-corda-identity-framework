@@ -16,7 +16,7 @@
 
 package io.onixlabs.test.cordapp.workflow.claims
 
-import io.onixlabs.corda.identityframework.contract.amend
+import io.onixlabs.corda.identityframework.v1.contract.amend
 import io.onixlabs.corda.identityframework.workflow.AmendClaimFlow
 import io.onixlabs.corda.identityframework.workflow.FindClaimFlow
 import io.onixlabs.corda.identityframework.workflow.IssueClaimFlow
@@ -24,7 +24,6 @@ import io.onixlabs.test.cordapp.contract.GreetingClaim
 import io.onixlabs.test.cordapp.workflow.FlowTest
 import io.onixlabs.test.cordapp.workflow.Pipeline
 import net.corda.core.contracts.StateAndRef
-import net.corda.core.node.services.Vault
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
