@@ -16,9 +16,9 @@
 
 package io.onixlabs.corda.identityframework.integration
 
-import io.onixlabs.corda.identityframework.v1.contract.Attestation
-import io.onixlabs.corda.identityframework.v1.contract.AttestationStatus
-import io.onixlabs.corda.identityframework.v1.contract.CordaClaim
+import io.onixlabs.corda.identityframework.contract.Attestation
+import io.onixlabs.corda.identityframework.contract.AttestationStatus
+import io.onixlabs.corda.identityframework.contract.CordaClaim
 import net.corda.core.node.services.Vault
 import net.corda.core.utilities.getOrThrow
 import org.junit.jupiter.api.Test

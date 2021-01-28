@@ -1,5 +1,5 @@
 rootProject.name = 'onixlabs-corda-identity-framework'
-include 'onixlabs-corda-identity-framework-v1-contract'
+include 'onixlabs-corda-identity-framework-contract'
 include 'onixlabs-corda-identity-framework-workflow'
 include 'onixlabs-corda-identity-framework-integration'
 include 'onixlabs-test-cordapp-contract'

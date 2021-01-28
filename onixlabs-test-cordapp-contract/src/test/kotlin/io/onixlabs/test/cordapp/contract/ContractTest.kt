@@ -16,8 +16,8 @@
 
 package io.onixlabs.test.cordapp.contract
 
-import io.onixlabs.corda.identityframework.v1.contract.AttestationContract
-import io.onixlabs.corda.identityframework.v1.contract.CordaClaimContract
+import io.onixlabs.corda.identityframework.contract.AttestationContract
+import io.onixlabs.corda.identityframework.contract.CordaClaimContract
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.crypto.SecureHash
 import net.corda.core.node.NotaryInfo

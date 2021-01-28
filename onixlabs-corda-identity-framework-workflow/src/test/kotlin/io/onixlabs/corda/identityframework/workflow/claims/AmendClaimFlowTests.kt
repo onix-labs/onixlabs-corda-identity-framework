@@ -16,8 +16,8 @@
 
 package io.onixlabs.corda.identityframework.workflow.claims
 
-import io.onixlabs.corda.identityframework.v1.contract.CordaClaim
-import io.onixlabs.corda.identityframework.v1.contract.amend
+import io.onixlabs.corda.identityframework.contract.CordaClaim
+import io.onixlabs.corda.identityframework.contract.amend
 import io.onixlabs.corda.identityframework.workflow.AmendClaimFlow
 import io.onixlabs.corda.identityframework.workflow.FlowTest
 import io.onixlabs.corda.identityframework.workflow.IssueClaimFlow

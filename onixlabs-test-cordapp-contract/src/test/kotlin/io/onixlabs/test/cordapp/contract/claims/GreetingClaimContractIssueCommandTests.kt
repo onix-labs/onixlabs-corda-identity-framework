@@ -16,7 +16,7 @@
 
 package io.onixlabs.test.cordapp.contract.claims
 
-import io.onixlabs.corda.identityframework.v1.contract.CordaClaimContract
+import io.onixlabs.corda.identityframework.contract.CordaClaimContract
 import io.onixlabs.test.cordapp.contract.*
 import net.corda.testing.node.ledger
 import org.junit.jupiter.api.Test

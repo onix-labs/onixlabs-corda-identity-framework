@@ -17,7 +17,7 @@ buildscript {
         onixlabs_corda_core_release_version = '1.0.0-rc4'
 
         cordapp_platform_version = 8
-        cordapp_signing_enabled = false
+        cordapp_signing_enabled = true
         cordapp_contract_name = 'ONIXLabs Corda Identity Framework Contract'
         cordapp_workflow_name = 'ONIXLabs Corda Identity Framework Workflow'
         cordapp_vendor_name = 'ONIXLabs'

@@ -19,9 +19,9 @@ package io.onixlabs.corda.identityframework.integration
 import io.onixlabs.corda.core.contract.cast
 import io.onixlabs.corda.core.integration.RPCService
 import io.onixlabs.corda.core.workflow.DEFAULT_PAGE_SPECIFICATION
-import io.onixlabs.corda.identityframework.v1.contract.Attestation
-import io.onixlabs.corda.identityframework.v1.contract.AttestationPointer
-import io.onixlabs.corda.identityframework.v1.contract.AttestationStatus
+import io.onixlabs.corda.identityframework.contract.Attestation
+import io.onixlabs.corda.identityframework.contract.AttestationPointer
+import io.onixlabs.corda.identityframework.contract.AttestationStatus
 import io.onixlabs.corda.identityframework.workflow.FindAttestationFlow
 import io.onixlabs.corda.identityframework.workflow.FindAttestationsFlow
 import net.corda.core.contracts.ContractState

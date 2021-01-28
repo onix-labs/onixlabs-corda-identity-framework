@@ -16,9 +16,9 @@
 
 package io.onixlabs.test.cordapp.contract
 
-import io.onixlabs.corda.identityframework.v1.contract.Attestation
-import io.onixlabs.corda.identityframework.v1.contract.AttestationPointer
-import io.onixlabs.corda.identityframework.v1.contract.AttestationStatus
+import io.onixlabs.corda.identityframework.contract.Attestation
+import io.onixlabs.corda.identityframework.contract.AttestationPointer
+import io.onixlabs.corda.identityframework.contract.AttestationStatus
 import net.corda.core.contracts.BelongsToContract
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.contracts.StateRef

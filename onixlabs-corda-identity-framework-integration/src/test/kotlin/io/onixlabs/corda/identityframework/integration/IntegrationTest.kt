@@ -52,7 +52,7 @@ abstract class IntegrationTest : AutoCloseable {
             startNodesInProcess = true,
             waitForAllNodesToFinish = false,
             cordappsForAllNodes = cordappsForPackages(
-                "io.onixlabs.corda.identityframework.v1.contract",
+                "io.onixlabs.corda.identityframework.contract",
                 "io.onixlabs.corda.identityframework.workflow"
             ),
             portAllocation = object : PortAllocation() {
@@ -60,7 +60,7 @@ abstract class IntegrationTest : AutoCloseable {
                 override fun nextPort(): Int = start++
             },
             networkParameters = testNetworkParameters(
-                minimumPlatformVersion = 8
+                minimumPlatformVersion = 7
             )
         )
 

@@ -16,8 +16,8 @@
 
 package io.onixlabs.test.cordapp.contract.claims
 
-import io.onixlabs.corda.identityframework.v1.contract.CordaClaimContract
-import io.onixlabs.corda.identityframework.v1.contract.amend
+import io.onixlabs.corda.identityframework.contract.CordaClaimContract
+import io.onixlabs.corda.identityframework.contract.amend
 import io.onixlabs.test.cordapp.contract.ContractTest
 import io.onixlabs.test.cordapp.contract.GREETING_CLAIM
 import io.onixlabs.test.cordapp.contract.GreetingClaimContract
