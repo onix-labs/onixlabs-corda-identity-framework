@@ -66,6 +66,12 @@ open class CordaClaimContract : Contract {
         internal const val CONTRACT_RULE_OUTPUTS =
             "On claim issuing, only one claim state must be created."
 
+        internal const val CONTRACT_RULE_ISSUER_PARTICIPANT =
+            "On claim issuing, the issuer of the created claim state must be a participant."
+
+        internal const val CONTRACT_RULE_HOLDER_PARTICIPANT =
+            "On claim issuing, the holder of the created claim state must be a participant."
+
         internal const val CONTRACT_RULE_SIGNERS =
             "On claim issuing, the issuer must sign the transaction."
     }
@@ -79,6 +85,12 @@ open class CordaClaimContract : Contract {
 
         internal const val CONTRACT_RULE_OUTPUTS =
             "On claim amending, only one claim state must be created."
+
+        internal const val CONTRACT_RULE_ISSUER_PARTICIPANT =
+            "On claim amending, the issuer of the created claim state must be a participant."
+
+        internal const val CONTRACT_RULE_HOLDER_PARTICIPANT =
+            "On claim amending, the holder of the created claim state must be a participant."
 
         internal const val CONTRACT_RULE_STATE_REF =
             "On claim amending, the created claim state must point to the consumed claim state."
@@ -143,6 +155,8 @@ open class CordaClaimContract : Contract {
 
         val claimOutput = claimOutputs.single()
 
+        Issue.CONTRACT_RULE_ISSUER_PARTICIPANT using (claimOutput.issuer in claimOutput.participants)
+        Issue.CONTRACT_RULE_HOLDER_PARTICIPANT using (claimOutput.holder in claimOutput.participants)
         Issue.CONTRACT_RULE_SIGNERS using (claimOutput.issuer.owningKey in signers)
 
         onVerifyIssue(transaction, signers)
@@ -164,6 +178,8 @@ open class CordaClaimContract : Contract {
         val claimInput = claimInputs.single()
         val claimOutput = claimOutputs.single()
 
+        Amend.CONTRACT_RULE_ISSUER_PARTICIPANT using (claimOutput.issuer in claimOutput.participants)
+        Amend.CONTRACT_RULE_HOLDER_PARTICIPANT using (claimOutput.holder in claimOutput.participants)
         Amend.CONTRACT_RULE_STATE_REF using (claimOutput.isPointingTo(claimInput))
         Amend.CONTRACT_RULE_CHANGES using (claimOutput.internalImmutableEquals(claimInput.state.data))
         Amend.CONTRACT_RULE_SIGNERS using (claimOutput.issuer.owningKey in signers)
