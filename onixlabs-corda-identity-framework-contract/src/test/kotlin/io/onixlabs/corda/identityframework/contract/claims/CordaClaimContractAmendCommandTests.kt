@@ -65,6 +65,32 @@ class CordaClaimContractAmendCommandTests : ContractTest() {
     }
 
     @Test
+    fun `On claim amending, the issuer of the created claim state must be a participant`() {
+        services.ledger {
+            transaction {
+                val issuedClaim1 = issue(CustomCordaClaim().withIssuerAndHolder())
+                input(issuedClaim1.ref)
+                output(CordaClaimContract.ID, issuedClaim1.amend("Amended Value").withoutIssuer())
+                command(keysOf(IDENTITY_A), CordaClaimContract.Amend)
+                failsWith(CordaClaimContract.Amend.CONTRACT_RULE_ISSUER_PARTICIPANT)
+            }
+        }
+    }
+
+    @Test
+    fun `On claim amending, the holder of the created claim state must be a participant`() {
+        services.ledger {
+            transaction {
+                val issuedClaim1 = issue(CustomCordaClaim().withIssuerAndHolder())
+                input(issuedClaim1.ref)
+                output(CordaClaimContract.ID, issuedClaim1.amend("Amended Value").withoutHolder())
+                command(keysOf(IDENTITY_A), CordaClaimContract.Amend)
+                failsWith(CordaClaimContract.Amend.CONTRACT_RULE_HOLDER_PARTICIPANT)
+            }
+        }
+    }
+
+    @Test
     fun `On claim amending, the created claim state must point to the consumed claim state`() {
         services.ledger {
             transaction {

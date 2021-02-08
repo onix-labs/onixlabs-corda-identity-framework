@@ -16,8 +16,10 @@
 
 package io.onixlabs.corda.identityframework.contract
 
+import net.corda.core.contracts.BelongsToContract
 import net.corda.core.contracts.StateRef
 import net.corda.core.crypto.SecureHash
+import net.corda.core.identity.AbstractParty
 import net.corda.core.identity.CordaX500Name
 import net.corda.testing.core.DUMMY_NOTARY_NAME
 import net.corda.testing.core.TestIdentity
@@ -31,3 +33,11 @@ val CLAIM_1 = CordaClaim(IDENTITY_A.party, IDENTITY_B.party, "example", "Hello, 
 val CLAIM_2 = CordaClaim(IDENTITY_B.party, IDENTITY_B.party, "example", 123)
 
 val EMPTY_REF = StateRef(SecureHash.zeroHash, 0)
+
+@BelongsToContract(CordaClaimContract::class)
+data class CustomCordaClaim(override val participants: List<AbstractParty> = emptyList()) :
+    CordaClaim<String>(IDENTITY_A.party, IDENTITY_B.party, "example", "Hello, World!") {
+    fun withIssuerAndHolder() = copy(participants = listOf(issuer, holder))
+    fun withoutIssuer() = copy(participants = listOf(holder))
+    fun withoutHolder() = copy(participants = listOf(issuer))
+}

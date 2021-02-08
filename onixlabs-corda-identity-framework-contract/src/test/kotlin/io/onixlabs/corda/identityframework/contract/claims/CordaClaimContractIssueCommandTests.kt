@@ -58,6 +58,28 @@ class CordaClaimContractIssueCommandTests : ContractTest() {
     }
 
     @Test
+    fun `On claim issuing, the issuer of the created claim state must be a participant`() {
+        services.ledger {
+            transaction {
+                output(CordaClaimContract.ID, CustomCordaClaim().withoutIssuer())
+                command(keysOf(IDENTITY_A), CordaClaimContract.Issue)
+                failsWith(CordaClaimContract.Issue.CONTRACT_RULE_ISSUER_PARTICIPANT)
+            }
+        }
+    }
+
+    @Test
+    fun `On claim issuing, the holder of the created claim state must be a participant`() {
+        services.ledger {
+            transaction {
+                output(CordaClaimContract.ID, CustomCordaClaim().withoutHolder())
+                command(keysOf(IDENTITY_A), CordaClaimContract.Issue)
+                failsWith(CordaClaimContract.Issue.CONTRACT_RULE_HOLDER_PARTICIPANT)
+            }
+        }
+    }
+
+    @Test
     fun `On claim issuing, the issuer must sign the transaction`() {
         services.ledger {
             transaction {
