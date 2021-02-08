@@ -18,6 +18,7 @@ package io.onixlabs.corda.identityframework.contract
 
 import net.corda.core.contracts.BelongsToContract
 import net.corda.core.contracts.StateRef
+import net.corda.core.contracts.UniqueIdentifier
 import net.corda.core.crypto.SecureHash
 import net.corda.core.identity.AbstractParty
 import net.corda.core.identity.CordaX500Name
@@ -35,9 +36,17 @@ val CLAIM_2 = CordaClaim(IDENTITY_B.party, IDENTITY_B.party, "example", 123)
 val EMPTY_REF = StateRef(SecureHash.zeroHash, 0)
 
 @BelongsToContract(CordaClaimContract::class)
-data class CustomCordaClaim(override val participants: List<AbstractParty> = emptyList()) :
-    CordaClaim<String>(IDENTITY_A.party, IDENTITY_B.party, "example", "Hello, World!") {
-    fun withIssuerAndHolder() = copy(participants = listOf(issuer, holder))
-    fun withoutIssuer() = copy(participants = listOf(holder))
-    fun withoutHolder() = copy(participants = listOf(issuer))
+class CustomCordaClaim(
+    value: String = "Hello, World!",
+    previousStateRef: StateRef? = null,
+    override val participants: List<AbstractParty> = emptyList()
+) : CordaClaim<String>(IDENTITY_A.party, IDENTITY_B.party, "example", value, UniqueIdentifier(), previousStateRef) {
+
+    override fun amend(previousStateRef: StateRef, value: String): CordaClaim<String> {
+        return CustomCordaClaim(value, previousStateRef)
+    }
+
+    fun withIssuerAndHolder() = CustomCordaClaim(participants = listOf(issuer, holder))
+    fun withoutIssuer() = CustomCordaClaim(participants = listOf(holder))
+    fun withoutHolder() = CustomCordaClaim(participants = listOf(issuer))
 }
