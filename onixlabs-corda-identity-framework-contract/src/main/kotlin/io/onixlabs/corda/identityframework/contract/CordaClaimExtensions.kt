@@ -27,7 +27,21 @@ import net.corda.core.contracts.StateAndRef
  * @return Returns an amended claim.
  */
 inline fun <T : Any, reified U : CordaClaim<T>> StateAndRef<U>.amend(value: T): U {
-    return U::class.java.cast(state.data.amend(ref, value))
+    val amendedClaim = state.data.amend(ref, value)
+
+    return try {
+        U::class.java.cast(amendedClaim)
+    } catch (classCastException: ClassCastException) {
+        val baseTypeName = CordaClaim::class.java.canonicalName
+        val derivedTypeName = U::class.java.canonicalName
+        val returnTypeName = amendedClaim.javaClass.canonicalName
+
+        throw IllegalStateException(buildString {
+            append("${classCastException.message}. ")
+            append("This typically occurs if a derived type of '$baseTypeName' does not override 'amend'. ")
+            append("The 'amend' function of '$derivedTypeName' appears to return '$returnTypeName' instead of '$derivedTypeName'.")
+        }, classCastException)
+    }
 }
 
 /**
