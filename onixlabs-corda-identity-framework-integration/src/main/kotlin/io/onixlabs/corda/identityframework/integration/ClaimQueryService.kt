@@ -16,7 +16,6 @@
 
 package io.onixlabs.corda.identityframework.integration
 
-import io.onixlabs.corda.core.contract.cast
 import io.onixlabs.corda.core.integration.RPCService
 import io.onixlabs.corda.core.workflow.DEFAULT_PAGE_SPECIFICATION
 import io.onixlabs.corda.identityframework.contract.CordaClaim
@@ -54,7 +53,9 @@ class ClaimQueryService(rpc: CordaRPCOps) : RPCService(rpc) {
      * @param flowTimeout The amount of time that the flow will be allowed to execute before failing.
      * @return Returns a claim that matches the query, or null if no claim was found.
      */
-    inline fun <reified T : CordaClaim<*>> findClaim(
+    fun findClaim(
+        claimClass: Class<out CordaClaim<*>> = CordaClaim::class.java,
+        valueClass: Class<*>? = null,
         linearId: UniqueIdentifier? = null,
         externalId: String? = null,
         issuer: AbstractParty? = null,
@@ -68,9 +69,11 @@ class ClaimQueryService(rpc: CordaRPCOps) : RPCService(rpc) {
         relevancyStatus: Vault.RelevancyStatus = Vault.RelevancyStatus.ALL,
         pageSpecification: PageSpecification = DEFAULT_PAGE_SPECIFICATION,
         flowTimeout: Duration = Duration.ofSeconds(30)
-    ): StateAndRef<T>? {
+    ): StateAndRef<CordaClaim<*>>? {
         return rpc.startFlowDynamic(
             FindClaimFlow::class.java,
+            claimClass,
+            valueClass,
             linearId,
             externalId,
             issuer,
@@ -83,7 +86,7 @@ class ClaimQueryService(rpc: CordaRPCOps) : RPCService(rpc) {
             stateStatus,
             relevancyStatus,
             pageSpecification
-        ).returnValue.getOrThrow(flowTimeout)?.cast()
+        ).returnValue.getOrThrow(flowTimeout)
     }
 
     /**
@@ -105,7 +108,9 @@ class ClaimQueryService(rpc: CordaRPCOps) : RPCService(rpc) {
      * @param flowTimeout The amount of time that the flow will be allowed to execute before failing.
      * @return Returns claims that matches the query, or null if no claims are found.
      */
-    inline fun <reified T : CordaClaim<*>> findClaims(
+    fun findClaims(
+        claimClass: Class<out CordaClaim<*>> = CordaClaim::class.java,
+        valueClass: Class<*>? = null,
         linearId: UniqueIdentifier? = null,
         externalId: String? = null,
         issuer: AbstractParty? = null,
@@ -119,9 +124,11 @@ class ClaimQueryService(rpc: CordaRPCOps) : RPCService(rpc) {
         relevancyStatus: Vault.RelevancyStatus = Vault.RelevancyStatus.ALL,
         pageSpecification: PageSpecification = DEFAULT_PAGE_SPECIFICATION,
         flowTimeout: Duration = Duration.ofSeconds(30)
-    ): List<StateAndRef<T>> {
+    ): List<StateAndRef<CordaClaim<*>>> {
         return rpc.startFlowDynamic(
             FindClaimsFlow::class.java,
+            claimClass,
+            valueClass,
             linearId,
             externalId,
             issuer,
@@ -134,6 +141,6 @@ class ClaimQueryService(rpc: CordaRPCOps) : RPCService(rpc) {
             stateStatus,
             relevancyStatus,
             pageSpecification
-        ).returnValue.getOrThrow(flowTimeout).map { it.cast<T>() }
+        ).returnValue.getOrThrow(flowTimeout)
     }
 }

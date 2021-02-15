@@ -53,7 +53,9 @@ import net.corda.core.node.services.vault.Sort
  */
 @StartableByRPC
 @StartableByService
-class FindClaimsFlow<T : CordaClaim<*>>(
+class FindClaimsFlow(
+    claimClass: Class<out CordaClaim<*>> = CordaClaim::class.java,
+    valueClass: Class<*>? = null,
     linearId: UniqueIdentifier? = null,
     externalId: String? = null,
     issuer: AbstractParty? = null,
@@ -67,9 +69,9 @@ class FindClaimsFlow<T : CordaClaim<*>>(
     relevancyStatus: Vault.RelevancyStatus = Vault.RelevancyStatus.ALL,
     override val pageSpecification: PageSpecification = DEFAULT_PAGE_SPECIFICATION,
     override val sorting: Sort = DEFAULT_SORTING
-) : FindStatesFlow<T>() {
+) : FindStatesFlow<CordaClaim<*>>() {
     override val criteria: QueryCriteria = VaultQueryCriteria(
-        contractStateTypes = setOf(contractStateType),
+        contractStateTypes = setOf(claimClass),
         relevancyStatus = relevancyStatus,
         status = stateStatus
     ).andWithExpressions(
@@ -79,6 +81,8 @@ class FindClaimsFlow<T : CordaClaim<*>>(
         holder?.let { CordaClaimEntity::holder.equal(it) },
         property?.let { CordaClaimEntity::property.equal(it) },
         value?.let { CordaClaimEntity::value.equal(it.toString()) },
+        value?.let { CordaClaimEntity::valueClass.equal(it.javaClass.canonicalName) },
+        valueClass?.let { CordaClaimEntity::valueClass.equal(it.canonicalName) },
         previousStateRef?.let { CordaClaimEntity::previousStateRef.equal(it.toString()) },
         isSelfIssued?.let { CordaClaimEntity::isSelfIssued.equal(it) },
         hash?.let { CordaClaimEntity::hash.equal(it.toString()) }

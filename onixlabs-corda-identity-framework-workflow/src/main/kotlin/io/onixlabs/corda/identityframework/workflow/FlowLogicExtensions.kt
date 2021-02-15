@@ -60,7 +60,7 @@ fun FlowLogic<*>.checkHasAttestedStateBeenWitnessed(attestation: Attestation<*>)
  * @throws FlowException if the claim already exists.
  */
 fun FlowLogic<*>.checkClaimExists(claim: CordaClaim<*>) {
-    if (subFlow(FindClaimsFlow<CordaClaim<*>>(hash = claim.hash)).isNotEmpty()) {
+    if (subFlow(FindClaimsFlow(claimClass = claim.javaClass, hash = claim.hash)).isNotEmpty()) {
         throw FlowException("A claim with the specified hash already exists: ${claim.hash}.")
     }
 }

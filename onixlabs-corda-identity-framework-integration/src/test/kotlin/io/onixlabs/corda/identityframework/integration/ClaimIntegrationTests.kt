@@ -16,6 +16,7 @@
 
 package io.onixlabs.corda.identityframework.integration
 
+import io.onixlabs.corda.core.contract.cast
 import io.onixlabs.corda.identityframework.contract.CordaClaim
 import net.corda.core.node.services.Vault
 import net.corda.core.utilities.getOrThrow
@@ -36,10 +37,10 @@ class ClaimIntegrationTests : IntegrationTest() {
         ).returnValue.getOrThrow()
 
         // Find the issued claim
-        val issuedClaim = nodeA.claims.queryService.findClaim<CordaClaim<String>>(
+        val issuedClaim = nodeA.claims.queryService.findClaim(
             linearId = ID,
             stateStatus = Vault.StateStatus.UNCONSUMED
-        ) ?: fail("Failed to find issued claim.")
+        )?.cast<CordaClaim<String>>() ?: fail("Failed to find issued claim.")
 
         // Amend the claim
         nodeA.claims.commandService.amendClaim(
@@ -48,10 +49,10 @@ class ClaimIntegrationTests : IntegrationTest() {
         ).returnValue.getOrThrow()
 
         // Find the amended claim
-        val amendedClaim = nodeA.claims.queryService.findClaim<CordaClaim<String>>(
+        val amendedClaim = nodeA.claims.queryService.findClaim(
             linearId = ID,
             stateStatus = Vault.StateStatus.UNCONSUMED
-        ) ?: fail("Failed to find amended claim.")
+        )?.cast<CordaClaim<String>>() ?: fail("Failed to find amended claim.")
 
         // Publish the amended claim
         nodeA.claims.commandService.publishClaim(
@@ -61,10 +62,10 @@ class ClaimIntegrationTests : IntegrationTest() {
 
         // Find the published claim
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.claims.queryService.findClaim<CordaClaim<String>>(
+            it.claims.queryService.findClaim(
                 linearId = ID,
                 stateStatus = Vault.StateStatus.UNCONSUMED
-            ) ?: fail("Failed to find sent claim.")
+            )?.cast<CordaClaim<String>>() ?: fail("Failed to find sent claim.")
         }
 
         // Revoke the claim

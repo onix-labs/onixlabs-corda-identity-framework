@@ -16,6 +16,7 @@
 
 package io.onixlabs.corda.identityframework.integration
 
+import io.onixlabs.corda.core.contract.cast
 import io.onixlabs.corda.identityframework.contract.Attestation
 import io.onixlabs.corda.identityframework.contract.AttestationStatus
 import io.onixlabs.corda.identityframework.contract.CordaClaim
@@ -38,10 +39,10 @@ class AttestationIntegrationTests : IntegrationTest() {
         ).returnValue.getOrThrow()
 
         // Find the issued claim
-        val issuedClaim = nodeC.claims.queryService.findClaim<CordaClaim<String>>(
+        val issuedClaim = nodeC.claims.queryService.findClaim(
             linearId = ID,
             stateStatus = Vault.StateStatus.UNCONSUMED
-        ) ?: fail("Failed to find issued claim.")
+        )?.cast<CordaClaim<String>>() ?: fail("Failed to find issued claim.")
 
         // Issue an attestation
         nodeC.attestations.commandService.issueAttestation(
