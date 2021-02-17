@@ -37,6 +37,8 @@ import net.corda.core.node.services.vault.QueryCriteria.VaultQueryCriteria
 /**
  * Represents the flow for finding a claim in the vault.
  *
+ * @param claimClass The class of the underlying corda claim.
+ * @param valueClass The class of the underlying corda claim value.
  * @param linearId The linear ID to include in the query.
  * @param externalId The external ID to include in the query.
  * @param issuer The issuer to include in the query.

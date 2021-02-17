@@ -84,6 +84,7 @@ class AttestationQueryService(rpc: CordaRPCOps) : RPCService(rpc) {
     ): StateAndRef<T>? {
         return rpc.startFlowDynamic(
             FindAttestationFlow::class.java,
+            T::class.java,
             linearId,
             externalId,
             attestor,
@@ -141,6 +142,7 @@ class AttestationQueryService(rpc: CordaRPCOps) : RPCService(rpc) {
     ): List<StateAndRef<T>> {
         return rpc.startFlowDynamic(
             FindAttestationsFlow::class.java,
+            T::class.java,
             linearId,
             externalId,
             attestor,
@@ -155,6 +157,6 @@ class AttestationQueryService(rpc: CordaRPCOps) : RPCService(rpc) {
             stateStatus,
             relevancyStatus,
             pageSpecification
-        ).returnValue.getOrThrow(flowTimeout).map { it.cast<T>() }
+        ).returnValue.getOrThrow(flowTimeout).cast()
     }
 }

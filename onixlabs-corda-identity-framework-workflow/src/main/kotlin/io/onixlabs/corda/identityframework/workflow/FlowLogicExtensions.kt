@@ -72,7 +72,7 @@ fun FlowLogic<*>.checkClaimExists(claim: CordaClaim<*>) {
  * @throws FlowException if the claim already exists.
  */
 fun FlowLogic<*>.checkAttestationExists(attestation: Attestation<*>) {
-    if (subFlow(FindAttestationsFlow<Attestation<*>>(hash = attestation.hash)).isNotEmpty()) {
+    if (subFlow(FindAttestationsFlow(hash = attestation.hash)).isNotEmpty()) {
         throw FlowException("An attestation with the specified hash already exists: ${attestation.hash}.")
     }
 }

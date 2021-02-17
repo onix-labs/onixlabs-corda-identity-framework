@@ -39,6 +39,7 @@ import net.corda.core.node.services.vault.QueryCriteria.VaultQueryCriteria
 /**
  * Represents the flow for finding an attestation in the vault.
  *
+ * @param attestationClass The class of the underlying attestation.
  * @param linearId The linear ID to include in the query.
  * @param externalId The external ID to include in the query.
  * @param attestor The attestor to include in the query.
@@ -56,7 +57,8 @@ import net.corda.core.node.services.vault.QueryCriteria.VaultQueryCriteria
  */
 @StartableByRPC
 @StartableByService
-class FindAttestationFlow<T : Attestation<*>>(
+class FindAttestationFlow(
+    attestationClass: Class<out Attestation<*>> = Attestation::class.java,
     linearId: UniqueIdentifier? = null,
     externalId: String? = null,
     attestor: AbstractParty? = null,
@@ -71,9 +73,9 @@ class FindAttestationFlow<T : Attestation<*>>(
     stateStatus: Vault.StateStatus = Vault.StateStatus.UNCONSUMED,
     relevancyStatus: Vault.RelevancyStatus = Vault.RelevancyStatus.ALL,
     override val pageSpecification: PageSpecification = DEFAULT_PAGE_SPECIFICATION
-) : FindStateFlow<T>() {
+) : FindStateFlow<Attestation<*>>() {
     override val criteria: QueryCriteria = VaultQueryCriteria(
-        contractStateTypes = setOf(contractStateType),
+        contractStateTypes = setOf(attestationClass),
         relevancyStatus = relevancyStatus,
         status = stateStatus
     ).andWithExpressions(

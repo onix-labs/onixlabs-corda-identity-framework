@@ -16,6 +16,7 @@
 
 package io.onixlabs.corda.identityframework.integration
 
+import io.onixlabs.corda.core.contract.cast
 import io.onixlabs.corda.core.integration.RPCService
 import io.onixlabs.corda.core.workflow.DEFAULT_PAGE_SPECIFICATION
 import io.onixlabs.corda.identityframework.contract.CordaClaim
@@ -53,8 +54,7 @@ class ClaimQueryService(rpc: CordaRPCOps) : RPCService(rpc) {
      * @param flowTimeout The amount of time that the flow will be allowed to execute before failing.
      * @return Returns a claim that matches the query, or null if no claim was found.
      */
-    fun findClaim(
-        claimClass: Class<out CordaClaim<*>> = CordaClaim::class.java,
+    inline fun <reified T : CordaClaim<*>> findClaim(
         valueClass: Class<*>? = null,
         linearId: UniqueIdentifier? = null,
         externalId: String? = null,
@@ -72,7 +72,7 @@ class ClaimQueryService(rpc: CordaRPCOps) : RPCService(rpc) {
     ): StateAndRef<CordaClaim<*>>? {
         return rpc.startFlowDynamic(
             FindClaimFlow::class.java,
-            claimClass,
+            T::class.java,
             valueClass,
             linearId,
             externalId,
@@ -86,7 +86,7 @@ class ClaimQueryService(rpc: CordaRPCOps) : RPCService(rpc) {
             stateStatus,
             relevancyStatus,
             pageSpecification
-        ).returnValue.getOrThrow(flowTimeout)
+        ).returnValue.getOrThrow(flowTimeout)?.cast()
     }
 
     /**
