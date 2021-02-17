@@ -107,7 +107,8 @@ open class CordaClaim<T : Any>(
             valueClass = value.javaClass.canonicalName,
             previousStateRef = previousStateRef?.toString(),
             isSelfIssued = isSelfIssued,
-            hash = hash.toString()
+            hash = hash.toString(),
+            claimClass = javaClass.canonicalName
         )
         else -> throw IllegalArgumentException("Unrecognised schema: $schema.")
     }

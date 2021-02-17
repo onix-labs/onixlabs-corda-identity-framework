@@ -1,4 +1,4 @@
-package io.onixlabs.corda.identityframework.workflow
+package io.onixlabs.corda.identityframework.integration
 
 import io.onixlabs.corda.identityframework.contract.CordaClaim
 import org.junit.jupiter.api.Test
@@ -16,7 +16,7 @@ class TypeReferenceTests {
     @Test
     fun `TypeReference should resolve type of CordaClaim`() {
         val actual = object : TypeReference<CordaClaim<*>>() {}.type.typeName
-        val expected = "io.onixlabs.corda.identityframework.contract.CordaClaim"
+        val expected = "io.onixlabs.corda.identityframework.contract.CordaClaim<?>"
         assertEquals(expected, actual)
     }
 

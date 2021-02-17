@@ -56,7 +56,7 @@ import net.corda.core.node.services.vault.Sort
 @StartableByRPC
 @StartableByService
 class FindClaimsFlow(
-    claimClass: Class<out CordaClaim<*>> = CordaClaim::class.java,
+    claimClass: Class<out CordaClaim<*>>? = null,
     valueClass: Class<*>? = null,
     linearId: UniqueIdentifier? = null,
     externalId: String? = null,
@@ -73,10 +73,11 @@ class FindClaimsFlow(
     override val sorting: Sort = DEFAULT_SORTING
 ) : FindStatesFlow<CordaClaim<*>>() {
     override val criteria: QueryCriteria = VaultQueryCriteria(
-        contractStateTypes = setOf(claimClass),
+        contractStateTypes = setOf(claimClass ?: contractStateType),
         relevancyStatus = relevancyStatus,
         status = stateStatus
     ).andWithExpressions(
+        claimClass?.let { CordaClaimEntity::claimClass.equal(it.canonicalName) },
         linearId?.let { CordaClaimEntity::linearId.equal(it.id) },
         externalId?.let { CordaClaimEntity::externalId.equal(it) },
         issuer?.let { CordaClaimEntity::issuer.equal(it) },

@@ -60,7 +60,7 @@ import net.corda.core.node.services.vault.Sort
 @StartableByRPC
 @StartableByService
 class FindAttestationsFlow(
-    attestationClass: Class<out Attestation<*>> = Attestation::class.java,
+    attestationClass: Class<out Attestation<*>>? = null,
     linearId: UniqueIdentifier? = null,
     externalId: String? = null,
     attestor: AbstractParty? = null,
@@ -78,10 +78,11 @@ class FindAttestationsFlow(
     override val sorting: Sort = DEFAULT_SORTING
 ) : FindStatesFlow<Attestation<*>>() {
     override val criteria: QueryCriteria = VaultQueryCriteria(
-        contractStateTypes = setOf(attestationClass),
+        contractStateTypes = setOf(attestationClass ?: contractStateType),
         relevancyStatus = relevancyStatus,
         status = stateStatus
     ).andWithExpressions(
+        attestationClass?.let { AttestationEntity::attestationClass.equal(it.canonicalName) },
         linearId?.let { AttestationEntity::linearId.equal(it.id) },
         externalId?.let { AttestationEntity::externalId.equal(it) },
         attestor?.let { AttestationEntity::attestor.equal(it) },

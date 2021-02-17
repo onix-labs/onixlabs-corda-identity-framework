@@ -55,7 +55,7 @@ import net.corda.core.node.services.vault.QueryCriteria.VaultQueryCriteria
 @StartableByRPC
 @StartableByService
 open class FindClaimFlow(
-    claimClass: Class<out CordaClaim<*>> = CordaClaim::class.java,
+    claimClass: Class<out CordaClaim<*>>? = null,
     valueClass: Class<*>? = null,
     linearId: UniqueIdentifier? = null,
     externalId: String? = null,
@@ -71,10 +71,11 @@ open class FindClaimFlow(
     override val pageSpecification: PageSpecification = DEFAULT_PAGE_SPECIFICATION
 ) : FindStateFlow<CordaClaim<*>>() {
     override val criteria: QueryCriteria = VaultQueryCriteria(
-        contractStateTypes = setOf(claimClass),
+        contractStateTypes = setOf(claimClass ?: contractStateType),
         relevancyStatus = relevancyStatus,
         status = stateStatus
     ).andWithExpressions(
+        claimClass?.let { CordaClaimEntity::claimClass.equal(it.canonicalName) },
         linearId?.let { CordaClaimEntity::linearId.equal(it.id) },
         externalId?.let { CordaClaimEntity::externalId.equal(it) },
         issuer?.let { CordaClaimEntity::issuer.equal(it) },

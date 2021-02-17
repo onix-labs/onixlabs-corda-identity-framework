@@ -39,18 +39,31 @@ class FindClaimsFlowValueTypeTests : FlowTest() {
             .create(network)
             .run(nodeA) {
                 FindClaimsFlow(
+                    property = "greeting"
+                )
+            }
+            .finally {
+                assertEquals(4, it.size)
+            }
+    }
+
+    @Test
+    fun `FindClaimsFlow should only return only the claims where the claim type is specified`() {
+        Pipeline
+            .create(network)
+            .run(nodeA) {
+                FindClaimsFlow(
                     claimClass = CordaClaim::class.java,
                     property = "greeting"
                 )
             }
             .finally {
-                val claims = it.map { it.cast<CordaClaim<Any>>() }
-                assertEquals(3, claims.size)
+                assertEquals(3, it.size)
             }
     }
 
     @Test
-    fun `FindClaimsFlow should only return a single claim when the value type is specified`() {
+    fun `FindClaimsFlow should the correct claim where the claim value type is String`() {
         Pipeline
             .create(network)
             .run(nodeA) {
@@ -62,6 +75,23 @@ class FindClaimsFlowValueTypeTests : FlowTest() {
             }
             .finally {
                 val claims = it.map { it.cast<CordaClaim<String>>() }
+                assertEquals(1, claims.size)
+                assertEquals("abc", claims.single().state.data.value)
+            }
+    }
+
+    @Test
+    fun `FindClaimsFlow should the correct claim where the claim type is GreetingClaim`() {
+        Pipeline
+            .create(network)
+            .run(nodeA) {
+                FindClaimsFlow(
+                    claimClass = GreetingClaim::class.java,
+                    property = "greeting"
+                )
+            }
+            .finally {
+                val claims = it.map { it.cast<GreetingClaim>() }
                 assertEquals(1, claims.size)
                 assertEquals("Hello, World!", claims.single().state.data.value)
             }

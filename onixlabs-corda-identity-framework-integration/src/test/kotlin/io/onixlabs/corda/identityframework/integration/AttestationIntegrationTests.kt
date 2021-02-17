@@ -39,10 +39,10 @@ class AttestationIntegrationTests : IntegrationTest() {
         ).returnValue.getOrThrow()
 
         // Find the issued claim
-        val issuedClaim = nodeC.claims.queryService.findClaim(
+        val issuedClaim = nodeC.claims.queryService.findClaim<CordaClaim<String>>(
             linearId = ID,
             stateStatus = Vault.StateStatus.UNCONSUMED
-        )?.cast<CordaClaim<String>>() ?: fail("Failed to find issued claim.")
+        ) ?: fail("Failed to find issued claim.")
 
         // Issue an attestation
         nodeC.attestations.commandService.issueAttestation(
