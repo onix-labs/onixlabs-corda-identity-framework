@@ -42,6 +42,21 @@ class ClaimCommandService(rpc: CordaRPCOps) : RPCService(rpc) {
     /**
      * Issues a claim.
      *
+     * @param claim The claim to issue.
+     * @param notary The notary to use for the transaction.
+     * @param observers Additional observers of the transaction.
+     */
+    fun <T : Any> issueClaim(
+        claim: CordaClaim<T>,
+        notary: Party? = null,
+        observers: Set<Party> = emptySet()
+    ): FlowProgressHandle<SignedTransaction> {
+        return rpc.startTrackedFlow(IssueClaimFlow::Initiator, claim, notary, observers)
+    }
+
+    /**
+     * Issues a claim.
+     *
      * @param T The underlying claim value type.
      * @param property The property of the claim.
      * @param value The value of the claim.
@@ -60,12 +75,24 @@ class ClaimCommandService(rpc: CordaRPCOps) : RPCService(rpc) {
         notary: Party? = null,
         observers: Set<Party> = emptySet()
     ): FlowProgressHandle<SignedTransaction> {
-        return rpc.startTrackedFlow(
-            IssueClaimFlow::Initiator,
-            CordaClaim(issuer, holder, property, value, linearId),
-            notary,
-            observers
-        )
+        val claim = CordaClaim(issuer, holder, property, value, linearId)
+        return issueClaim(claim, notary, observers)
+    }
+
+    /**
+     * Amends a claim.
+     *
+     * @param T The underlying claim value type.
+     * @param oldClaim The claim to be consumed.
+     * @param newClaim The claim to be created.
+     * @param observers Additional observers of the transaction.
+     */
+    fun <T : Any> amendClaim(
+        oldClaim: StateAndRef<CordaClaim<T>>,
+        newClaim: CordaClaim<T>,
+        observers: Set<Party> = emptySet()
+    ): FlowProgressHandle<SignedTransaction> {
+        return rpc.startTrackedFlow(AmendClaimFlow::Initiator, oldClaim, newClaim, observers)
     }
 
     /**
@@ -81,12 +108,7 @@ class ClaimCommandService(rpc: CordaRPCOps) : RPCService(rpc) {
         value: T,
         observers: Set<Party> = emptySet()
     ): FlowProgressHandle<SignedTransaction> {
-        return rpc.startTrackedFlow(
-            AmendClaimFlow::Initiator,
-            claim,
-            claim.amend(value),
-            observers
-        )
+        return amendClaim(claim, claim.amend(value), observers)
     }
 
     /**
