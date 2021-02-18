@@ -53,7 +53,8 @@ class FindClaimFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimFlow<GreetingClaim>(
+                        FindClaimFlow(
+                            claimClass = GreetingClaim::class.java,
                             linearId = claim.state.data.linearId
                         )
                     }
@@ -69,7 +70,8 @@ class FindClaimFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimFlow<GreetingClaim>(
+                        FindClaimFlow(
+                            claimClass = GreetingClaim::class.java,
                             externalId = claim.state.data.linearId.externalId
                         )
                     }
@@ -85,7 +87,8 @@ class FindClaimFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimFlow<GreetingClaim>(
+                        FindClaimFlow(
+                            claimClass = GreetingClaim::class.java,
                             issuer = claim.state.data.issuer
                         )
                     }
@@ -101,7 +104,8 @@ class FindClaimFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimFlow<GreetingClaim>(
+                        FindClaimFlow(
+                            claimClass = GreetingClaim::class.java,
                             holder = claim.state.data.holder
                         )
                     }
@@ -117,7 +121,8 @@ class FindClaimFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimFlow<GreetingClaim>(
+                        FindClaimFlow(
+                            claimClass = GreetingClaim::class.java,
                             property = claim.state.data.property
                         )
                     }
@@ -133,7 +138,8 @@ class FindClaimFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimFlow<GreetingClaim>(
+                        FindClaimFlow(
+                            claimClass = GreetingClaim::class.java,
                             value = claim.state.data.value
                         )
                     }
@@ -149,7 +155,8 @@ class FindClaimFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimFlow<GreetingClaim>(
+                        FindClaimFlow(
+                            claimClass = GreetingClaim::class.java,
                             previousStateRef = claim.state.data.previousStateRef
                         )
                     }
@@ -165,7 +172,8 @@ class FindClaimFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimFlow<GreetingClaim>(
+                        FindClaimFlow(
+                            claimClass = GreetingClaim::class.java,
                             isSelfIssued = claim.state.data.isSelfIssued
                         )
                     }
@@ -181,7 +189,8 @@ class FindClaimFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimFlow<GreetingClaim>(
+                        FindClaimFlow(
+                            claimClass = GreetingClaim::class.java,
                             hash = claim.state.data.hash
                         )
                     }

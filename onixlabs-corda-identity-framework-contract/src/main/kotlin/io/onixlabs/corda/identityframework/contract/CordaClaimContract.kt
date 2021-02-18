@@ -16,8 +16,12 @@
 
 package io.onixlabs.corda.identityframework.contract
 
+import io.onixlabs.corda.core.contract.ContractID
 import io.onixlabs.corda.core.contract.isPointingTo
-import net.corda.core.contracts.*
+import net.corda.core.contracts.CommandData
+import net.corda.core.contracts.Contract
+import net.corda.core.contracts.requireSingleCommand
+import net.corda.core.contracts.requireThat
 import net.corda.core.transactions.LedgerTransaction
 import java.security.PublicKey
 
@@ -27,14 +31,7 @@ import java.security.PublicKey
  */
 open class CordaClaimContract : Contract {
 
-    companion object {
-
-        /**
-         * The ID of this contract.
-         */
-        @JvmStatic
-        val ID: ContractClassName = this::class.java.enclosingClass.canonicalName
-    }
+    companion object : ContractID
 
     /**
      * Verifies a ledger transaction using a command from this contract.
