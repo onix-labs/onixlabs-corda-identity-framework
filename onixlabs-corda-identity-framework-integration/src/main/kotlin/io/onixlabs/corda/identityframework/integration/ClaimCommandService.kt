@@ -42,9 +42,11 @@ class ClaimCommandService(rpc: CordaRPCOps) : RPCService(rpc) {
     /**
      * Issues a claim.
      *
+     * @param T The underlying claim value type.
      * @param claim The claim to issue.
      * @param notary The notary to use for the transaction.
      * @param observers Additional observers of the transaction.
+     * @return Returns a flow process handle.
      */
     fun <T : Any> issueClaim(
         claim: CordaClaim<T>,
@@ -65,6 +67,7 @@ class ClaimCommandService(rpc: CordaRPCOps) : RPCService(rpc) {
      * @param linearId The unique identifier of the claim.
      * @param notary The notary to use for the transaction.
      * @param observers Additional observers of the transaction.
+     * @return Returns a flow process handle.
      */
     fun <T : Any> issueClaim(
         property: String,
@@ -86,6 +89,7 @@ class ClaimCommandService(rpc: CordaRPCOps) : RPCService(rpc) {
      * @param oldClaim The claim to be consumed.
      * @param newClaim The claim to be created.
      * @param observers Additional observers of the transaction.
+     * @return Returns a flow process handle.
      */
     fun <T : Any> amendClaim(
         oldClaim: StateAndRef<CordaClaim<T>>,
@@ -102,6 +106,7 @@ class ClaimCommandService(rpc: CordaRPCOps) : RPCService(rpc) {
      * @param claim The claim to be consumed.
      * @param value The amended value of the claim.
      * @param observers Additional observers of the transaction.
+     * @return Returns a flow process handle.
      */
     fun <T : Any> amendClaim(
         claim: StateAndRef<CordaClaim<T>>,
@@ -117,16 +122,13 @@ class ClaimCommandService(rpc: CordaRPCOps) : RPCService(rpc) {
      * @param T The underlying claim value type.
      * @param claim The claim to be consumed.
      * @param observers Additional observers of the transaction.
+     * @return Returns a flow process handle.
      */
     fun <T : Any> revokeClaim(
         claim: StateAndRef<CordaClaim<T>>,
         observers: Set<Party> = emptySet()
     ): FlowProgressHandle<SignedTransaction> {
-        return rpc.startTrackedFlow(
-            RevokeClaimFlow::Initiator,
-            claim,
-            observers
-        )
+        return rpc.startTrackedFlow(RevokeClaimFlow::Initiator, claim, observers)
     }
 
     /**
@@ -135,15 +137,12 @@ class ClaimCommandService(rpc: CordaRPCOps) : RPCService(rpc) {
      * @param T The underlying claim value type.
      * @param claim The claim to be published.
      * @param observers Additional observers of the transaction.
+     * @return Returns a flow process handle.
      */
     fun <T : Any> publishClaim(
         claim: StateAndRef<CordaClaim<T>>,
         observers: Set<Party>
     ): FlowProgressHandle<SignedTransaction> {
-        return rpc.startTrackedFlow(
-            PublishClaimFlow::Initiator,
-            claim,
-            observers
-        )
+        return rpc.startTrackedFlow(PublishClaimFlow::Initiator, claim, observers)
     }
 }
