@@ -36,6 +36,9 @@
             <column name="hash" type="nvarchar(64)">
                 <constraints nullable="false" unique="true"/>
             </column>
+            <column name="claim_class" type="nvarchar(1024)">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
         <addPrimaryKey columnNames="output_index, transaction_id"
                        constraintName="PK_corda_claim_states"

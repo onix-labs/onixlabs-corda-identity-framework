@@ -69,7 +69,7 @@ class FindAttestationsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationsFlow<Attestation<GreetingClaim>>(
+                        FindAttestationsFlow(
                             linearId = attestation.state.data.linearId,
                             stateStatus = Vault.StateStatus.ALL
                         )
@@ -86,7 +86,7 @@ class FindAttestationsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationsFlow<Attestation<GreetingClaim>>(
+                        FindAttestationsFlow(
                             externalId = attestation.state.data.linearId.externalId,
                             stateStatus = Vault.StateStatus.ALL
                         )
@@ -103,7 +103,7 @@ class FindAttestationsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationsFlow<Attestation<GreetingClaim>>(
+                        FindAttestationsFlow(
                             attestor = attestation.state.data.attestor,
                             stateStatus = Vault.StateStatus.ALL
                         )
@@ -120,7 +120,7 @@ class FindAttestationsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationsFlow<Attestation<GreetingClaim>>(
+                        FindAttestationsFlow(
                             pointer = attestation.state.data.pointer,
                             stateStatus = Vault.StateStatus.ALL
                         )
@@ -137,7 +137,7 @@ class FindAttestationsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationsFlow<Attestation<GreetingClaim>>(
+                        FindAttestationsFlow(
                             pointerStateRef = claim.ref,
                             stateStatus = Vault.StateStatus.ALL
                         )
@@ -154,7 +154,7 @@ class FindAttestationsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationsFlow<Attestation<GreetingClaim>>(
+                        FindAttestationsFlow(
                             pointerStateClass = claim.state.data.javaClass,
                             stateStatus = Vault.StateStatus.ALL
                         )
@@ -171,7 +171,7 @@ class FindAttestationsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationsFlow<Attestation<GreetingClaim>>(
+                        FindAttestationsFlow(
                             pointerStateLinearId = claim.state.data.linearId,
                             stateStatus = Vault.StateStatus.ALL
                         )
@@ -188,7 +188,7 @@ class FindAttestationsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationsFlow<Attestation<GreetingClaim>>(
+                        FindAttestationsFlow(
                             pointerHash = attestation.state.data.pointer.hash,
                             stateStatus = Vault.StateStatus.ALL
                         )
@@ -205,7 +205,7 @@ class FindAttestationsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationsFlow<Attestation<GreetingClaim>>(
+                        FindAttestationsFlow(
                             status = AttestationStatus.ACCEPTED,
                             stateStatus = Vault.StateStatus.ALL
                         )
@@ -222,7 +222,7 @@ class FindAttestationsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationsFlow<Attestation<GreetingClaim>>(
+                        FindAttestationsFlow(
                             status = AttestationStatus.REJECTED,
                             stateStatus = Vault.StateStatus.ALL
                         )
@@ -239,7 +239,7 @@ class FindAttestationsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationsFlow<Attestation<GreetingClaim>>(
+                        FindAttestationsFlow(
                             previousStateRef = attestation.state.data.previousStateRef,
                             stateStatus = Vault.StateStatus.ALL
                         )
@@ -256,7 +256,7 @@ class FindAttestationsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationsFlow<Attestation<GreetingClaim>>(
+                        FindAttestationsFlow(
                             hash = attestation.state.data.hash,
                             stateStatus = Vault.StateStatus.ALL
                         )

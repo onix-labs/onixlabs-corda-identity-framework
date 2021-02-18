@@ -24,6 +24,7 @@ import io.onixlabs.corda.identityframework.contract.CordaClaimSchema.CordaClaimE
 import net.corda.core.contracts.StateRef
 import net.corda.core.contracts.UniqueIdentifier
 import net.corda.core.crypto.SecureHash
+import net.corda.core.flows.FlowException
 import net.corda.core.flows.StartableByRPC
 import net.corda.core.flows.StartableByService
 import net.corda.core.identity.AbstractParty
@@ -36,6 +37,8 @@ import net.corda.core.node.services.vault.QueryCriteria.VaultQueryCriteria
 /**
  * Represents the flow for finding a claim in the vault.
  *
+ * @param claimClass The class of the underlying corda claim.
+ * @param valueClass The class of the underlying corda claim value.
  * @param linearId The linear ID to include in the query.
  * @param externalId The external ID to include in the query.
  * @param issuer The issuer to include in the query.
@@ -51,7 +54,9 @@ import net.corda.core.node.services.vault.QueryCriteria.VaultQueryCriteria
  */
 @StartableByRPC
 @StartableByService
-class FindClaimFlow<T : CordaClaim<*>>(
+open class FindClaimFlow(
+    claimClass: Class<out CordaClaim<*>>? = null,
+    valueClass: Class<*>? = null,
     linearId: UniqueIdentifier? = null,
     externalId: String? = null,
     issuer: AbstractParty? = null,
@@ -64,18 +69,21 @@ class FindClaimFlow<T : CordaClaim<*>>(
     stateStatus: Vault.StateStatus = Vault.StateStatus.UNCONSUMED,
     relevancyStatus: Vault.RelevancyStatus = Vault.RelevancyStatus.ALL,
     override val pageSpecification: PageSpecification = DEFAULT_PAGE_SPECIFICATION
-) : FindStateFlow<T>() {
+) : FindStateFlow<CordaClaim<*>>() {
     override val criteria: QueryCriteria = VaultQueryCriteria(
-        contractStateTypes = setOf(contractStateType),
+        contractStateTypes = setOf(claimClass ?: contractStateType),
         relevancyStatus = relevancyStatus,
         status = stateStatus
     ).andWithExpressions(
+        claimClass?.let { CordaClaimEntity::claimClass.equal(it.canonicalName) },
         linearId?.let { CordaClaimEntity::linearId.equal(it.id) },
         externalId?.let { CordaClaimEntity::externalId.equal(it) },
         issuer?.let { CordaClaimEntity::issuer.equal(it) },
         holder?.let { CordaClaimEntity::holder.equal(it) },
         property?.let { CordaClaimEntity::property.equal(it) },
         value?.let { CordaClaimEntity::value.equal(it.toString()) },
+        value?.let { CordaClaimEntity::valueClass.equal(it.javaClass.canonicalName) },
+        valueClass?.let { CordaClaimEntity::valueClass.equal(it.canonicalName) },
         previousStateRef?.let { CordaClaimEntity::previousStateRef.equal(it.toString()) },
         isSelfIssued?.let { CordaClaimEntity::isSelfIssued.equal(it) },
         hash?.let { CordaClaimEntity::hash.equal(it.toString()) }

@@ -100,7 +100,8 @@ open class Attestation<T : ContractState>(
             pointerHash = pointer.hash.toString(),
             status = status,
             previousStateRef = previousStateRef?.toString(),
-            hash = hash.toString()
+            hash = hash.toString(),
+            attestationClass = javaClass.canonicalName
         )
         else -> throw IllegalArgumentException("Unrecognised schema: $schema.")
     }

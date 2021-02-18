@@ -55,7 +55,7 @@ class FindAttestationFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationFlow<Attestation<GreetingClaim>>(
+                        FindAttestationFlow(
                             linearId = attestation.state.data.linearId
                         )
                     }
@@ -71,7 +71,7 @@ class FindAttestationFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationFlow<Attestation<GreetingClaim>>(
+                        FindAttestationFlow(
                             externalId = attestation.state.data.linearId.externalId
                         )
                     }
@@ -87,7 +87,7 @@ class FindAttestationFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationFlow<Attestation<GreetingClaim>>(
+                        FindAttestationFlow(
                             attestor = attestation.state.data.attestor
                         )
                     }
@@ -103,7 +103,7 @@ class FindAttestationFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationFlow<Attestation<GreetingClaim>>(
+                        FindAttestationFlow(
                             pointer = attestation.state.data.pointer
                         )
                     }
@@ -119,7 +119,7 @@ class FindAttestationFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationFlow<Attestation<GreetingClaim>>(
+                        FindAttestationFlow(
                             pointerStateRef = claim.ref
                         )
                     }
@@ -135,7 +135,7 @@ class FindAttestationFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationFlow<Attestation<GreetingClaim>>(
+                        FindAttestationFlow(
                             pointerStateClass = claim.state.data.javaClass
                         )
                     }
@@ -151,7 +151,7 @@ class FindAttestationFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationFlow<Attestation<GreetingClaim>>(
+                        FindAttestationFlow(
                             pointerStateLinearId = claim.state.data.linearId
                         )
                     }
@@ -167,7 +167,7 @@ class FindAttestationFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationFlow<Attestation<GreetingClaim>>(
+                        FindAttestationFlow(
                             pointerHash = attestation.state.data.pointer.hash
                         )
                     }
@@ -183,7 +183,7 @@ class FindAttestationFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationFlow<Attestation<GreetingClaim>>(
+                        FindAttestationFlow(
                             status = attestation.state.data.status
                         )
                     }
@@ -199,7 +199,7 @@ class FindAttestationFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationFlow<Attestation<GreetingClaim>>(
+                        FindAttestationFlow(
                             previousStateRef = attestation.state.data.previousStateRef
                         )
                     }
@@ -215,7 +215,7 @@ class FindAttestationFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationFlow<Attestation<GreetingClaim>>(
+                        FindAttestationFlow(
                             hash = attestation.state.data.hash
                         )
                     }

@@ -41,6 +41,7 @@ import net.corda.core.node.services.vault.Sort
 /**
  * Represents the flow for finding attestations in the vault.
  *
+ * @param attestationClass The class of the underlying attestation.
  * @param linearId The linear ID to include in the query.
  * @param externalId The external ID to include in the query.
  * @param attestor The attestor to include in the query.
@@ -58,7 +59,8 @@ import net.corda.core.node.services.vault.Sort
  */
 @StartableByRPC
 @StartableByService
-class FindAttestationsFlow<T : Attestation<*>>(
+class FindAttestationsFlow(
+    attestationClass: Class<out Attestation<*>>? = null,
     linearId: UniqueIdentifier? = null,
     externalId: String? = null,
     attestor: AbstractParty? = null,
@@ -74,12 +76,13 @@ class FindAttestationsFlow<T : Attestation<*>>(
     relevancyStatus: Vault.RelevancyStatus = Vault.RelevancyStatus.ALL,
     override val pageSpecification: PageSpecification = DEFAULT_PAGE_SPECIFICATION,
     override val sorting: Sort = DEFAULT_SORTING
-) : FindStatesFlow<T>() {
+) : FindStatesFlow<Attestation<*>>() {
     override val criteria: QueryCriteria = VaultQueryCriteria(
-        contractStateTypes = setOf(contractStateType),
+        contractStateTypes = setOf(attestationClass ?: contractStateType),
         relevancyStatus = relevancyStatus,
         status = stateStatus
     ).andWithExpressions(
+        attestationClass?.let { AttestationEntity::attestationClass.equal(it.canonicalName) },
         linearId?.let { AttestationEntity::linearId.equal(it.id) },
         externalId?.let { AttestationEntity::externalId.equal(it) },
         attestor?.let { AttestationEntity::attestor.equal(it) },

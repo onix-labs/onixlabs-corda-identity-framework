@@ -62,6 +62,9 @@ object CordaClaimSchema {
         val isSelfIssued: Boolean = false,
 
         @Column(name = "hash", nullable = false, unique = true)
-        val hash: String = ""
+        val hash: String = "",
+
+        @Column(name = "claim_class", nullable = false)
+        val claimClass: String = ""
     ) : PersistentState()
 }

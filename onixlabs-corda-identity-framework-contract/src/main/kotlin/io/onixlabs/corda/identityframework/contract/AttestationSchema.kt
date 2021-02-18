@@ -61,6 +61,9 @@ object AttestationSchema {
         val previousStateRef: String? = null,
 
         @Column(name = "hash", nullable = false, unique = true)
-        val hash: String = ""
+        val hash: String = "",
+
+        @Column(name = "attestation_class", nullable = false)
+        val attestationClass: String = ""
     ) : PersistentState()
 }

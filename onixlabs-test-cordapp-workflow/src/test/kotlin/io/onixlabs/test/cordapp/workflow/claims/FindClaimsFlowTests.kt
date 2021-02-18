@@ -19,6 +19,7 @@ package io.onixlabs.test.cordapp.workflow.claims
 import io.onixlabs.corda.identityframework.contract.CordaClaim
 import io.onixlabs.corda.identityframework.contract.amend
 import io.onixlabs.corda.identityframework.workflow.AmendClaimFlow
+import io.onixlabs.corda.identityframework.workflow.FindClaimFlow
 import io.onixlabs.corda.identityframework.workflow.FindClaimsFlow
 import io.onixlabs.corda.identityframework.workflow.IssueClaimFlow
 import io.onixlabs.test.cordapp.contract.GreetingClaim
@@ -54,7 +55,8 @@ class FindClaimsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimsFlow<GreetingClaim>(
+                        FindClaimsFlow(
+                            claimClass = GreetingClaim::class.java,
                             linearId = GREETING_CLAIM.linearId,
                             stateStatus = Vault.StateStatus.ALL
                         )
@@ -71,7 +73,8 @@ class FindClaimsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimsFlow<GreetingClaim>(
+                        FindClaimsFlow(
+                            claimClass = GreetingClaim::class.java,
                             externalId = GREETING_CLAIM.linearId.externalId,
                             stateStatus = Vault.StateStatus.ALL
                         )
@@ -88,7 +91,8 @@ class FindClaimsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimsFlow<GreetingClaim>(
+                        FindClaimsFlow(
+                            claimClass = GreetingClaim::class.java,
                             issuer = GREETING_CLAIM.issuer,
                             stateStatus = Vault.StateStatus.ALL
                         )
@@ -105,7 +109,8 @@ class FindClaimsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimsFlow<GreetingClaim>(
+                        FindClaimsFlow(
+                            claimClass = GreetingClaim::class.java,
                             holder = GREETING_CLAIM.holder,
                             stateStatus = Vault.StateStatus.ALL
                         )
@@ -122,7 +127,8 @@ class FindClaimsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimsFlow<GreetingClaim>(
+                        FindClaimsFlow(
+                            claimClass = GreetingClaim::class.java,
                             property = GREETING_CLAIM.property,
                             stateStatus = Vault.StateStatus.ALL
                         )
@@ -139,7 +145,8 @@ class FindClaimsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimsFlow<GreetingClaim>(
+                        FindClaimsFlow(
+                            claimClass = GreetingClaim::class.java,
                             value = GREETING_CLAIM.value,
                             stateStatus = Vault.StateStatus.ALL
                         )
@@ -156,7 +163,8 @@ class FindClaimsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimsFlow<CordaClaim<*>>(
+                        FindClaimsFlow(
+                            claimClass = GreetingClaim::class.java,
                             previousStateRef = claim.state.data.previousStateRef,
                             stateStatus = Vault.StateStatus.ALL
                         )
@@ -173,7 +181,8 @@ class FindClaimsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimsFlow<GreetingClaim>(
+                        FindClaimsFlow(
+                            claimClass = GreetingClaim::class.java,
                             isSelfIssued = true,
                             stateStatus = Vault.StateStatus.ALL
                         )
@@ -190,7 +199,8 @@ class FindClaimsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimsFlow<GreetingClaim>(
+                        FindClaimsFlow(
+                            claimClass = GreetingClaim::class.java,
                             hash = GREETING_CLAIM.hash,
                             stateStatus = Vault.StateStatus.ALL
                         )
