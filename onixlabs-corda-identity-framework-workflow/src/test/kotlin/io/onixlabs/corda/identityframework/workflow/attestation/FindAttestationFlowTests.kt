@@ -57,7 +57,7 @@ class FindAttestationFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationFlow<Attestation<CordaClaim<String>>>(
+                        FindAttestationFlow(
                             linearId = attestation.state.data.linearId,
                             stateStatus = Vault.StateStatus.UNCONSUMED
                         )
@@ -74,7 +74,7 @@ class FindAttestationFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationFlow<Attestation<CordaClaim<String>>>(
+                        FindAttestationFlow(
                             externalId = attestation.state.data.linearId.externalId,
                             stateStatus = Vault.StateStatus.UNCONSUMED
                         )
@@ -91,7 +91,7 @@ class FindAttestationFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationFlow<Attestation<CordaClaim<String>>>(
+                        FindAttestationFlow(
                             attestor = attestation.state.data.attestor,
                             stateStatus = Vault.StateStatus.UNCONSUMED
                         )
@@ -108,7 +108,7 @@ class FindAttestationFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationFlow<Attestation<CordaClaim<String>>>(
+                        FindAttestationFlow(
                             pointer = attestation.state.data.pointer,
                             stateStatus = Vault.StateStatus.UNCONSUMED
                         )
@@ -125,7 +125,7 @@ class FindAttestationFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationFlow<Attestation<CordaClaim<String>>>(
+                        FindAttestationFlow(
                             pointerStateRef = claim.ref,
                             stateStatus = Vault.StateStatus.UNCONSUMED
                         )
@@ -142,7 +142,7 @@ class FindAttestationFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationFlow<Attestation<CordaClaim<String>>>(
+                        FindAttestationFlow(
                             pointerStateClass = claim.state.data.javaClass,
                             stateStatus = Vault.StateStatus.UNCONSUMED
                         )
@@ -159,7 +159,7 @@ class FindAttestationFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationFlow<Attestation<CordaClaim<String>>>(
+                        FindAttestationFlow(
                             pointerStateLinearId = claim.state.data.linearId,
                             stateStatus = Vault.StateStatus.UNCONSUMED
                         )
@@ -176,7 +176,7 @@ class FindAttestationFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationFlow<Attestation<CordaClaim<String>>>(
+                        FindAttestationFlow(
                             pointerHash = attestation.state.data.pointer.hash,
                             stateStatus = Vault.StateStatus.UNCONSUMED
                         )
@@ -193,7 +193,7 @@ class FindAttestationFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationFlow<Attestation<CordaClaim<String>>>(
+                        FindAttestationFlow(
                             status = attestation.state.data.status,
                             stateStatus = Vault.StateStatus.UNCONSUMED
                         )
@@ -210,7 +210,7 @@ class FindAttestationFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationFlow<Attestation<CordaClaim<String>>>(
+                        FindAttestationFlow(
                             previousStateRef = attestation.state.data.previousStateRef,
                             stateStatus = Vault.StateStatus.UNCONSUMED
                         )
@@ -227,7 +227,7 @@ class FindAttestationFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindAttestationFlow<Attestation<CordaClaim<String>>>(
+                        FindAttestationFlow(
                             hash = attestation.state.data.hash,
                             stateStatus = Vault.StateStatus.UNCONSUMED
                         )

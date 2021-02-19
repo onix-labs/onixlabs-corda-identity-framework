@@ -81,7 +81,7 @@ class FindClaimsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimsFlow<CordaClaim<*>>(
+                        FindClaimsFlow(
                             linearId = CLAIM_1.linearId,
                             stateStatus = Vault.StateStatus.ALL
                         )
@@ -98,7 +98,7 @@ class FindClaimsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimsFlow<CordaClaim<*>>(
+                        FindClaimsFlow(
                             externalId = CLAIM_1.linearId.externalId,
                             stateStatus = Vault.StateStatus.ALL
                         )
@@ -115,7 +115,7 @@ class FindClaimsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimsFlow<CordaClaim<*>>(
+                        FindClaimsFlow(
                             issuer = CLAIM_1.issuer,
                             stateStatus = Vault.StateStatus.ALL
                         )
@@ -132,7 +132,7 @@ class FindClaimsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimsFlow<CordaClaim<*>>(
+                        FindClaimsFlow(
                             holder = CLAIM_1.holder,
                             stateStatus = Vault.StateStatus.ALL
                         )
@@ -149,7 +149,7 @@ class FindClaimsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimsFlow<CordaClaim<*>>(
+                        FindClaimsFlow(
                             property = CLAIM_1.property,
                             stateStatus = Vault.StateStatus.ALL
                         )
@@ -166,7 +166,7 @@ class FindClaimsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimsFlow<CordaClaim<*>>(
+                        FindClaimsFlow(
                             value = CLAIM_1.value,
                             stateStatus = Vault.StateStatus.ALL
                         )
@@ -183,7 +183,7 @@ class FindClaimsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimsFlow<CordaClaim<*>>(
+                        FindClaimsFlow(
                             previousStateRef = claim.state.data.previousStateRef,
                             stateStatus = Vault.StateStatus.ALL
                         )
@@ -200,7 +200,7 @@ class FindClaimsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimsFlow<CordaClaim<*>>(
+                        FindClaimsFlow(
                             isSelfIssued = true,
                             stateStatus = Vault.StateStatus.ALL
                         )
@@ -217,7 +217,7 @@ class FindClaimsFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimsFlow<CordaClaim<*>>(
+                        FindClaimsFlow(
                             hash = CLAIM_1.hash,
                             stateStatus = Vault.StateStatus.ALL
                         )

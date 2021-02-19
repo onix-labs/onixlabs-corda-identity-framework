@@ -56,7 +56,7 @@ class AttestationIntegrationTests : IntegrationTest() {
 
         // Amend the issued attestation
         nodeC.attestations.commandService.amendAttestation(
-            attestation = issuedAttestation,
+            oldAttestation = issuedAttestation,
             state = issuedClaim,
             status = AttestationStatus.ACCEPTED
         ).returnValue.getOrThrow()

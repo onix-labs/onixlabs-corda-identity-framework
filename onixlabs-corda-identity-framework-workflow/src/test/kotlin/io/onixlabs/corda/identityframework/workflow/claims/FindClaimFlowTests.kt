@@ -49,7 +49,8 @@ class FindClaimFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimFlow<CordaClaim<String>>(
+                        FindClaimFlow(
+                            valueClass = String::class.java,
                             linearId = claim.state.data.linearId,
                             stateStatus = Vault.StateStatus.UNCONSUMED
                         )
@@ -66,7 +67,8 @@ class FindClaimFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimFlow<CordaClaim<String>>(
+                        FindClaimFlow(
+                            valueClass = String::class.java,
                             externalId = claim.state.data.linearId.externalId,
                             stateStatus = Vault.StateStatus.UNCONSUMED
                         )
@@ -83,7 +85,8 @@ class FindClaimFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimFlow<CordaClaim<String>>(
+                        FindClaimFlow(
+                            valueClass = String::class.java,
                             issuer = claim.state.data.issuer,
                             stateStatus = Vault.StateStatus.UNCONSUMED
                         )
@@ -100,7 +103,8 @@ class FindClaimFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimFlow<CordaClaim<String>>(
+                        FindClaimFlow(
+                            valueClass = String::class.java,
                             holder = claim.state.data.holder,
                             stateStatus = Vault.StateStatus.UNCONSUMED
                         )
@@ -117,7 +121,8 @@ class FindClaimFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimFlow<CordaClaim<String>>(
+                        FindClaimFlow(
+                            valueClass = String::class.java,
                             property = claim.state.data.property,
                             stateStatus = Vault.StateStatus.UNCONSUMED
                         )
@@ -134,7 +139,8 @@ class FindClaimFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimFlow<CordaClaim<String>>(
+                        FindClaimFlow(
+                            valueClass = String::class.java,
                             value = claim.state.data.value,
                             stateStatus = Vault.StateStatus.UNCONSUMED
                         )
@@ -151,7 +157,8 @@ class FindClaimFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimFlow<CordaClaim<String>>(
+                        FindClaimFlow(
+                            valueClass = String::class.java,
                             previousStateRef = claim.state.data.previousStateRef,
                             stateStatus = Vault.StateStatus.UNCONSUMED
                         )
@@ -168,7 +175,8 @@ class FindClaimFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimFlow<CordaClaim<String>>(
+                        FindClaimFlow(
+                            valueClass = String::class.java,
                             isSelfIssued = claim.state.data.isSelfIssued,
                             stateStatus = Vault.StateStatus.UNCONSUMED
                         )
@@ -185,7 +193,8 @@ class FindClaimFlowTests : FlowTest() {
                 Pipeline
                     .create(network)
                     .run(it) {
-                        FindClaimFlow<CordaClaim<String>>(
+                        FindClaimFlow(
+                            valueClass = String::class.java,
                             hash = claim.state.data.hash,
                             stateStatus = Vault.StateStatus.UNCONSUMED
                         )
