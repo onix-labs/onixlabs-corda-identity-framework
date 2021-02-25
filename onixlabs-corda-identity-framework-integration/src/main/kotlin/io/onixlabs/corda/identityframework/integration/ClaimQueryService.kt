@@ -23,6 +23,7 @@ import io.onixlabs.corda.identityframework.contract.CordaClaim
 import io.onixlabs.corda.identityframework.workflow.FindClaimFlow
 import io.onixlabs.corda.identityframework.workflow.FindClaimsFlow
 import net.corda.core.contracts.StateAndRef
+import net.corda.core.contracts.StateRef
 import net.corda.core.contracts.UniqueIdentifier
 import net.corda.core.crypto.SecureHash
 import net.corda.core.identity.AbstractParty
@@ -31,7 +32,6 @@ import net.corda.core.node.services.Vault
 import net.corda.core.node.services.vault.PageSpecification
 import net.corda.core.utilities.getOrThrow
 import java.time.Duration
-import java.time.Instant
 
 class ClaimQueryService(rpc: CordaRPCOps) : RPCService(rpc) {
 
@@ -47,7 +47,7 @@ class ClaimQueryService(rpc: CordaRPCOps) : RPCService(rpc) {
      * @param holder The holder to include in the query.
      * @param property The property to include in the query.
      * @param value The value to include in the query.
-     * @param timestamp The timestamp to include in the query.
+     * @param previousStateRef The previous state reference to include in the query.
      * @param isSelfIssued The is-self-issued status to include in the query.
      * @param hash The hash to include in the query.
      * @param stateStatus The state status to include in the query.
@@ -65,7 +65,7 @@ class ClaimQueryService(rpc: CordaRPCOps) : RPCService(rpc) {
         holder: AbstractParty? = null,
         property: String? = null,
         value: Any? = null,
-        timestamp: Instant? = null,
+        previousStateRef: StateRef? = null,
         isSelfIssued: Boolean? = null,
         hash: SecureHash? = null,
         stateStatus: Vault.StateStatus = Vault.StateStatus.UNCONSUMED,
@@ -83,7 +83,7 @@ class ClaimQueryService(rpc: CordaRPCOps) : RPCService(rpc) {
             holder,
             property,
             value,
-            timestamp,
+            previousStateRef,
             isSelfIssued,
             hash,
             stateStatus,
@@ -102,7 +102,7 @@ class ClaimQueryService(rpc: CordaRPCOps) : RPCService(rpc) {
      * @param holder The holder to include in the query.
      * @param property The property to include in the query.
      * @param value The value to include in the query.
-     * @param timestamp The timestamp to include in the query.
+     * @param previousStateRef The previous state reference to include in the query.
      * @param isSelfIssued The is-self-issued status to include in the query.
      * @param hash The hash to include in the query.
      * @param stateStatus The state status to include in the query.
@@ -118,7 +118,7 @@ class ClaimQueryService(rpc: CordaRPCOps) : RPCService(rpc) {
         holder: AbstractParty? = null,
         property: String? = null,
         value: Any? = null,
-        timestamp: Instant? = null,
+        previousStateRef: StateRef? = null,
         isSelfIssued: Boolean? = null,
         hash: SecureHash? = null,
         stateStatus: Vault.StateStatus = Vault.StateStatus.UNCONSUMED,
@@ -128,7 +128,7 @@ class ClaimQueryService(rpc: CordaRPCOps) : RPCService(rpc) {
     ): StateAndRef<T>? {
         val claimType = object : TypeReference<T>() {}
         val claimClass = claimType.type.toClass()
-        val valueClass = claimType.arguments[0].toClass()
+        val valueClass = claimType.arguments[0].toClassOrNull()
         return rpc.startFlowDynamic(
             FindClaimFlow::class.java,
             claimClass,
@@ -139,7 +139,7 @@ class ClaimQueryService(rpc: CordaRPCOps) : RPCService(rpc) {
             holder,
             property,
             value,
-            timestamp,
+            previousStateRef,
             isSelfIssued,
             hash,
             stateStatus,
@@ -160,7 +160,7 @@ class ClaimQueryService(rpc: CordaRPCOps) : RPCService(rpc) {
      * @param holder The holder to include in the query.
      * @param property The property to include in the query.
      * @param value The value to include in the query.
-     * @param timestamp The timestamp to include in the query.
+     * @param previousStateRef The previous state reference to include in the query.
      * @param isSelfIssued The is-self-issued status to include in the query.
      * @param hash The hash to include in the query.
      * @param stateStatus The state status to include in the query.
@@ -178,7 +178,7 @@ class ClaimQueryService(rpc: CordaRPCOps) : RPCService(rpc) {
         holder: AbstractParty? = null,
         property: String? = null,
         value: Any? = null,
-        timestamp: Instant? = null,
+        previousStateRef: StateRef? = null,
         isSelfIssued: Boolean? = null,
         hash: SecureHash? = null,
         stateStatus: Vault.StateStatus = Vault.StateStatus.UNCONSUMED,
@@ -196,7 +196,7 @@ class ClaimQueryService(rpc: CordaRPCOps) : RPCService(rpc) {
             holder,
             property,
             value,
-            timestamp,
+            previousStateRef,
             isSelfIssued,
             hash,
             stateStatus,
@@ -215,7 +215,7 @@ class ClaimQueryService(rpc: CordaRPCOps) : RPCService(rpc) {
      * @param holder The holder to include in the query.
      * @param property The property to include in the query.
      * @param value The value to include in the query.
-     * @param timestamp The timestamp to include in the query.
+     * @param previousStateRef The previous state reference to include in the query.
      * @param isSelfIssued The is-self-issued status to include in the query.
      * @param hash The hash to include in the query.
      * @param stateStatus The state status to include in the query.
@@ -231,7 +231,7 @@ class ClaimQueryService(rpc: CordaRPCOps) : RPCService(rpc) {
         holder: AbstractParty? = null,
         property: String? = null,
         value: Any? = null,
-        timestamp: Instant? = null,
+        previousStateRef: StateRef? = null,
         isSelfIssued: Boolean? = null,
         hash: SecureHash? = null,
         stateStatus: Vault.StateStatus = Vault.StateStatus.UNCONSUMED,
@@ -241,7 +241,7 @@ class ClaimQueryService(rpc: CordaRPCOps) : RPCService(rpc) {
     ): List<StateAndRef<T>> {
         val claimType = object : TypeReference<T>() {}
         val claimClass = claimType.type.toClass()
-        val valueClass = claimType.arguments[0].toClass()
+        val valueClass = claimType.arguments[0].toClassOrNull()
         return rpc.startFlowDynamic(
             FindClaimsFlow::class.java,
             claimClass,
@@ -252,7 +252,7 @@ class ClaimQueryService(rpc: CordaRPCOps) : RPCService(rpc) {
             holder,
             property,
             value,
-            timestamp,
+            previousStateRef,
             isSelfIssued,
             hash,
             stateStatus,

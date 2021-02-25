@@ -17,6 +17,7 @@
 package io.onixlabs.corda.identityframework.workflow
 
 import co.paralleluniverse.fibers.Suspendable
+import io.onixlabs.corda.core.workflow.checkSufficientSessions
 import io.onixlabs.corda.core.workflow.currentStep
 import io.onixlabs.corda.core.workflow.initiateFlows
 import io.onixlabs.corda.identityframework.contract.Attestation
@@ -51,7 +52,7 @@ class AmendAttestationFlow(
     @Suspendable
     override fun call(): SignedTransaction {
         currentStep(INITIALIZING)
-        checkHasSufficientFlowSessions(sessions, oldAttestation.state.data, newAttestation)
+        checkSufficientSessions(sessions, oldAttestation.state.data, newAttestation)
         checkHasAttestedStateBeenWitnessed(newAttestation)
         checkAttestationExists(newAttestation)
 
