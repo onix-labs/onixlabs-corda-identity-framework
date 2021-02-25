@@ -26,20 +26,6 @@ import net.corda.core.transactions.SignedTransaction
 import net.corda.core.transactions.TransactionBuilder
 import java.security.PublicKey
 
-///**
-// * Checks whether there are sufficient sessions for counter-parties of the specified contract states.
-// *
-// * @param sessions The list of available flow sessions.
-// * @param states The specified contract states to check.
-// * @throws FlowException if a flow session does not exist for a required counter-party.
-// */
-//fun FlowLogic<*>.checkHasSufficientFlowSessions(sessions: Iterable<FlowSession>, vararg states: ContractState) {
-//    val sessionParties = sessions.map { it.counterparty }.toSet()
-//    states.flatMap { it.participants }.toSet().filter { it !in serviceHub.myInfo.legalIdentities }.forEach {
-//        if (it !in sessionParties) throw FlowException("A flow session is required for the specified counterparty: $it")
-//    }
-//}
-
 /**
  * Checks whether the state for the specified attestation has been witnessed by this node.
  *
