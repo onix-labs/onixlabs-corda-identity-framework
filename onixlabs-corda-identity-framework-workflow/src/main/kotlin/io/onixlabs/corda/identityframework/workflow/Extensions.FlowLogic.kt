@@ -20,26 +20,11 @@ import co.paralleluniverse.fibers.Suspendable
 import io.onixlabs.corda.core.workflow.currentStep
 import io.onixlabs.corda.identityframework.contract.Attestation
 import io.onixlabs.corda.identityframework.contract.CordaClaim
-import net.corda.core.contracts.ContractState
 import net.corda.core.flows.*
 import net.corda.core.identity.Party
 import net.corda.core.transactions.SignedTransaction
 import net.corda.core.transactions.TransactionBuilder
 import java.security.PublicKey
-
-/**
- * Checks whether there are sufficient sessions for counter-parties of the specified contract states.
- *
- * @param sessions The list of available flow sessions.
- * @param states The specified contract states to check.
- * @throws FlowException if a flow session does not exist for a required counter-party.
- */
-fun FlowLogic<*>.checkHasSufficientFlowSessions(sessions: Iterable<FlowSession>, vararg states: ContractState) {
-    val sessionParties = sessions.map { it.counterparty }.toSet()
-    states.flatMap { it.participants }.toSet().filter { it !in serviceHub.myInfo.legalIdentities }.forEach {
-        if (it !in sessionParties) throw FlowException("A flow session is required for the specified counterparty: $it")
-    }
-}
 
 /**
  * Checks whether the state for the specified attestation has been witnessed by this node.
@@ -49,7 +34,7 @@ fun FlowLogic<*>.checkHasSufficientFlowSessions(sessions: Iterable<FlowSession>,
  */
 fun FlowLogic<*>.checkHasAttestedStateBeenWitnessed(attestation: Attestation<*>) {
     if (attestation.pointer.resolve(serviceHub) == null) {
-        throw FlowException("The state that the attestation is pointing to has not been witnessed by this node.")
+        throw FlowException("A state with the specified state reference has not been witnessed: ${attestation.pointer.stateRef}.")
     }
 }
 
@@ -84,7 +69,11 @@ fun FlowLogic<*>.checkAttestationExists(attestation: Attestation<*>) {
  * @param action The context in which the [TransactionBuilder] will build the transaction.
  * @return Returns an unsigned transaction.
  */
-fun FlowLogic<*>.transaction(notary: Party, action: TransactionBuilder.() -> TransactionBuilder): TransactionBuilder {
+@Suspendable
+internal fun FlowLogic<*>.transaction(
+    notary: Party,
+    action: TransactionBuilder.() -> TransactionBuilder
+): TransactionBuilder {
     currentStep(GENERATING)
     return with(TransactionBuilder(notary)) { action(this) }
 }
@@ -96,7 +85,11 @@ fun FlowLogic<*>.transaction(notary: Party, action: TransactionBuilder.() -> Tra
  * @param signingKey The initial signing ket for the transaction.
  * @return Returns a verified and signed transaction.
  */
-fun FlowLogic<*>.verifyAndSign(builder: TransactionBuilder, signingKey: PublicKey): SignedTransaction {
+@Suspendable
+internal fun FlowLogic<*>.verifyAndSign(
+    builder: TransactionBuilder,
+    signingKey: PublicKey
+): SignedTransaction {
     currentStep(VERIFYING)
     builder.verify(serviceHub)
 
@@ -112,7 +105,10 @@ fun FlowLogic<*>.verifyAndSign(builder: TransactionBuilder, signingKey: PublicKe
  * @return Returns a signed transaction.
  */
 @Suspendable
-fun FlowLogic<*>.countersign(transaction: SignedTransaction, sessions: Set<FlowSession>): SignedTransaction {
+internal fun FlowLogic<*>.countersign(
+    transaction: SignedTransaction,
+    sessions: Set<FlowSession>
+): SignedTransaction {
     currentStep(COUNTERSIGNING)
     return subFlow(CollectSignaturesFlow(transaction, sessions, COUNTERSIGNING.childProgressTracker()))
 }
@@ -125,7 +121,10 @@ fun FlowLogic<*>.countersign(transaction: SignedTransaction, sessions: Set<FlowS
  * @return Returns a finalized and recorded transaction.
  */
 @Suspendable
-fun FlowLogic<*>.finalize(transaction: SignedTransaction, sessions: Set<FlowSession> = emptySet()): SignedTransaction {
+internal fun FlowLogic<*>.finalize(
+    transaction: SignedTransaction,
+    sessions: Set<FlowSession> = emptySet()
+): SignedTransaction {
     currentStep(FINALIZING)
     return subFlow(FinalityFlow(transaction, sessions, FINALIZING.childProgressTracker()))
 }

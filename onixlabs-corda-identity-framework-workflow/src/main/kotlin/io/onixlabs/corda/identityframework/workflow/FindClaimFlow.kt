@@ -24,7 +24,6 @@ import io.onixlabs.corda.identityframework.contract.CordaClaimSchema.CordaClaimE
 import net.corda.core.contracts.StateRef
 import net.corda.core.contracts.UniqueIdentifier
 import net.corda.core.crypto.SecureHash
-import net.corda.core.flows.FlowException
 import net.corda.core.flows.StartableByRPC
 import net.corda.core.flows.StartableByService
 import net.corda.core.identity.AbstractParty
