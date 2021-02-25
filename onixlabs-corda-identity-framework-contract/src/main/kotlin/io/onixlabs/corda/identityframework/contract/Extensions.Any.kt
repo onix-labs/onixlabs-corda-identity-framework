@@ -17,20 +17,7 @@
 package io.onixlabs.corda.identityframework.contract
 
 import kotlin.reflect.KVisibility
-import kotlin.reflect.full.declaredMemberProperties
 import kotlin.reflect.full.memberProperties
-
-/**
- * Checks a collection of [AbstractClaim] instances for duplicate keys.
- *
- * @param isCaseSensitive Determines whether to perform case sensitive key checking.
- * @param message The exception message to throw if the collection contains duplicate keys.
- * @throws IllegalStateException if the collection contains duplicate keys.
- */
-fun Iterable<AbstractClaim<*>>.checkForDuplicateKeys(
-    isCaseSensitive: Boolean = false,
-    message: String = "The claim collection contains duplicate keys."
-) = check(count() == distinctBy { if (isCaseSensitive) it.property else it.property.toLowerCase() }.size) { message }
 
 /**
  * Formats any object like a Kotlin data class.

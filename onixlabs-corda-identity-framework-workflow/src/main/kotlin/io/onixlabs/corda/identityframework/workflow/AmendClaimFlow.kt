@@ -17,6 +17,7 @@
 package io.onixlabs.corda.identityframework.workflow
 
 import co.paralleluniverse.fibers.Suspendable
+import io.onixlabs.corda.core.workflow.checkSufficientSessions
 import io.onixlabs.corda.core.workflow.currentStep
 import io.onixlabs.corda.core.workflow.initiateFlows
 import io.onixlabs.corda.identityframework.contract.CordaClaim
@@ -51,7 +52,7 @@ class AmendClaimFlow(
     @Suspendable
     override fun call(): SignedTransaction {
         currentStep(INITIALIZING)
-        checkHasSufficientFlowSessions(sessions, oldClaim.state.data, newClaim)
+        checkSufficientSessions(sessions, oldClaim.state.data, newClaim)
         checkClaimExists(newClaim)
 
         val transaction = transaction(oldClaim.state.notary) {
