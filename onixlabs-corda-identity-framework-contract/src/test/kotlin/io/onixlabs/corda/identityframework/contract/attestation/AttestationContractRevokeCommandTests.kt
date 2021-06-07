@@ -1,11 +1,11 @@
-/**
- * Copyright 2020 Matthew Layton
+/*
+ * Copyright 2020-2021 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,7 +27,7 @@ class AttestationContractRevokeCommandTests : ContractTest() {
         services.ledger {
             transaction {
                 val issuedClaim1 = issue(CLAIM_1)
-                val issuedAttestation1 = issue(issuedClaim1.accept(IDENTITY_C.party))
+                val issuedAttestation1 = issue(issuedClaim1.acceptLinearState(IDENTITY_C.party))
                 input(issuedAttestation1.ref)
                 fails()
                 command(keysOf(IDENTITY_C), AttestationContract.Revoke)
@@ -41,8 +41,8 @@ class AttestationContractRevokeCommandTests : ContractTest() {
         services.ledger {
             transaction {
                 val issuedClaim1 = issue(CLAIM_1)
-                val issuedAttestation1 = issue(issuedClaim1.accept(IDENTITY_C.party))
-                val issuedAttestation2 = issue(issuedClaim1.accept(IDENTITY_C.party))
+                val issuedAttestation1 = issue(issuedClaim1.acceptLinearState(IDENTITY_C.party))
+                val issuedAttestation2 = issue(issuedClaim1.acceptLinearState(IDENTITY_C.party))
                 input(issuedAttestation1.ref)
                 input(issuedAttestation2.ref)
                 command(keysOf(IDENTITY_C), AttestationContract.Revoke)
@@ -56,7 +56,7 @@ class AttestationContractRevokeCommandTests : ContractTest() {
         services.ledger {
             transaction {
                 val issuedClaim1 = issue(CLAIM_1)
-                val issuedAttestation1 = issue(issuedClaim1.accept(IDENTITY_C.party))
+                val issuedAttestation1 = issue(issuedClaim1.acceptLinearState(IDENTITY_C.party))
                 input(issuedAttestation1.ref)
                 output(AttestationContract.ID, issuedAttestation1.state.data)
                 command(keysOf(IDENTITY_C), AttestationContract.Revoke)
@@ -70,7 +70,7 @@ class AttestationContractRevokeCommandTests : ContractTest() {
         services.ledger {
             transaction {
                 val issuedClaim1 = issue(CLAIM_1)
-                val issuedAttestation1 = issue(issuedClaim1.accept(IDENTITY_C.party))
+                val issuedAttestation1 = issue(issuedClaim1.acceptLinearState(IDENTITY_C.party))
                 input(issuedAttestation1.ref)
                 command(keysOf(IDENTITY_A), AttestationContract.Revoke)
                 failsWith(AttestationContract.Revoke.CONTRACT_RULE_SIGNERS)

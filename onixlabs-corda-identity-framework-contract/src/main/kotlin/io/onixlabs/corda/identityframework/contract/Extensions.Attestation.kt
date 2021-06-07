@@ -1,11 +1,11 @@
-/**
- * Copyright 2020 Matthew Layton
+/*
+ * Copyright 2020-2021 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,6 +17,7 @@
 package io.onixlabs.corda.identityframework.contract
 
 import net.corda.core.contracts.ContractState
+import net.corda.core.contracts.LinearState
 import net.corda.core.contracts.StateAndRef
 
 /**
@@ -29,14 +30,14 @@ import net.corda.core.contracts.StateAndRef
  * @param metadata Additional information about the attestation.
  * @return Returns an amended attestation.
  */
-inline fun <T : ContractState, reified U : Attestation<T>> StateAndRef<U>.amend(
+inline fun <T : ContractState, reified U : Attestation<T>> StateAndRef<U>.amendAttestation(
     status: AttestationStatus,
     pointer: AttestationPointer<T> = this.state.data.pointer,
     metadata: Map<String, String> = emptyMap()
 ): U = U::class.java.cast(state.data.amend(ref, status, pointer, metadata))
 
 /**
- * Amends an attestation.
+ * Amends an attestation of a [ContractState].
  *
  * @param T The underlying [ContractState] type.
  * @param U The underlying [Attestation] type.
@@ -45,11 +46,27 @@ inline fun <T : ContractState, reified U : Attestation<T>> StateAndRef<U>.amend(
  * @param metadata Additional information about the attestation.
  * @return Returns an amended attestation.
  */
-inline fun <reified T : ContractState, reified U : Attestation<T>> StateAndRef<U>.amend(
+inline fun <reified T : ContractState, reified U : Attestation<T>> StateAndRef<U>.amendContractStateAttestation(
     status: AttestationStatus,
     stateAndRef: StateAndRef<T>,
     metadata: Map<String, String> = emptyMap()
-): U = amend(status, stateAndRef.toAttestationPointer(), metadata)
+): U = amendAttestation(status, stateAndRef.toStaticAttestationPointer(), metadata)
+
+/**
+ * Amends an attestation of a [LinearState].
+ *
+ * @param T The underlying [LinearState] type.
+ * @param U The underlying [Attestation] type.
+ * @param status The amended status of the attestation.
+ * @param stateAndRef The [StateAndRef] from which to amend the attestation.
+ * @param metadata Additional information about the attestation.
+ * @return Returns an amended attestation.
+ */
+inline fun <reified T : LinearState, reified U : Attestation<T>> StateAndRef<U>.amendLinearStateAttestation(
+    status: AttestationStatus,
+    stateAndRef: StateAndRef<T>,
+    metadata: Map<String, String> = emptyMap()
+): U = amendAttestation(status, stateAndRef.toLinearAttestationPointer(), metadata)
 
 /**
  * Accepts an attestation.
@@ -60,13 +77,13 @@ inline fun <reified T : ContractState, reified U : Attestation<T>> StateAndRef<U
  * @param metadata Additional information about the attestation.
  * @return Returns an accepted attestation.
  */
-inline fun <T : ContractState, reified U : Attestation<T>> StateAndRef<U>.accept(
+inline fun <T : ContractState, reified U : Attestation<T>> StateAndRef<U>.acceptState(
     pointer: AttestationPointer<T> = this.state.data.pointer,
     metadata: Map<String, String> = emptyMap()
-): U = amend(AttestationStatus.ACCEPTED, pointer, metadata)
+): U = amendAttestation(AttestationStatus.ACCEPTED, pointer, metadata)
 
 /**
- * Accepts an attestation.
+ * Accepts an attestation of a [ContractState].
  *
  * @param T The underlying [ContractState] type.
  * @param U The underlying [Attestation] type.
@@ -74,10 +91,24 @@ inline fun <T : ContractState, reified U : Attestation<T>> StateAndRef<U>.accept
  * @param metadata Additional information about the attestation.
  * @return Returns an accepted attestation.
  */
-inline fun <T : ContractState, reified U : Attestation<T>> StateAndRef<U>.accept(
+inline fun <T : ContractState, reified U : Attestation<T>> StateAndRef<U>.acceptContractState(
     stateAndRef: StateAndRef<T>,
     metadata: Map<String, String> = emptyMap()
-): U = amend(AttestationStatus.ACCEPTED, stateAndRef.toAttestationPointer(), metadata)
+): U = amendAttestation(AttestationStatus.ACCEPTED, stateAndRef.toStaticAttestationPointer(), metadata)
+
+/**
+ * Accepts an attestation of a [LinearState].
+ *
+ * @param T The underlying [LinearState] type.
+ * @param U The underlying [Attestation] type.
+ * @param stateAndRef The [StateAndRef] from which to amend the attestation.
+ * @param metadata Additional information about the attestation.
+ * @return Returns an accepted attestation.
+ */
+inline fun <T : LinearState, reified U : Attestation<T>> StateAndRef<U>.acceptLinearState(
+    stateAndRef: StateAndRef<T>,
+    metadata: Map<String, String> = emptyMap()
+): U = amendAttestation(AttestationStatus.ACCEPTED, stateAndRef.toLinearAttestationPointer(), metadata)
 
 /**
  * Rejects an attestation.
@@ -88,13 +119,13 @@ inline fun <T : ContractState, reified U : Attestation<T>> StateAndRef<U>.accept
  * @param metadata Additional information about the attestation.
  * @return Returns an rejected attestation.
  */
-inline fun <T : ContractState, reified U : Attestation<T>> StateAndRef<U>.reject(
+inline fun <T : ContractState, reified U : Attestation<T>> StateAndRef<U>.rejectState(
     pointer: AttestationPointer<T> = this.state.data.pointer,
     metadata: Map<String, String> = emptyMap()
-): U = amend(AttestationStatus.REJECTED, pointer, metadata)
+): U = amendAttestation(AttestationStatus.REJECTED, pointer, metadata)
 
 /**
- * Rejects an attestation.
+ * Rejects an attestation of a [ContractState].
  *
  * @param T The underlying [ContractState] type.
  * @param U The underlying [Attestation] type.
@@ -102,7 +133,21 @@ inline fun <T : ContractState, reified U : Attestation<T>> StateAndRef<U>.reject
  * @param metadata Additional information about the attestation.
  * @return Returns an rejected attestation.
  */
-inline fun <T : ContractState, reified U : Attestation<T>> StateAndRef<U>.reject(
+inline fun <T : ContractState, reified U : Attestation<T>> StateAndRef<U>.rejectContractState(
     stateAndRef: StateAndRef<T>,
     metadata: Map<String, String> = emptyMap()
-): U = amend(AttestationStatus.REJECTED, stateAndRef.toAttestationPointer(), metadata)
+): U = amendAttestation(AttestationStatus.REJECTED, stateAndRef.toStaticAttestationPointer(), metadata)
+
+/**
+ * Rejects an attestation of a [LinearState].
+ *
+ * @param T The underlying [LinearState] type.
+ * @param U The underlying [Attestation] type.
+ * @param stateAndRef The [StateAndRef] from which to amend the attestation.
+ * @param metadata Additional information about the attestation.
+ * @return Returns an rejected attestation.
+ */
+inline fun <T : LinearState, reified U : Attestation<T>> StateAndRef<U>.rejectLinearState(
+    stateAndRef: StateAndRef<T>,
+    metadata: Map<String, String> = emptyMap()
+): U = amendAttestation(AttestationStatus.REJECTED, stateAndRef.toLinearAttestationPointer(), metadata)

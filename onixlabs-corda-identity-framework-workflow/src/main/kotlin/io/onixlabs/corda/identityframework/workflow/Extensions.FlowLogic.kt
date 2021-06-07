@@ -1,11 +1,11 @@
-/**
- * Copyright 2020 Matthew Layton
+/*
+ * Copyright 2020-2021 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,9 +17,14 @@
 package io.onixlabs.corda.identityframework.workflow
 
 import co.paralleluniverse.fibers.Suspendable
+import io.onixlabs.corda.core.services.any
+import io.onixlabs.corda.core.services.equalTo
+import io.onixlabs.corda.core.services.vaultServiceFor
 import io.onixlabs.corda.core.workflow.currentStep
 import io.onixlabs.corda.identityframework.contract.Attestation
+import io.onixlabs.corda.identityframework.contract.AttestationSchema
 import io.onixlabs.corda.identityframework.contract.CordaClaim
+import io.onixlabs.corda.identityframework.contract.CordaClaimSchema
 import net.corda.core.flows.*
 import net.corda.core.identity.Party
 import net.corda.core.transactions.SignedTransaction
@@ -32,9 +37,11 @@ import java.security.PublicKey
  * @param attestation The attestation to check.
  * @throws FlowException if the state for the specified attestation has not been witnessed.
  */
+@Suspendable
 fun FlowLogic<*>.checkHasAttestedStateBeenWitnessed(attestation: Attestation<*>) {
     if (attestation.pointer.resolve(serviceHub) == null) {
-        throw FlowException("A state with the specified state reference has not been witnessed: ${attestation.pointer.stateRef}.")
+        val message = "A state with the specified state reference has not been witnessed:"
+        throw FlowException("$message ${attestation.pointer.stateRef}.")
     }
 }
 
@@ -44,8 +51,13 @@ fun FlowLogic<*>.checkHasAttestedStateBeenWitnessed(attestation: Attestation<*>)
  * @param claim The claim to check for existence.
  * @throws FlowException if the claim already exists.
  */
+@Suspendable
 fun FlowLogic<*>.checkClaimExists(claim: CordaClaim<*>) {
-    if (subFlow(FindClaimsFlow(claimClass = claim.javaClass, hash = claim.hash)).isNotEmpty()) {
+    val claimExists = serviceHub.vaultServiceFor(claim.javaClass).any {
+        where(CordaClaimSchema.CordaClaimEntity::hash equalTo claim.hash.toString())
+    }
+
+    if (claimExists) {
         throw FlowException("A claim with the specified hash already exists: ${claim.hash}.")
     }
 }
@@ -56,8 +68,13 @@ fun FlowLogic<*>.checkClaimExists(claim: CordaClaim<*>) {
  * @param attestation The attestation to check for existence.
  * @throws FlowException if the claim already exists.
  */
+@Suspendable
 fun FlowLogic<*>.checkAttestationExists(attestation: Attestation<*>) {
-    if (subFlow(FindAttestationsFlow(hash = attestation.hash)).isNotEmpty()) {
+    val attestationExists = serviceHub.vaultServiceFor(attestation.javaClass).any {
+        where(AttestationSchema.AttestationEntity::hash equalTo attestation.hash.toString())
+    }
+
+    if (attestationExists) {
         throw FlowException("An attestation with the specified hash already exists: ${attestation.hash}.")
     }
 }

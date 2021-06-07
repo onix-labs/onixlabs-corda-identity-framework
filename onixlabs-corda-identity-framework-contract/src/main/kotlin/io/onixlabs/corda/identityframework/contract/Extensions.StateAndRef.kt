@@ -1,11 +1,11 @@
-/**
- * Copyright 2020 Matthew Layton
+/*
+ * Copyright 2020-2021 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,15 +23,23 @@ import net.corda.core.contracts.UniqueIdentifier
 import net.corda.core.identity.AbstractParty
 
 /**
- * Creates an attestation pointer from a [StateAndRef].
+ * Creates a static attestation pointer from a [StateAndRef].
  *
  * @param T The underlying [ContractState] type.
- * @return Returns an attestation pointer for the specified [StateAndRef].
+ * @return Returns a static attestation pointer for the specified [StateAndRef].
  */
-fun <T : ContractState> StateAndRef<T>.toAttestationPointer(): AttestationPointer<T> {
-    return if (state.data is LinearState) {
-        AttestationPointer(ref, state.data.javaClass, (state.data as LinearState).linearId)
-    } else AttestationPointer(ref, state.data.javaClass)
+fun <T : ContractState> StateAndRef<T>.toStaticAttestationPointer(): StaticAttestationPointer<T> {
+    return StaticAttestationPointer(this)
+}
+
+/**
+ * Creates a linear attestation pointer from a [StateAndRef].
+ *
+ * @param T The underlying [LinearState] type.
+ * @return Returns a linear attestation pointer for the specified [StateAndRef].
+ */
+fun <T : LinearState> StateAndRef<T>.toLinearAttestationPointer(): LinearAttestationPointer<T> {
+    return LinearAttestationPointer(this)
 }
 
 /**
@@ -44,7 +52,7 @@ fun <T : ContractState> StateAndRef<T>.toAttestationPointer(): AttestationPointe
  * @param linearId The unique identifier of the attestation.
  * @return Returns an attestation for the specified [StateAndRef].
  */
-fun <T : ContractState> StateAndRef<T>.attest(
+fun <T : ContractState> StateAndRef<T>.attestContractState(
     attestor: AbstractParty,
     status: AttestationStatus,
     metadata: Map<String, String> = emptyMap(),
@@ -52,7 +60,7 @@ fun <T : ContractState> StateAndRef<T>.attest(
 ): Attestation<T> = Attestation(
     attestor,
     state.data.participants.toSet(),
-    toAttestationPointer(),
+    toStaticAttestationPointer(),
     status,
     metadata,
     linearId,
@@ -68,11 +76,11 @@ fun <T : ContractState> StateAndRef<T>.attest(
  * @param linearId The unique identifier of the attestation.
  * @return Returns an accepted attestation for the specified [StateAndRef].
  */
-fun <T : ContractState> StateAndRef<T>.accept(
+fun <T : ContractState> StateAndRef<T>.acceptContractState(
     attestor: AbstractParty,
     metadata: Map<String, String> = emptyMap(),
     linearId: UniqueIdentifier = UniqueIdentifier()
-): Attestation<T> = attest(attestor, AttestationStatus.ACCEPTED, metadata, linearId)
+): Attestation<T> = attestContractState(attestor, AttestationStatus.ACCEPTED, metadata, linearId)
 
 /**
  * Creates a rejected attestation from the specified [StateAndRef].
@@ -83,8 +91,63 @@ fun <T : ContractState> StateAndRef<T>.accept(
  * @param linearId The unique identifier of the attestation.
  * @return Returns an rejected attestation for the specified [StateAndRef].
  */
-fun <T : ContractState> StateAndRef<T>.reject(
+fun <T : ContractState> StateAndRef<T>.rejectContractState(
     attestor: AbstractParty,
     metadata: Map<String, String> = emptyMap(),
     linearId: UniqueIdentifier = UniqueIdentifier()
-): Attestation<T> = attest(attestor, AttestationStatus.REJECTED, metadata, linearId)
+): Attestation<T> = attestContractState(attestor, AttestationStatus.REJECTED, metadata, linearId)
+
+/**
+ * Creates an attestation from the specified [StateAndRef].
+ *
+ * @param T The underlying [ContractState] type.
+ * @param attestor The attestor of the witnessed state.
+ * @param status The status of the attestation.
+ * @param metadata Additional information about the attestation.
+ * @param linearId The unique identifier of the attestation.
+ * @return Returns an attestation for the specified [StateAndRef].
+ */
+fun <T : LinearState> StateAndRef<T>.attestLinearState(
+    attestor: AbstractParty,
+    status: AttestationStatus,
+    metadata: Map<String, String> = emptyMap(),
+    linearId: UniqueIdentifier = UniqueIdentifier()
+): Attestation<T> = Attestation(
+    attestor,
+    state.data.participants.toSet(),
+    toLinearAttestationPointer(),
+    status,
+    metadata,
+    linearId,
+    null
+)
+
+/**
+ * Creates an accepted attestation from the specified [StateAndRef].
+ *
+ * @param T The underlying [ContractState] type.
+ * @param attestor The attestor of the witnessed state.
+ * @param metadata Additional information about the attestation.
+ * @param linearId The unique identifier of the attestation.
+ * @return Returns an accepted attestation for the specified [StateAndRef].
+ */
+fun <T : LinearState> StateAndRef<T>.acceptLinearState(
+    attestor: AbstractParty,
+    metadata: Map<String, String> = emptyMap(),
+    linearId: UniqueIdentifier = UniqueIdentifier()
+): Attestation<T> = attestLinearState(attestor, AttestationStatus.ACCEPTED, metadata, linearId)
+
+/**
+ * Creates a rejected attestation from the specified [StateAndRef].
+ *
+ * @param T The underlying [ContractState] type.
+ * @param attestor The attestor of the witnessed state.
+ * @param metadata Additional information about the attestation.
+ * @param linearId The unique identifier of the attestation.
+ * @return Returns an rejected attestation for the specified [StateAndRef].
+ */
+fun <T : LinearState> StateAndRef<T>.rejectLinearState(
+    attestor: AbstractParty,
+    metadata: Map<String, String> = emptyMap(),
+    linearId: UniqueIdentifier = UniqueIdentifier()
+): Attestation<T> = attestLinearState(attestor, AttestationStatus.REJECTED, metadata, linearId)

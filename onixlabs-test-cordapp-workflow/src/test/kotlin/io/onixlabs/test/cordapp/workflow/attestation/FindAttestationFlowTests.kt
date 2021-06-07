@@ -1,11 +1,11 @@
-/**
- * Copyright 2020 Matthew Layton
+/*
+ * Copyright 2020-2021 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,16 +16,18 @@
 
 package io.onixlabs.test.cordapp.workflow.attestation
 
+import io.onixlabs.corda.core.services.equalTo
+import io.onixlabs.corda.core.services.singleOrNull
+import io.onixlabs.corda.core.services.vaultServiceFor
 import io.onixlabs.corda.identityframework.contract.Attestation
-import io.onixlabs.corda.identityframework.contract.accept
-import io.onixlabs.corda.identityframework.workflow.FindAttestationFlow
+import io.onixlabs.corda.identityframework.contract.AttestationSchema
+import io.onixlabs.corda.identityframework.contract.acceptLinearState
 import io.onixlabs.corda.identityframework.workflow.IssueAttestationFlow
 import io.onixlabs.corda.identityframework.workflow.IssueClaimFlow
 import io.onixlabs.test.cordapp.contract.GreetingClaim
 import io.onixlabs.test.cordapp.workflow.FlowTest
 import io.onixlabs.test.cordapp.workflow.Pipeline
 import net.corda.core.contracts.StateAndRef
-import net.corda.core.node.services.Vault
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -42,7 +44,7 @@ class FindAttestationFlowTests : FlowTest() {
             }
             .run(nodeC) {
                 claim = it.tx.outRefsOfType<GreetingClaim>().single()
-                val attestation = claim.accept(partyC)
+                val attestation = claim.acceptLinearState(partyC)
                 IssueAttestationFlow.Initiator(attestation)
             }
             .finally { attestation = it.tx.outRefsOfType<Attestation<GreetingClaim>>().single() }
@@ -51,176 +53,99 @@ class FindAttestationFlowTests : FlowTest() {
     @Test
     fun `FindAttestationFlow should find the expected claim by linear ID`() {
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.transaction {
-                Pipeline
-                    .create(network)
-                    .run(it) {
-                        FindAttestationFlow(
-                            linearId = attestation.state.data.linearId
-                        )
-                    }
-                    .finally { assertEquals(attestation, it) }
+            val result = it.services.vaultServiceFor<Attestation<*>>().singleOrNull {
+                linearIds(attestation.state.data.linearId)
             }
+
+            assertEquals(attestation, result)
         }
     }
 
     @Test
     fun `FindAttestationFlow should find the expected claim by external ID`() {
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.transaction {
-                Pipeline
-                    .create(network)
-                    .run(it) {
-                        FindAttestationFlow(
-                            externalId = attestation.state.data.linearId.externalId
-                        )
-                    }
-                    .finally { assertEquals(attestation, it) }
+            val result = it.services.vaultServiceFor<Attestation<*>>().singleOrNull {
+                where(AttestationSchema.AttestationEntity::externalId equalTo attestation.state.data.linearId.externalId)
             }
+
+            assertEquals(attestation, result)
         }
     }
 
     @Test
     fun `FindAttestationFlow should find the expected claim by attestor`() {
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.transaction {
-                Pipeline
-                    .create(network)
-                    .run(it) {
-                        FindAttestationFlow(
-                            attestor = attestation.state.data.attestor
-                        )
-                    }
-                    .finally { assertEquals(attestation, it) }
+            val result = it.services.vaultServiceFor<Attestation<*>>().singleOrNull {
+                where(AttestationSchema.AttestationEntity::attestor equalTo attestation.state.data.attestor)
             }
+
+            assertEquals(attestation, result)
         }
     }
 
     @Test
     fun `FindAttestationFlow should find the expected claim by pointer`() {
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.transaction {
-                Pipeline
-                    .create(network)
-                    .run(it) {
-                        FindAttestationFlow(
-                            pointer = attestation.state.data.pointer
-                        )
-                    }
-                    .finally { assertEquals(attestation, it) }
+            val result = it.services.vaultServiceFor<Attestation<*>>().singleOrNull {
+                where(AttestationSchema.AttestationEntity::pointerHash equalTo attestation.state.data.pointer.hash)
             }
+
+            assertEquals(attestation, result)
         }
     }
 
     @Test
     fun `FindAttestationFlow should find the expected claim by pointerStateRef`() {
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.transaction {
-                Pipeline
-                    .create(network)
-                    .run(it) {
-                        FindAttestationFlow(
-                            pointerStateRef = claim.ref
-                        )
-                    }
-                    .finally { assertEquals(attestation, it) }
+            val result = it.services.vaultServiceFor<Attestation<*>>().singleOrNull {
+                where(AttestationSchema.AttestationEntity::pointerStateRef equalTo attestation.state.data.pointer.stateRef)
             }
-        }
-    }
 
-    @Test
-    fun `FindAttestationFlow should find the expected claim by pointerStateClass`() {
-        listOf(nodeA, nodeB, nodeC).forEach {
-            it.transaction {
-                Pipeline
-                    .create(network)
-                    .run(it) {
-                        FindAttestationFlow(
-                            pointerStateClass = claim.state.data.javaClass
-                        )
-                    }
-                    .finally { assertEquals(attestation, it) }
-            }
+            assertEquals(attestation, result)
         }
     }
 
     @Test
     fun `FindAttestationFlow should find the expected claim by pointerStateLinearId`() {
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.transaction {
-                Pipeline
-                    .create(network)
-                    .run(it) {
-                        FindAttestationFlow(
-                            pointerStateLinearId = claim.state.data.linearId
-                        )
-                    }
-                    .finally { assertEquals(attestation, it) }
+            val result = it.services.vaultServiceFor<Attestation<*>>().singleOrNull {
+                where(AttestationSchema.AttestationEntity::pointerStateLinearId equalTo GREETING_CLAIM.linearId.id)
             }
-        }
-    }
 
-    @Test
-    fun `FindAttestationFlow should find the expected claim by pointerHash`() {
-        listOf(nodeA, nodeB, nodeC).forEach {
-            it.transaction {
-                Pipeline
-                    .create(network)
-                    .run(it) {
-                        FindAttestationFlow(
-                            pointerHash = attestation.state.data.pointer.hash
-                        )
-                    }
-                    .finally { assertEquals(attestation, it) }
-            }
+            assertEquals(attestation, result)
         }
     }
 
     @Test
     fun `FindAttestationFlow should find the expected claim by status`() {
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.transaction {
-                Pipeline
-                    .create(network)
-                    .run(it) {
-                        FindAttestationFlow(
-                            status = attestation.state.data.status
-                        )
-                    }
-                    .finally { assertEquals(attestation, it) }
+            val result = it.services.vaultServiceFor<Attestation<*>>().singleOrNull {
+                where(AttestationSchema.AttestationEntity::status equalTo attestation.state.data.status)
             }
+
+            assertEquals(attestation, result)
         }
     }
 
     @Test
     fun `FindAttestationFlow should find the expected claim by previousStateRef`() {
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.transaction {
-                Pipeline
-                    .create(network)
-                    .run(it) {
-                        FindAttestationFlow(
-                            previousStateRef = attestation.state.data.previousStateRef
-                        )
-                    }
-                    .finally { assertEquals(attestation, it) }
+            val result = it.services.vaultServiceFor<Attestation<*>>().singleOrNull {
+                where(AttestationSchema.AttestationEntity::previousStateRef equalTo attestation.state.data.previousStateRef)
             }
+
+            assertEquals(attestation, result)
         }
     }
 
     @Test
     fun `FindAttestationFlow should find the expected claim by hash`() {
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.transaction {
-                Pipeline
-                    .create(network)
-                    .run(it) {
-                        FindAttestationFlow(
-                            hash = attestation.state.data.hash
-                        )
-                    }
-                    .finally { assertEquals(attestation, it) }
+            val result = it.services.vaultServiceFor<Attestation<*>>().singleOrNull {
+                where(AttestationSchema.AttestationEntity::hash equalTo attestation.state.data.hash)
             }
+
+            assertEquals(attestation, result)
         }
     }
 }

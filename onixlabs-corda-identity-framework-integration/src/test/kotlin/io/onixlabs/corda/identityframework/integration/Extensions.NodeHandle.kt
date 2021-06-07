@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package io.onixlabs.corda.identityframework.contract.general
+package io.onixlabs.corda.identityframework.integration
 
-import io.onixlabs.corda.identityframework.contract.Claim
+import net.corda.testing.driver.NodeHandle
 
-class GreetingClaim(val greeter: String) : Claim<String>("Greeting", "Hello, World!")
+val NodeHandle.claimService: ClaimService get() = ClaimService(rpc)
+val NodeHandle.attestationService: AttestationService get() = AttestationService(rpc)

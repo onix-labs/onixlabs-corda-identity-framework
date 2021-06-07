@@ -28,6 +28,7 @@ dependencies {
 
     // CorDapp Dependencies
     cordapp "$onixlabs_group:onixlabs-corda-core-contract:$onixlabs_corda_core_release_version"
+    cordapp "$onixlabs_group:onixlabs-corda-core-workflow:$onixlabs_corda_core_release_version"
 
     // Test Dependencies
     testRuntimeOnly "$junit_group:junit-jupiter-engine:$junit_version"

@@ -1,11 +1,11 @@
-/**
- * Copyright 2020 Matthew Layton
+/*
+ * Copyright 2020-2021 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,8 +17,8 @@
 package io.onixlabs.test.cordapp.workflow.attestation
 
 import io.onixlabs.corda.identityframework.contract.Attestation
-import io.onixlabs.corda.identityframework.contract.accept
-import io.onixlabs.corda.identityframework.contract.reject
+import io.onixlabs.corda.identityframework.contract.acceptLinearState
+import io.onixlabs.corda.identityframework.contract.rejectState
 import io.onixlabs.corda.identityframework.workflow.AmendAttestationFlow
 import io.onixlabs.corda.identityframework.workflow.IssueAttestationFlow
 import io.onixlabs.corda.identityframework.workflow.IssueClaimFlow
@@ -43,12 +43,12 @@ class AmendAttestationFlowTests : FlowTest() {
             }
             .run(nodeC) {
                 val issuedClaim = it.tx.outRefsOfType<GreetingClaim>().single()
-                val attestation = issuedClaim.accept(partyC)
+                val attestation = issuedClaim.acceptLinearState(partyC)
                 IssueAttestationFlow.Initiator(attestation)
             }
             .run(nodeC) {
                 val oldAttestation = it.tx.outRefsOfType<Attestation<GreetingClaim>>().single()
-                attestation = oldAttestation.reject()
+                attestation = oldAttestation.rejectState()
                 AmendAttestationFlow.Initiator(oldAttestation, attestation)
             }
             .finally { transaction = it }

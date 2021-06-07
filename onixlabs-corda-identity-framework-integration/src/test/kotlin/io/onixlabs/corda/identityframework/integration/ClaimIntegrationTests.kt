@@ -1,11 +1,11 @@
-/**
- * Copyright 2020 Matthew Layton
+/*
+ * Copyright 2020-2021 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,8 +16,9 @@
 
 package io.onixlabs.corda.identityframework.integration
 
+import io.onixlabs.corda.core.services.singleOrNull
+import io.onixlabs.corda.core.services.vaultServiceFor
 import io.onixlabs.corda.identityframework.contract.CordaClaim
-import net.corda.core.node.services.Vault
 import net.corda.core.utilities.getOrThrow
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
@@ -28,7 +29,7 @@ class ClaimIntegrationTests : IntegrationTest() {
     fun `Claim integration service tests`() = start {
 
         // Issue a claim
-        nodeA.claims.commandService.issueClaim(
+        nodeA.claimService.issueClaim(
             property = "example",
             value = "Hello, World!",
             linearId = ID,
@@ -36,39 +37,36 @@ class ClaimIntegrationTests : IntegrationTest() {
         ).returnValue.getOrThrow()
 
         // Find the issued claim
-        val issuedClaim = nodeA.claims.queryService.findClaim<CordaClaim<String>>(
-            linearId = ID,
-            stateStatus = Vault.StateStatus.UNCONSUMED
-        ) ?: fail("Failed to find issued claim.")
+        val issuedClaim = nodeA.rpc.vaultServiceFor<CordaClaim<String>>().singleOrNull {
+            linearIds(ID)
+        } ?: fail("Failed to find issued claim.")
 
         // Amend the claim
-        nodeA.claims.commandService.amendClaim(
+        nodeA.claimService.amendClaim(
             claim = issuedClaim,
             value = "Goodbye, World!"
         ).returnValue.getOrThrow()
 
         // Find the amended claim
-        val amendedClaim = nodeA.claims.queryService.findClaim<CordaClaim<String>>(
-            linearId = ID,
-            stateStatus = Vault.StateStatus.UNCONSUMED
-        ) ?: fail("Failed to find amended claim.")
+        val amendedClaim = nodeA.rpc.vaultServiceFor<CordaClaim<String>>().singleOrNull {
+            linearIds(ID)
+        } ?: fail("Failed to find amended claim.")
 
         // Publish the amended claim
-        nodeA.claims.commandService.publishClaim(
+        nodeA.claimService.publishClaim(
             claim = amendedClaim,
             observers = setOf(partyB, partyC)
         ).returnValue.getOrThrow()
 
         // Find the published claim
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.claims.queryService.findClaim<CordaClaim<String>>(
-                linearId = ID,
-                stateStatus = Vault.StateStatus.UNCONSUMED
-            ) ?: fail("Failed to find sent claim.")
+            it.rpc.vaultServiceFor<CordaClaim<String>>().singleOrNull {
+                linearIds(ID)
+            } ?: fail("Failed to find sent claim.")
         }
 
         // Revoke the claim
-        nodeA.claims.commandService.revokeClaim(
+        nodeA.claimService.revokeClaim(
             claim = amendedClaim,
             observers = setOf(partyB, partyC)
         ).returnValue.getOrThrow()

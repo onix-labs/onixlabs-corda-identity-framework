@@ -1,11 +1,11 @@
-/**
- * Copyright 2020 Matthew Layton
+/*
+ * Copyright 2020-2021 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,10 +16,17 @@
 
 package io.onixlabs.corda.identityframework.workflow.claims
 
+import io.onixlabs.corda.core.services.equalTo
+import io.onixlabs.corda.core.services.filter
+import io.onixlabs.corda.core.services.vaultServiceFor
 import io.onixlabs.corda.identityframework.contract.CordaClaim
+import io.onixlabs.corda.identityframework.contract.CordaClaimSchema
 import io.onixlabs.corda.identityframework.contract.amend
-import io.onixlabs.corda.identityframework.workflow.*
-import net.corda.core.contracts.StateAndRef
+import io.onixlabs.corda.identityframework.workflow.AmendClaimFlow
+import io.onixlabs.corda.identityframework.workflow.FlowTest
+import io.onixlabs.corda.identityframework.workflow.IssueClaimFlow
+import io.onixlabs.corda.identityframework.workflow.Pipeline
+import net.corda.core.contracts.StateRef
 import net.corda.core.node.services.Vault
 import org.junit.jupiter.api.Test
 import java.time.Instant
@@ -27,7 +34,7 @@ import kotlin.test.assertEquals
 
 class FindClaimsFlowTests : FlowTest() {
 
-    private lateinit var claim: StateAndRef<CordaClaim<String>>
+    private var previousStateRef: StateRef? = null
 
     override fun initialize() {
         Pipeline
@@ -71,159 +78,118 @@ class FindClaimsFlowTests : FlowTest() {
                 val newClaim = oldClaim.amend(Instant.MAX)
                 AmendClaimFlow.Initiator(oldClaim, newClaim, observers = setOf(partyA, partyB))
             }
-            .finally { claim = it.tx.outRefsOfType<CordaClaim<String>>().single() }
+            .finally {
+                previousStateRef = it
+                    .tx.outRefsOfType<CordaClaim<Instant>>()
+                    .single().state.data.previousStateRef
+            }
     }
 
     @Test
     fun `FindClaimsFlow should find the expected claim by linear ID`() {
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.transaction {
-                Pipeline
-                    .create(network)
-                    .run(it) {
-                        FindClaimsFlow(
-                            linearId = CLAIM_1.linearId,
-                            stateStatus = Vault.StateStatus.ALL
-                        )
-                    }
-                    .finally { assertEquals(3, it.size) }
+            val results = it.services.vaultServiceFor<CordaClaim<Instant>>().filter {
+                stateStatus(Vault.StateStatus.ALL)
+                linearIds(CLAIM_1.linearId)
             }
+
+            assertEquals(3, results.count())
         }
     }
 
     @Test
     fun `FindClaimsFlow should find the expected claim by external ID`() {
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.transaction {
-                Pipeline
-                    .create(network)
-                    .run(it) {
-                        FindClaimsFlow(
-                            externalId = CLAIM_1.linearId.externalId,
-                            stateStatus = Vault.StateStatus.ALL
-                        )
-                    }
-                    .finally { assertEquals(3, it.size) }
+            val results = it.services.vaultServiceFor<CordaClaim<Instant>>().filter {
+                stateStatus(Vault.StateStatus.ALL)
+                where(CordaClaimSchema.CordaClaimEntity::externalId equalTo CLAIM_1.linearId.externalId)
             }
+
+            assertEquals(3, results.count())
         }
     }
 
     @Test
     fun `FindClaimsFlow should find the expected claim by issuer`() {
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.transaction {
-                Pipeline
-                    .create(network)
-                    .run(it) {
-                        FindClaimsFlow(
-                            issuer = CLAIM_1.issuer,
-                            stateStatus = Vault.StateStatus.ALL
-                        )
-                    }
-                    .finally { assertEquals(3, it.size) }
+            val results = it.services.vaultServiceFor<CordaClaim<Instant>>().filter {
+                stateStatus(Vault.StateStatus.ALL)
+                where(CordaClaimSchema.CordaClaimEntity::issuer equalTo CLAIM_1.issuer)
             }
+
+            assertEquals(3, results.count())
         }
     }
 
     @Test
     fun `FindClaimsFlow should find the expected claim by holder`() {
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.transaction {
-                Pipeline
-                    .create(network)
-                    .run(it) {
-                        FindClaimsFlow(
-                            holder = CLAIM_1.holder,
-                            stateStatus = Vault.StateStatus.ALL
-                        )
-                    }
-                    .finally { assertEquals(6, it.size) }
+            val results = it.services.vaultServiceFor<CordaClaim<Instant>>().filter {
+                stateStatus(Vault.StateStatus.ALL)
+                where(CordaClaimSchema.CordaClaimEntity::holder equalTo CLAIM_1.holder)
             }
+
+            assertEquals(3, results.count())
         }
     }
 
     @Test
     fun `FindClaimsFlow should find the expected claim by property`() {
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.transaction {
-                Pipeline
-                    .create(network)
-                    .run(it) {
-                        FindClaimsFlow(
-                            property = CLAIM_1.property,
-                            stateStatus = Vault.StateStatus.ALL
-                        )
-                    }
-                    .finally { assertEquals(3, it.size) }
+            val results = it.services.vaultServiceFor<CordaClaim<Instant>>().filter {
+                stateStatus(Vault.StateStatus.ALL)
+                where(CordaClaimSchema.CordaClaimEntity::property equalTo CLAIM_1.property)
             }
+
+            assertEquals(3, results.count())
         }
     }
 
     @Test
     fun `FindClaimsFlow should find the expected claim by value`() {
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.transaction {
-                Pipeline
-                    .create(network)
-                    .run(it) {
-                        FindClaimsFlow(
-                            value = CLAIM_1.value,
-                            stateStatus = Vault.StateStatus.ALL
-                        )
-                    }
-                    .finally { assertEquals(1, it.size) }
+            val results = it.services.vaultServiceFor<CordaClaim<Instant>>().filter {
+                stateStatus(Vault.StateStatus.ALL)
+                where(CordaClaimSchema.CordaClaimEntity::value equalTo CLAIM_1.value)
             }
+
+            assertEquals(3, results.count())
         }
     }
 
     @Test
     fun `FindClaimsFlow should find the expected claim by previousStateRef`() {
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.transaction {
-                Pipeline
-                    .create(network)
-                    .run(it) {
-                        FindClaimsFlow(
-                            previousStateRef = claim.state.data.previousStateRef,
-                            stateStatus = Vault.StateStatus.ALL
-                        )
-                    }
-                    .finally { assertEquals(1, it.size) }
+            val results = it.services.vaultServiceFor<CordaClaim<Instant>>().filter {
+                stateStatus(Vault.StateStatus.ALL)
+                where(CordaClaimSchema.CordaClaimEntity::previousStateRef equalTo previousStateRef?.toString())
             }
+
+            assertEquals(1, results.count())
         }
     }
 
     @Test
     fun `FindClaimsFlow should find the expected claim by isSelfIssued`() {
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.transaction {
-                Pipeline
-                    .create(network)
-                    .run(it) {
-                        FindClaimsFlow(
-                            isSelfIssued = true,
-                            stateStatus = Vault.StateStatus.ALL
-                        )
-                    }
-                    .finally { assertEquals(6, it.size) }
+            val results = it.services.vaultServiceFor<CordaClaim<Instant>>().filter {
+                stateStatus(Vault.StateStatus.ALL)
+                where(CordaClaimSchema.CordaClaimEntity::isSelfIssued equalTo true)
             }
+
+            assertEquals(6, results.count())
         }
     }
 
     @Test
     fun `FindClaimsFlow should find the expected claim by hash`() {
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.transaction {
-                Pipeline
-                    .create(network)
-                    .run(it) {
-                        FindClaimsFlow(
-                            hash = CLAIM_1.hash,
-                            stateStatus = Vault.StateStatus.ALL
-                        )
-                    }
-                    .finally { assertEquals(1, it.size) }
+            val results = it.services.vaultServiceFor<CordaClaim<Instant>>().filter {
+                stateStatus(Vault.StateStatus.ALL)
+                where(CordaClaimSchema.CordaClaimEntity::hash equalTo CLAIM_1.hash.toString())
             }
+
+            assertEquals(1, results.count())
         }
     }
 }

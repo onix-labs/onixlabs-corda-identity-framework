@@ -1,11 +1,11 @@
-/**
- * Copyright 2020 Matthew Layton
+/*
+ * Copyright 2020-2021 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,9 +16,17 @@
 
 package io.onixlabs.corda.identityframework.workflow.claims
 
+import io.onixlabs.corda.core.services.equalTo
+import io.onixlabs.corda.core.services.singleOrNull
+import io.onixlabs.corda.core.services.vaultServiceFor
 import io.onixlabs.corda.identityframework.contract.CordaClaim
+import io.onixlabs.corda.identityframework.contract.CordaClaimSchema
+import io.onixlabs.corda.identityframework.contract.CordaClaimSchema.CordaClaimEntity
 import io.onixlabs.corda.identityframework.contract.amend
-import io.onixlabs.corda.identityframework.workflow.*
+import io.onixlabs.corda.identityframework.workflow.AmendClaimFlow
+import io.onixlabs.corda.identityframework.workflow.FlowTest
+import io.onixlabs.corda.identityframework.workflow.IssueClaimFlow
+import io.onixlabs.corda.identityframework.workflow.Pipeline
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.node.services.Vault
 import org.junit.jupiter.api.Test
@@ -45,162 +53,108 @@ class FindClaimFlowTests : FlowTest() {
     @Test
     fun `FindClaimFlow should find the expected claim by linear ID`() {
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.transaction {
-                Pipeline
-                    .create(network)
-                    .run(it) {
-                        FindClaimFlow(
-                            valueClass = String::class.java,
-                            linearId = claim.state.data.linearId,
-                            stateStatus = Vault.StateStatus.UNCONSUMED
-                        )
-                    }
-                    .finally { assertEquals(claim, it) }
+            val result = it.services.vaultServiceFor<CordaClaim<String>>().singleOrNull {
+                stateStatus(Vault.StateStatus.UNCONSUMED)
+                linearIds(claim.state.data.linearId)
             }
+
+            assertEquals(claim, result)
         }
     }
 
     @Test
     fun `FindClaimFlow should find the expected claim by external ID`() {
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.transaction {
-                Pipeline
-                    .create(network)
-                    .run(it) {
-                        FindClaimFlow(
-                            valueClass = String::class.java,
-                            externalId = claim.state.data.linearId.externalId,
-                            stateStatus = Vault.StateStatus.UNCONSUMED
-                        )
-                    }
-                    .finally { assertEquals(claim, it) }
+            val result = it.services.vaultServiceFor<CordaClaim<String>>().singleOrNull {
+                stateStatus(Vault.StateStatus.UNCONSUMED)
+                where(CordaClaimEntity::externalId equalTo claim.state.data.linearId.externalId)
             }
+
+            assertEquals(claim, result)
         }
     }
 
     @Test
     fun `FindClaimFlow should find the expected claim by issuer`() {
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.transaction {
-                Pipeline
-                    .create(network)
-                    .run(it) {
-                        FindClaimFlow(
-                            valueClass = String::class.java,
-                            issuer = claim.state.data.issuer,
-                            stateStatus = Vault.StateStatus.UNCONSUMED
-                        )
-                    }
-                    .finally { assertEquals(claim, it) }
+            val result = it.services.vaultServiceFor<CordaClaim<String>>().singleOrNull {
+                stateStatus(Vault.StateStatus.UNCONSUMED)
+                where(CordaClaimEntity::issuer equalTo claim.state.data.issuer)
             }
+
+            assertEquals(claim, result)
         }
     }
 
     @Test
     fun `FindClaimFlow should find the expected claim by holder`() {
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.transaction {
-                Pipeline
-                    .create(network)
-                    .run(it) {
-                        FindClaimFlow(
-                            valueClass = String::class.java,
-                            holder = claim.state.data.holder,
-                            stateStatus = Vault.StateStatus.UNCONSUMED
-                        )
-                    }
-                    .finally { assertEquals(claim, it) }
+            val result = it.services.vaultServiceFor<CordaClaim<String>>().singleOrNull {
+                stateStatus(Vault.StateStatus.UNCONSUMED)
+                where(CordaClaimEntity::holder equalTo claim.state.data.holder)
             }
+
+            assertEquals(claim, result)
         }
     }
 
     @Test
     fun `FindClaimFlow should find the expected claim by property`() {
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.transaction {
-                Pipeline
-                    .create(network)
-                    .run(it) {
-                        FindClaimFlow(
-                            valueClass = String::class.java,
-                            property = claim.state.data.property,
-                            stateStatus = Vault.StateStatus.UNCONSUMED
-                        )
-                    }
-                    .finally { assertEquals(claim, it) }
+            val result = it.services.vaultServiceFor<CordaClaim<String>>().singleOrNull {
+                stateStatus(Vault.StateStatus.UNCONSUMED)
+                where(CordaClaimEntity::property equalTo claim.state.data.property)
             }
+
+            assertEquals(claim, result)
         }
     }
 
     @Test
     fun `FindClaimFlow should find the expected claim by value`() {
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.transaction {
-                Pipeline
-                    .create(network)
-                    .run(it) {
-                        FindClaimFlow(
-                            valueClass = String::class.java,
-                            value = claim.state.data.value,
-                            stateStatus = Vault.StateStatus.UNCONSUMED
-                        )
-                    }
-                    .finally { assertEquals(claim, it) }
+            val result = it.services.vaultServiceFor<CordaClaim<String>>().singleOrNull {
+                stateStatus(Vault.StateStatus.UNCONSUMED)
+                where(CordaClaimEntity::value equalTo claim.state.data.value)
             }
+
+            assertEquals(claim, result)
         }
     }
 
     @Test
     fun `FindClaimFlow should find the expected claim by previousStateRef`() {
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.transaction {
-                Pipeline
-                    .create(network)
-                    .run(it) {
-                        FindClaimFlow(
-                            valueClass = String::class.java,
-                            previousStateRef = claim.state.data.previousStateRef,
-                            stateStatus = Vault.StateStatus.UNCONSUMED
-                        )
-                    }
-                    .finally { assertEquals(claim, it) }
+            val result = it.services.vaultServiceFor<CordaClaim<String>>().singleOrNull {
+                stateStatus(Vault.StateStatus.UNCONSUMED)
+                where(CordaClaimEntity::previousStateRef equalTo claim.state.data.previousStateRef.toString())
             }
+
+            assertEquals(claim, result)
         }
     }
 
     @Test
     fun `FindClaimFlow should find the expected claim by isSelfIssued`() {
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.transaction {
-                Pipeline
-                    .create(network)
-                    .run(it) {
-                        FindClaimFlow(
-                            valueClass = String::class.java,
-                            isSelfIssued = claim.state.data.isSelfIssued,
-                            stateStatus = Vault.StateStatus.UNCONSUMED
-                        )
-                    }
-                    .finally { assertEquals(claim, it) }
+            val result = it.services.vaultServiceFor<CordaClaim<String>>().singleOrNull {
+                stateStatus(Vault.StateStatus.UNCONSUMED)
+                where(CordaClaimEntity::isSelfIssued equalTo claim.state.data.isSelfIssued)
             }
+
+            assertEquals(claim, result)
         }
     }
 
     @Test
     fun `FindClaimFlow should find the expected claim by hash`() {
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.transaction {
-                Pipeline
-                    .create(network)
-                    .run(it) {
-                        FindClaimFlow(
-                            valueClass = String::class.java,
-                            hash = claim.state.data.hash,
-                            stateStatus = Vault.StateStatus.UNCONSUMED
-                        )
-                    }
-                    .finally { assertEquals(claim, it) }
+            val result = it.services.vaultServiceFor<CordaClaim<String>>().singleOrNull {
+                stateStatus(Vault.StateStatus.UNCONSUMED)
+                where(CordaClaimEntity::hash equalTo claim.state.data.hash.toString())
             }
+
+            assertEquals(claim, result)
         }
     }
 }

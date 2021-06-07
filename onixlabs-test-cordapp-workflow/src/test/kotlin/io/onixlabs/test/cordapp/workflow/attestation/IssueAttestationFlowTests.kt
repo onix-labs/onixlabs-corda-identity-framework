@@ -1,11 +1,11 @@
-/**
- * Copyright 2020 Matthew Layton
+/*
+ * Copyright 2020-2021 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,7 +17,7 @@
 package io.onixlabs.test.cordapp.workflow.attestation
 
 import io.onixlabs.corda.identityframework.contract.Attestation
-import io.onixlabs.corda.identityframework.contract.accept
+import io.onixlabs.corda.identityframework.contract.acceptLinearState
 import io.onixlabs.corda.identityframework.workflow.IssueAttestationFlow
 import io.onixlabs.corda.identityframework.workflow.IssueClaimFlow
 import io.onixlabs.test.cordapp.contract.GreetingClaim
@@ -41,7 +41,7 @@ class IssueAttestationFlowTests : FlowTest() {
             }
             .run(nodeC) {
                 val issuedClaim = it.tx.outRefsOfType<GreetingClaim>().single()
-                attestation = issuedClaim.accept(partyC)
+                attestation = issuedClaim.acceptLinearState(partyC)
                 IssueAttestationFlow.Initiator(attestation)
             }
             .finally { transaction = it }

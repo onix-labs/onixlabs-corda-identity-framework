@@ -1,11 +1,11 @@
-/**
- * Copyright 2020 Matthew Layton
+/*
+ * Copyright 2020-2021 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,8 +27,8 @@ class AttestationContractAmendCommandTests : ContractTest() {
         services.ledger {
             transaction {
                 val issuedClaim1 = issue(CLAIM_1)
-                val issuedAttestation1 = issue(issuedClaim1.accept(IDENTITY_C.party))
-                val amendedAttestation1 = issuedAttestation1.reject()
+                val issuedAttestation1 = issue(issuedClaim1.acceptLinearState(IDENTITY_C.party))
+                val amendedAttestation1 = issuedAttestation1.rejectState()
                 input(issuedAttestation1.ref)
                 output(AttestationContract.ID, amendedAttestation1)
                 fails()
@@ -43,9 +43,9 @@ class AttestationContractAmendCommandTests : ContractTest() {
         services.ledger {
             transaction {
                 val issuedClaim1 = issue(CLAIM_1)
-                val issuedAttestation1 = issue(issuedClaim1.accept(IDENTITY_C.party))
-                val issuedAttestation2 = issue(issuedClaim1.accept(IDENTITY_C.party))
-                val amendedAttestation1 = issuedAttestation1.reject()
+                val issuedAttestation1 = issue(issuedClaim1.acceptLinearState(IDENTITY_C.party))
+                val issuedAttestation2 = issue(issuedClaim1.acceptLinearState(IDENTITY_C.party))
+                val amendedAttestation1 = issuedAttestation1.rejectState()
                 input(issuedAttestation1.ref)
                 input(issuedAttestation2.ref)
                 output(AttestationContract.ID, amendedAttestation1)
@@ -60,8 +60,8 @@ class AttestationContractAmendCommandTests : ContractTest() {
         services.ledger {
             transaction {
                 val issuedClaim1 = issue(CLAIM_1)
-                val issuedAttestation1 = issue(issuedClaim1.accept(IDENTITY_C.party))
-                val amendedAttestation1 = issuedAttestation1.reject()
+                val issuedAttestation1 = issue(issuedClaim1.acceptLinearState(IDENTITY_C.party))
+                val amendedAttestation1 = issuedAttestation1.rejectState()
                 input(issuedAttestation1.ref)
                 output(AttestationContract.ID, amendedAttestation1)
                 output(AttestationContract.ID, amendedAttestation1)
@@ -76,7 +76,7 @@ class AttestationContractAmendCommandTests : ContractTest() {
         services.ledger {
             transaction {
                 val issuedClaim1 = issue(CLAIM_1)
-                val issuedAttestation1 = issue(issuedClaim1.accept(IDENTITY_C.party))
+                val issuedAttestation1 = issue(issuedClaim1.acceptLinearState(IDENTITY_C.party))
                 val amendedAttestation1 = issuedAttestation1.withInvalidAttestor(IDENTITY_B.party)
                 input(issuedAttestation1.ref)
                 output(AttestationContract.ID, amendedAttestation1)
@@ -91,7 +91,7 @@ class AttestationContractAmendCommandTests : ContractTest() {
         services.ledger {
             transaction {
                 val issuedClaim1 = issue(CLAIM_1)
-                val issuedAttestation1 = issue(issuedClaim1.accept(IDENTITY_C.party))
+                val issuedAttestation1 = issue(issuedClaim1.acceptLinearState(IDENTITY_C.party))
                 val amendedAttestation1 = issuedAttestation1.withInvalidPointer()
                 input(issuedAttestation1.ref)
                 output(AttestationContract.ID, amendedAttestation1)
@@ -106,7 +106,7 @@ class AttestationContractAmendCommandTests : ContractTest() {
         services.ledger {
             transaction {
                 val issuedClaim1 = issue(CLAIM_1)
-                val issuedAttestation1 = issue(issuedClaim1.accept(IDENTITY_C.party))
+                val issuedAttestation1 = issue(issuedClaim1.acceptLinearState(IDENTITY_C.party))
                 val amendedAttestation1 = issuedAttestation1.withInvalidPreviousStateRef()
                 input(issuedAttestation1.ref)
                 output(AttestationContract.ID, amendedAttestation1)
@@ -121,8 +121,8 @@ class AttestationContractAmendCommandTests : ContractTest() {
         services.ledger {
             transaction {
                 val issuedClaim1 = issue(CLAIM_1)
-                val issuedAttestation1 = issue(issuedClaim1.accept(IDENTITY_C.party))
-                val amendedAttestation1 = issuedAttestation1.reject()
+                val issuedAttestation1 = issue(issuedClaim1.acceptLinearState(IDENTITY_C.party))
+                val amendedAttestation1 = issuedAttestation1.rejectState()
                 input(issuedAttestation1.ref)
                 output(AttestationContract.ID, amendedAttestation1)
                 command(keysOf(IDENTITY_B), AttestationContract.Amend)

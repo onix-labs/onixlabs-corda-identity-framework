@@ -26,7 +26,7 @@
             <column name="value" type="clob">
                 <constraints nullable="false"/>
             </column>
-            <column name="value_class" type="nvarchar(1024)">
+            <column name="value_type" type="nvarchar(1024)">
                 <constraints nullable="false"/>
             </column>
             <column name="previous_state_ref" type="nvarchar(128)"/>
@@ -36,7 +36,7 @@
             <column name="hash" type="nvarchar(64)">
                 <constraints nullable="false" unique="true"/>
             </column>
-            <column name="claim_class" type="nvarchar(1024)">
+            <column name="claim_type" type="nvarchar(1024)">
                 <constraints nullable="false"/>
             </column>
         </createTable>
