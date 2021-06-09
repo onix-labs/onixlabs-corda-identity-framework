@@ -54,9 +54,10 @@ class FindClaimsFlowValueTypeTests : FlowTest() {
 
     @Test
     fun `FindClaimsFlow should only return only the claims where the claim type is specified`() {
-        val results = nodeA.services.vaultServiceFor<GreetingClaim>().filter {
+        val results = nodeA.services.vaultServiceFor<CordaClaim<String>>().filter {
             stateStatus(Vault.StateStatus.ALL)
-            where(CordaClaimSchema.CordaClaimEntity::property equalTo "greeting")
+            expression(CordaClaimSchema.CordaClaimEntity::property equalTo "greeting")
+            expression(CordaClaimSchema.CordaClaimEntity::claimType equalTo CordaClaim::class.java.canonicalName)
         }
 
         assertEquals(3, results.count())
@@ -64,9 +65,11 @@ class FindClaimsFlowValueTypeTests : FlowTest() {
 
     @Test
     fun `FindClaimsFlow should the correct claim where the claim value type is String`() {
-        val results = nodeA.services.vaultServiceFor<CordaClaim<String>>().filter {
+        val results = nodeA.services.vaultServiceFor<CordaClaim<*>>().filter {
             stateStatus(Vault.StateStatus.ALL)
-            where(CordaClaimSchema.CordaClaimEntity::property equalTo "greeting")
+            expression(CordaClaimSchema.CordaClaimEntity::property equalTo "greeting")
+            expression(CordaClaimSchema.CordaClaimEntity::claimType equalTo CordaClaim::class.java.canonicalName)
+            expression(CordaClaimSchema.CordaClaimEntity::valueType equalTo String::class.java.canonicalName)
         }
 
         assertEquals(1, results.count())
@@ -75,9 +78,9 @@ class FindClaimsFlowValueTypeTests : FlowTest() {
 
     @Test
     fun `FindClaimsFlow should the correct claim where the claim type is GreetingClaim`() {
-        val results = nodeA.services.vaultServiceFor<CordaClaim<String>>().filter {
+        val results = nodeA.services.vaultServiceFor<GreetingClaim>().filter {
             stateStatus(Vault.StateStatus.ALL)
-            where(CordaClaimSchema.CordaClaimEntity::property equalTo "greeting")
+            expression(CordaClaimSchema.CordaClaimEntity::property equalTo "greeting")
         }
 
         assertEquals(1, results.count())

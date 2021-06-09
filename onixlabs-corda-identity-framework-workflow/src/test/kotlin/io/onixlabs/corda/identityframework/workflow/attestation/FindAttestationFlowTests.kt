@@ -17,6 +17,7 @@
 package io.onixlabs.corda.identityframework.workflow.attestation
 
 import io.onixlabs.corda.core.services.equalTo
+import io.onixlabs.corda.core.services.isNull
 import io.onixlabs.corda.core.services.singleOrNull
 import io.onixlabs.corda.core.services.vaultServiceFor
 import io.onixlabs.corda.identityframework.contract.*
@@ -68,7 +69,7 @@ class FindAttestationFlowTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                where(AttestationEntity::externalId equalTo attestation.state.data.linearId.externalId)
+                expression(AttestationEntity::externalId.isNull())
             }
 
             assertEquals(attestation, result)
@@ -80,7 +81,7 @@ class FindAttestationFlowTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                where(AttestationEntity::attestor equalTo attestation.state.data.attestor)
+                expression(AttestationEntity::attestor equalTo attestation.state.data.attestor)
             }
 
             assertEquals(attestation, result)
@@ -92,7 +93,7 @@ class FindAttestationFlowTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                where(AttestationEntity::pointerStateRef equalTo claim.ref.toString())
+                expression(AttestationEntity::pointerStateRef equalTo claim.ref.toString())
             }
 
             assertEquals(attestation, result)
@@ -104,7 +105,7 @@ class FindAttestationFlowTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                where(AttestationEntity::pointerStateLinearId equalTo claim.state.data.linearId.id)
+                expression(AttestationEntity::pointerStateLinearId equalTo claim.state.data.linearId.id)
             }
 
             assertEquals(attestation, result)
@@ -116,7 +117,7 @@ class FindAttestationFlowTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                where(AttestationEntity::pointerHash equalTo attestation.state.data.pointer.hash.toString())
+                expression(AttestationEntity::pointerHash equalTo attestation.state.data.pointer.hash.toString())
             }
 
             assertEquals(attestation, result)
@@ -128,7 +129,7 @@ class FindAttestationFlowTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                where(AttestationEntity::status equalTo attestation.state.data.status)
+                expression(AttestationEntity::status equalTo attestation.state.data.status)
             }
 
             assertEquals(attestation, result)
@@ -140,7 +141,7 @@ class FindAttestationFlowTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                where(AttestationEntity::previousStateRef equalTo attestation.state.data.previousStateRef?.toString())
+                expression(AttestationEntity::previousStateRef equalTo attestation.state.data.previousStateRef?.toString())
             }
 
             assertEquals(attestation, result)
@@ -152,7 +153,7 @@ class FindAttestationFlowTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                where(AttestationEntity::hash equalTo attestation.state.data.hash.toString())
+                expression(AttestationEntity::hash equalTo attestation.state.data.hash.toString())
             }
 
             assertEquals(attestation, result)

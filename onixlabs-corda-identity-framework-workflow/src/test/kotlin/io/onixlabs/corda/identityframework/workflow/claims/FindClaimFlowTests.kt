@@ -67,7 +67,7 @@ class FindClaimFlowTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<CordaClaim<String>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                where(CordaClaimEntity::externalId equalTo claim.state.data.linearId.externalId)
+                expression(CordaClaimEntity::externalId equalTo claim.state.data.linearId.externalId)
             }
 
             assertEquals(claim, result)
@@ -79,7 +79,7 @@ class FindClaimFlowTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<CordaClaim<String>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                where(CordaClaimEntity::issuer equalTo claim.state.data.issuer)
+                expression(CordaClaimEntity::issuer equalTo claim.state.data.issuer)
             }
 
             assertEquals(claim, result)
@@ -91,7 +91,7 @@ class FindClaimFlowTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<CordaClaim<String>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                where(CordaClaimEntity::holder equalTo claim.state.data.holder)
+                expression(CordaClaimEntity::holder equalTo claim.state.data.holder)
             }
 
             assertEquals(claim, result)
@@ -103,7 +103,7 @@ class FindClaimFlowTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<CordaClaim<String>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                where(CordaClaimEntity::property equalTo claim.state.data.property)
+                expression(CordaClaimEntity::property equalTo claim.state.data.property)
             }
 
             assertEquals(claim, result)
@@ -115,7 +115,7 @@ class FindClaimFlowTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<CordaClaim<String>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                where(CordaClaimEntity::value equalTo claim.state.data.value)
+                expression(CordaClaimEntity::value equalTo claim.state.data.value)
             }
 
             assertEquals(claim, result)
@@ -127,7 +127,7 @@ class FindClaimFlowTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<CordaClaim<String>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                where(CordaClaimEntity::previousStateRef equalTo claim.state.data.previousStateRef.toString())
+                expression(CordaClaimEntity::previousStateRef equalTo claim.state.data.previousStateRef.toString())
             }
 
             assertEquals(claim, result)
@@ -139,7 +139,7 @@ class FindClaimFlowTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<CordaClaim<String>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                where(CordaClaimEntity::isSelfIssued equalTo claim.state.data.isSelfIssued)
+                expression(CordaClaimEntity::isSelfIssued equalTo claim.state.data.isSelfIssued)
             }
 
             assertEquals(claim, result)
@@ -151,7 +151,7 @@ class FindClaimFlowTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<CordaClaim<String>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                where(CordaClaimEntity::hash equalTo claim.state.data.hash.toString())
+                expression(CordaClaimEntity::hash equalTo claim.state.data.hash.toString())
             }
 
             assertEquals(claim, result)

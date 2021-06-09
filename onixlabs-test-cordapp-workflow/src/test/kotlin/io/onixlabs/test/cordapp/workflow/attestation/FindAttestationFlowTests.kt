@@ -17,6 +17,7 @@
 package io.onixlabs.test.cordapp.workflow.attestation
 
 import io.onixlabs.corda.core.services.equalTo
+import io.onixlabs.corda.core.services.isNull
 import io.onixlabs.corda.core.services.singleOrNull
 import io.onixlabs.corda.core.services.vaultServiceFor
 import io.onixlabs.corda.identityframework.contract.Attestation
@@ -65,7 +66,7 @@ class FindAttestationFlowTests : FlowTest() {
     fun `FindAttestationFlow should find the expected claim by external ID`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<*>>().singleOrNull {
-                where(AttestationSchema.AttestationEntity::externalId equalTo attestation.state.data.linearId.externalId)
+                expression(AttestationSchema.AttestationEntity::externalId.isNull())
             }
 
             assertEquals(attestation, result)
@@ -76,7 +77,7 @@ class FindAttestationFlowTests : FlowTest() {
     fun `FindAttestationFlow should find the expected claim by attestor`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<*>>().singleOrNull {
-                where(AttestationSchema.AttestationEntity::attestor equalTo attestation.state.data.attestor)
+                expression(AttestationSchema.AttestationEntity::attestor equalTo attestation.state.data.attestor)
             }
 
             assertEquals(attestation, result)
@@ -87,7 +88,7 @@ class FindAttestationFlowTests : FlowTest() {
     fun `FindAttestationFlow should find the expected claim by pointer`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<*>>().singleOrNull {
-                where(AttestationSchema.AttestationEntity::pointerHash equalTo attestation.state.data.pointer.hash)
+                expression(AttestationSchema.AttestationEntity::pointerHash equalTo attestation.state.data.pointer.hash.toString())
             }
 
             assertEquals(attestation, result)
@@ -98,7 +99,7 @@ class FindAttestationFlowTests : FlowTest() {
     fun `FindAttestationFlow should find the expected claim by pointerStateRef`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<*>>().singleOrNull {
-                where(AttestationSchema.AttestationEntity::pointerStateRef equalTo attestation.state.data.pointer.stateRef)
+                expression(AttestationSchema.AttestationEntity::pointerStateRef equalTo attestation.state.data.pointer.stateRef.toString())
             }
 
             assertEquals(attestation, result)
@@ -109,7 +110,7 @@ class FindAttestationFlowTests : FlowTest() {
     fun `FindAttestationFlow should find the expected claim by pointerStateLinearId`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<*>>().singleOrNull {
-                where(AttestationSchema.AttestationEntity::pointerStateLinearId equalTo GREETING_CLAIM.linearId.id)
+                expression(AttestationSchema.AttestationEntity::pointerStateLinearId equalTo GREETING_CLAIM.linearId.id)
             }
 
             assertEquals(attestation, result)
@@ -120,7 +121,7 @@ class FindAttestationFlowTests : FlowTest() {
     fun `FindAttestationFlow should find the expected claim by status`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<*>>().singleOrNull {
-                where(AttestationSchema.AttestationEntity::status equalTo attestation.state.data.status)
+                expression(AttestationSchema.AttestationEntity::status equalTo attestation.state.data.status)
             }
 
             assertEquals(attestation, result)
@@ -131,7 +132,7 @@ class FindAttestationFlowTests : FlowTest() {
     fun `FindAttestationFlow should find the expected claim by previousStateRef`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<*>>().singleOrNull {
-                where(AttestationSchema.AttestationEntity::previousStateRef equalTo attestation.state.data.previousStateRef)
+                expression(AttestationSchema.AttestationEntity::previousStateRef.isNull())
             }
 
             assertEquals(attestation, result)
@@ -142,7 +143,7 @@ class FindAttestationFlowTests : FlowTest() {
     fun `FindAttestationFlow should find the expected claim by hash`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<*>>().singleOrNull {
-                where(AttestationSchema.AttestationEntity::hash equalTo attestation.state.data.hash)
+                expression(AttestationSchema.AttestationEntity::hash equalTo attestation.state.data.hash.toString())
             }
 
             assertEquals(attestation, result)

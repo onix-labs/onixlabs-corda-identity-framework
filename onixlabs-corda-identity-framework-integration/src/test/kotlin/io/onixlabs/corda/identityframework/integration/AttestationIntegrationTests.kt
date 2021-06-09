@@ -52,7 +52,7 @@ class AttestationIntegrationTests : IntegrationTest() {
 
         // Find the issued attestation
         val issuedAttestation = nodeC.rpc.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
-            where(AttestationSchema.AttestationEntity::pointerStateRef equalTo issuedClaim.ref.toString())
+            expression(AttestationSchema.AttestationEntity::pointerStateRef equalTo issuedClaim.ref.toString())
         } ?: fail("Failed to find issued attestation.")
 
         // Amend the issued attestation
@@ -64,7 +64,7 @@ class AttestationIntegrationTests : IntegrationTest() {
 
         // Find the amended attestation
         val amendedAttestation = nodeC.rpc.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
-            where(AttestationSchema.AttestationEntity::pointerStateRef equalTo issuedClaim.ref.toString())
+            expression(AttestationSchema.AttestationEntity::pointerStateRef equalTo issuedClaim.ref.toString())
         } ?: fail("Failed to find amended attestation.")
 
         // Publish the amended attestation
@@ -76,7 +76,7 @@ class AttestationIntegrationTests : IntegrationTest() {
         // Find the published attestation
         listOf(nodeA, nodeB, nodeC).forEach {
             it.rpc.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
-                where(AttestationSchema.AttestationEntity::pointerStateRef equalTo issuedClaim.ref.toString())
+                expression(AttestationSchema.AttestationEntity::pointerStateRef equalTo issuedClaim.ref.toString())
             } ?: fail("Failed to find published attestation.")
         }
 

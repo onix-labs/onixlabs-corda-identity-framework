@@ -102,7 +102,7 @@ class FindClaimsFlowTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<CordaClaim<Instant>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                where(CordaClaimSchema.CordaClaimEntity::externalId equalTo CLAIM_1.linearId.externalId)
+                expression(CordaClaimSchema.CordaClaimEntity::externalId equalTo CLAIM_1.linearId.externalId)
             }
 
             assertEquals(3, results.count())
@@ -114,7 +114,7 @@ class FindClaimsFlowTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<CordaClaim<Instant>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                where(CordaClaimSchema.CordaClaimEntity::issuer equalTo CLAIM_1.issuer)
+                expression(CordaClaimSchema.CordaClaimEntity::issuer equalTo CLAIM_1.issuer)
             }
 
             assertEquals(3, results.count())
@@ -126,10 +126,10 @@ class FindClaimsFlowTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<CordaClaim<Instant>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                where(CordaClaimSchema.CordaClaimEntity::holder equalTo CLAIM_1.holder)
+                expression(CordaClaimSchema.CordaClaimEntity::holder equalTo CLAIM_1.holder)
             }
 
-            assertEquals(3, results.count())
+            assertEquals(6, results.count())
         }
     }
 
@@ -138,7 +138,7 @@ class FindClaimsFlowTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<CordaClaim<Instant>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                where(CordaClaimSchema.CordaClaimEntity::property equalTo CLAIM_1.property)
+                expression(CordaClaimSchema.CordaClaimEntity::property equalTo CLAIM_1.property)
             }
 
             assertEquals(3, results.count())
@@ -150,10 +150,10 @@ class FindClaimsFlowTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<CordaClaim<Instant>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                where(CordaClaimSchema.CordaClaimEntity::value equalTo CLAIM_1.value)
+                expression(CordaClaimSchema.CordaClaimEntity::value equalTo CLAIM_1.value)
             }
 
-            assertEquals(3, results.count())
+            assertEquals(1, results.count())
         }
     }
 
@@ -162,7 +162,7 @@ class FindClaimsFlowTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<CordaClaim<Instant>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                where(CordaClaimSchema.CordaClaimEntity::previousStateRef equalTo previousStateRef?.toString())
+                expression(CordaClaimSchema.CordaClaimEntity::previousStateRef equalTo previousStateRef?.toString())
             }
 
             assertEquals(1, results.count())
@@ -174,7 +174,7 @@ class FindClaimsFlowTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<CordaClaim<Instant>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                where(CordaClaimSchema.CordaClaimEntity::isSelfIssued equalTo true)
+                expression(CordaClaimSchema.CordaClaimEntity::isSelfIssued equalTo true)
             }
 
             assertEquals(6, results.count())
@@ -186,7 +186,7 @@ class FindClaimsFlowTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<CordaClaim<Instant>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                where(CordaClaimSchema.CordaClaimEntity::hash equalTo CLAIM_1.hash.toString())
+                expression(CordaClaimSchema.CordaClaimEntity::hash equalTo CLAIM_1.hash.toString())
             }
 
             assertEquals(1, results.count())

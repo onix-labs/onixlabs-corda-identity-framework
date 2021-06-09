@@ -54,7 +54,7 @@ fun FlowLogic<*>.checkHasAttestedStateBeenWitnessed(attestation: Attestation<*>)
 @Suspendable
 fun FlowLogic<*>.checkClaimExists(claim: CordaClaim<*>) {
     val claimExists = serviceHub.vaultServiceFor(claim.javaClass).any {
-        where(CordaClaimSchema.CordaClaimEntity::hash equalTo claim.hash.toString())
+        expression(CordaClaimSchema.CordaClaimEntity::hash equalTo claim.hash.toString())
     }
 
     if (claimExists) {
@@ -71,7 +71,7 @@ fun FlowLogic<*>.checkClaimExists(claim: CordaClaim<*>) {
 @Suspendable
 fun FlowLogic<*>.checkAttestationExists(attestation: Attestation<*>) {
     val attestationExists = serviceHub.vaultServiceFor(attestation.javaClass).any {
-        where(AttestationSchema.AttestationEntity::hash equalTo attestation.hash.toString())
+        expression(AttestationSchema.AttestationEntity::hash equalTo attestation.hash.toString())
     }
 
     if (attestationExists) {
