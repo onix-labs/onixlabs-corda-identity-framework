@@ -31,7 +31,7 @@ import net.corda.core.contracts.StateAndRef
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-class FindClaimFlowTests : FlowTest() {
+class VaultServiceClaimQueryTests : FlowTest() {
 
     private lateinit var claim: StateAndRef<GreetingClaim>
 
@@ -50,7 +50,7 @@ class FindClaimFlowTests : FlowTest() {
     }
 
     @Test
-    fun `FindClaimFlow should find the expected claim by linear ID`() {
+    fun `VaultService should find the expected claim by linear ID`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<GreetingClaim>().singleOrNull {
                 linearIds(claim.state.data.linearId)
@@ -61,7 +61,7 @@ class FindClaimFlowTests : FlowTest() {
     }
 
     @Test
-    fun `FindClaimFlow should find the expected claim by external ID`() {
+    fun `VaultService isNull should find the expected claim by external ID`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<GreetingClaim>().singleOrNull {
                 expression(CordaClaimSchema.CordaClaimEntity::externalId.isNull())
@@ -72,7 +72,7 @@ class FindClaimFlowTests : FlowTest() {
     }
 
     @Test
-    fun `FindClaimFlow should find the expected claim by issuer`() {
+    fun `VaultService equalTo should find the expected claim by issuer`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<GreetingClaim>().singleOrNull {
                 expression(CordaClaimSchema.CordaClaimEntity::issuer equalTo claim.state.data.issuer)
@@ -83,7 +83,7 @@ class FindClaimFlowTests : FlowTest() {
     }
 
     @Test
-    fun `FindClaimFlow should find the expected claim by holder`() {
+    fun `VaultService equalTo should find the expected claim by holder`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<GreetingClaim>().singleOrNull {
                 expression(CordaClaimSchema.CordaClaimEntity::holder equalTo claim.state.data.holder)
@@ -94,7 +94,7 @@ class FindClaimFlowTests : FlowTest() {
     }
 
     @Test
-    fun `FindClaimFlow should find the expected claim by property`() {
+    fun `VaultService equalTo should find the expected claim by property`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<GreetingClaim>().singleOrNull {
                 expression(CordaClaimSchema.CordaClaimEntity::property equalTo claim.state.data.property)
@@ -105,7 +105,7 @@ class FindClaimFlowTests : FlowTest() {
     }
 
     @Test
-    fun `FindClaimFlow should find the expected claim by value`() {
+    fun `VaultService equalTo should find the expected claim by value`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<GreetingClaim>().singleOrNull {
                 expression(CordaClaimSchema.CordaClaimEntity::value equalTo claim.state.data.value)
@@ -116,7 +116,7 @@ class FindClaimFlowTests : FlowTest() {
     }
 
     @Test
-    fun `FindClaimFlow should find the expected claim by previousStateRef`() {
+    fun `VaultService equalTo should find the expected claim by previousStateRef`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<GreetingClaim>().singleOrNull {
                 expression(CordaClaimSchema.CordaClaimEntity::previousStateRef equalTo claim.state.data.previousStateRef?.toString())
@@ -127,7 +127,7 @@ class FindClaimFlowTests : FlowTest() {
     }
 
     @Test
-    fun `FindClaimFlow should find the expected claim by isSelfIssued`() {
+    fun `VaultService equalTo should find the expected claim by isSelfIssued`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<GreetingClaim>().singleOrNull {
                 expression(CordaClaimSchema.CordaClaimEntity::isSelfIssued equalTo claim.state.data.isSelfIssued)
@@ -138,7 +138,7 @@ class FindClaimFlowTests : FlowTest() {
     }
 
     @Test
-    fun `FindClaimFlow should find the expected claim by hash`() {
+    fun `VaultService equalTo should find the expected claim by hash`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<GreetingClaim>().singleOrNull {
                 expression(CordaClaimSchema.CordaClaimEntity::hash equalTo claim.state.data.hash.toString())

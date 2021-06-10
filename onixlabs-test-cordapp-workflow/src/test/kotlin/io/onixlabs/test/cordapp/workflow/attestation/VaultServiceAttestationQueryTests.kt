@@ -32,7 +32,7 @@ import net.corda.core.contracts.StateAndRef
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-class FindAttestationFlowTests : FlowTest() {
+class VaultServiceAttestationQueryTests : FlowTest() {
 
     private lateinit var claim: StateAndRef<GreetingClaim>
     private lateinit var attestation: StateAndRef<Attestation<GreetingClaim>>
@@ -52,7 +52,7 @@ class FindAttestationFlowTests : FlowTest() {
     }
 
     @Test
-    fun `FindAttestationFlow should find the expected claim by linear ID`() {
+    fun `VaultService should find the expected claim by linear ID`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<*>>().singleOrNull {
                 linearIds(attestation.state.data.linearId)
@@ -63,7 +63,7 @@ class FindAttestationFlowTests : FlowTest() {
     }
 
     @Test
-    fun `FindAttestationFlow should find the expected claim by external ID`() {
+    fun `VaultService isNull should find the expected claim by external ID`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<*>>().singleOrNull {
                 expression(AttestationSchema.AttestationEntity::externalId.isNull())
@@ -74,7 +74,7 @@ class FindAttestationFlowTests : FlowTest() {
     }
 
     @Test
-    fun `FindAttestationFlow should find the expected claim by attestor`() {
+    fun `VaultService equalTo should find the expected claim by attestor`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<*>>().singleOrNull {
                 expression(AttestationSchema.AttestationEntity::attestor equalTo attestation.state.data.attestor)
@@ -85,7 +85,7 @@ class FindAttestationFlowTests : FlowTest() {
     }
 
     @Test
-    fun `FindAttestationFlow should find the expected claim by pointer`() {
+    fun `VaultService equalTo should find the expected claim by pointer`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<*>>().singleOrNull {
                 expression(AttestationSchema.AttestationEntity::pointerHash equalTo attestation.state.data.pointer.hash.toString())
@@ -96,7 +96,7 @@ class FindAttestationFlowTests : FlowTest() {
     }
 
     @Test
-    fun `FindAttestationFlow should find the expected claim by pointerStateRef`() {
+    fun `VaultService equalTo should find the expected claim by pointerStateRef`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<*>>().singleOrNull {
                 expression(AttestationSchema.AttestationEntity::pointerStateRef equalTo attestation.state.data.pointer.stateRef.toString())
@@ -107,7 +107,7 @@ class FindAttestationFlowTests : FlowTest() {
     }
 
     @Test
-    fun `FindAttestationFlow should find the expected claim by pointerStateLinearId`() {
+    fun `VaultService equalTo should find the expected claim by pointerStateLinearId`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<*>>().singleOrNull {
                 expression(AttestationSchema.AttestationEntity::pointerStateLinearId equalTo GREETING_CLAIM.linearId.id)
@@ -118,7 +118,7 @@ class FindAttestationFlowTests : FlowTest() {
     }
 
     @Test
-    fun `FindAttestationFlow should find the expected claim by status`() {
+    fun `VaultService equalTo should find the expected claim by status`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<*>>().singleOrNull {
                 expression(AttestationSchema.AttestationEntity::status equalTo attestation.state.data.status)
@@ -129,7 +129,7 @@ class FindAttestationFlowTests : FlowTest() {
     }
 
     @Test
-    fun `FindAttestationFlow should find the expected claim by previousStateRef`() {
+    fun `VaultService equalTo should find the expected claim by previousStateRef`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<*>>().singleOrNull {
                 expression(AttestationSchema.AttestationEntity::previousStateRef.isNull())
@@ -140,7 +140,7 @@ class FindAttestationFlowTests : FlowTest() {
     }
 
     @Test
-    fun `FindAttestationFlow should find the expected claim by hash`() {
+    fun `VaultService equalTo should find the expected claim by hash`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<*>>().singleOrNull {
                 expression(AttestationSchema.AttestationEntity::hash equalTo attestation.state.data.hash.toString())
@@ -150,3 +150,4 @@ class FindAttestationFlowTests : FlowTest() {
         }
     }
 }
+

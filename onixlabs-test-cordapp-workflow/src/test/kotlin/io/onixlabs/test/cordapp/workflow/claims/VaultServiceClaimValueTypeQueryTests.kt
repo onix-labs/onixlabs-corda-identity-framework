@@ -29,7 +29,7 @@ import net.corda.core.node.services.Vault
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-class FindClaimsFlowValueTypeTests : FlowTest() {
+class VaultServiceClaimValueTypeQueryTests : FlowTest() {
 
     override fun initialize() {
         Pipeline
@@ -53,7 +53,7 @@ class FindClaimsFlowValueTypeTests : FlowTest() {
     }
 
     @Test
-    fun `FindClaimsFlow should only return only the claims where the claim type is specified`() {
+    fun `VaultService equalTo should only return only the claims where the claim type is specified`() {
         val results = nodeA.services.vaultServiceFor<CordaClaim<String>>().filter {
             stateStatus(Vault.StateStatus.ALL)
             expression(CordaClaimSchema.CordaClaimEntity::property equalTo "greeting")
@@ -64,7 +64,7 @@ class FindClaimsFlowValueTypeTests : FlowTest() {
     }
 
     @Test
-    fun `FindClaimsFlow should the correct claim where the claim value type is String`() {
+    fun `VaultService equalTo should the correct claim where the claim value type is String`() {
         val results = nodeA.services.vaultServiceFor<CordaClaim<*>>().filter {
             stateStatus(Vault.StateStatus.ALL)
             expression(CordaClaimSchema.CordaClaimEntity::property equalTo "greeting")
@@ -77,7 +77,7 @@ class FindClaimsFlowValueTypeTests : FlowTest() {
     }
 
     @Test
-    fun `FindClaimsFlow should the correct claim where the claim type is GreetingClaim`() {
+    fun `VaultService equalTo should the correct claim where the claim type is GreetingClaim`() {
         val results = nodeA.services.vaultServiceFor<GreetingClaim>().filter {
             stateStatus(Vault.StateStatus.ALL)
             expression(CordaClaimSchema.CordaClaimEntity::property equalTo "greeting")

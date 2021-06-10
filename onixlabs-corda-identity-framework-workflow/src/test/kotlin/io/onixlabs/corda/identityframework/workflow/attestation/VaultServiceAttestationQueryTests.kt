@@ -28,7 +28,7 @@ import net.corda.core.node.services.Vault
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
-class FindAttestationFlowTests : FlowTest() {
+class VaultServiceAttestationQueryTests : FlowTest() {
 
     private lateinit var claim: StateAndRef<CordaClaim<String>>
     private lateinit var attestation: StateAndRef<Attestation<CordaClaim<String>>>
@@ -53,7 +53,7 @@ class FindAttestationFlowTests : FlowTest() {
     }
 
     @Test
-    fun `FindAttestationFlow should find the expected claim by linear ID`() {
+    fun `VaultService should find the expected claim by linear ID`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
@@ -65,7 +65,7 @@ class FindAttestationFlowTests : FlowTest() {
     }
 
     @Test
-    fun `FindAttestationFlow should find the expected claim by external ID`() {
+    fun `VaultService isNull should find the expected claim by external ID`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
@@ -77,7 +77,7 @@ class FindAttestationFlowTests : FlowTest() {
     }
 
     @Test
-    fun `FindAttestationFlow should find the expected claim by attestor`() {
+    fun `VaultService equalTo should find the expected claim by attestor`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
@@ -89,7 +89,7 @@ class FindAttestationFlowTests : FlowTest() {
     }
 
     @Test
-    fun `FindAttestationFlow should find the expected claim by pointerStateRef`() {
+    fun `VaultService equalTo should find the expected claim by pointerStateRef`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
@@ -101,7 +101,7 @@ class FindAttestationFlowTests : FlowTest() {
     }
 
     @Test
-    fun `FindAttestationFlow should find the expected claim by pointerStateLinearId`() {
+    fun `VaultService equalTo should find the expected claim by pointerStateLinearId`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
@@ -113,7 +113,7 @@ class FindAttestationFlowTests : FlowTest() {
     }
 
     @Test
-    fun `FindAttestationFlow should find the expected claim by pointerHash`() {
+    fun `VaultService equalTo should find the expected claim by pointerHash`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
@@ -125,7 +125,7 @@ class FindAttestationFlowTests : FlowTest() {
     }
 
     @Test
-    fun `FindAttestationFlow should find the expected claim by status`() {
+    fun `VaultService equalTo should find the expected claim by status`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
@@ -137,7 +137,7 @@ class FindAttestationFlowTests : FlowTest() {
     }
 
     @Test
-    fun `FindAttestationFlow should find the expected claim by previousStateRef`() {
+    fun `VaultService equalTo should find the expected claim by previousStateRef`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
@@ -149,7 +149,7 @@ class FindAttestationFlowTests : FlowTest() {
     }
 
     @Test
-    fun `FindAttestationFlow should find the expected claim by hash`() {
+    fun `VaultService equalTo should find the expected claim by hash`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
