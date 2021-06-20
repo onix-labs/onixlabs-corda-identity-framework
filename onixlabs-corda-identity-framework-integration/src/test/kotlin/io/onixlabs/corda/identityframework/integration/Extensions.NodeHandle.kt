@@ -16,7 +16,20 @@
 
 package io.onixlabs.corda.identityframework.integration
 
+import net.corda.core.crypto.SecureHash
 import net.corda.testing.driver.NodeHandle
 
 val NodeHandle.claimService: ClaimService get() = ClaimService(rpc)
 val NodeHandle.attestationService: AttestationService get() = AttestationService(rpc)
+
+/**
+ * Sometimes, integration tests cause race conditions, whereby a vault query begins executing before the database
+ * has persisted new states, thus causing the tests to fail. This function, albeit hacky ensures that a transaction
+ * has been recorded before performing vault queries, thus reducing the likeliness of a test failure due to a race
+ * condition.
+ */
+fun NodeHandle.waitForTransaction(id: SecureHash, millisecondsToSleep: Long = 100) {
+    while (id !in rpc.stateMachineRecordedTransactionMappingSnapshot().map { it.transactionId }) {
+        Thread.sleep(millisecondsToSleep)
+    }
+}

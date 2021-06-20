@@ -68,13 +68,14 @@ class AttestationIntegrationTests : IntegrationTest() {
         } ?: fail("Failed to find amended attestation.")
 
         // Publish the amended attestation
-        nodeA.attestationService.publishAttestation(
+        val tx = nodeA.attestationService.publishAttestation(
             attestation = amendedAttestation,
             observers = setOf(partyB)
         ).returnValue.getOrThrow()
 
         // Find the published attestation
         listOf(nodeA, nodeB, nodeC).forEach {
+            it.waitForTransaction(tx.id)
             it.rpc.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
                 expression(AttestationSchema.AttestationEntity::pointerStateRef equalTo issuedClaim.ref.toString())
             } ?: fail("Failed to find published attestation.")

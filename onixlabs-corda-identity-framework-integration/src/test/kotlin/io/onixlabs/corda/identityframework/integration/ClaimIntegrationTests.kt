@@ -53,13 +53,14 @@ class ClaimIntegrationTests : IntegrationTest() {
         } ?: fail("Failed to find amended claim.")
 
         // Publish the amended claim
-        nodeA.claimService.publishClaim(
+        val tx = nodeA.claimService.publishClaim(
             claim = amendedClaim,
             observers = setOf(partyB, partyC)
         ).returnValue.getOrThrow()
 
         // Find the published claim
         listOf(nodeA, nodeB, nodeC).forEach {
+            it.waitForTransaction(tx.id)
             it.rpc.vaultServiceFor<CordaClaim<String>>().singleOrNull {
                 linearIds(ID)
             } ?: fail("Failed to find sent claim.")
