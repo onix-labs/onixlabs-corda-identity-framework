@@ -1,11 +1,11 @@
-/**
- * Copyright 2020 Matthew Layton
+/*
+ * Copyright 2020-2021 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,7 +27,7 @@ class AttestationContractIssueCommandTests : ContractTest() {
         services.ledger {
             transaction {
                 val issuedClaim1 = issue(CLAIM_1)
-                val attestation1 = issuedClaim1.accept(IDENTITY_C.party)
+                val attestation1 = issuedClaim1.acceptLinearState(IDENTITY_C.party)
                 output(AttestationContract.ID, attestation1)
                 fails()
                 command(keysOf(IDENTITY_C), AttestationContract.Issue)
@@ -41,7 +41,7 @@ class AttestationContractIssueCommandTests : ContractTest() {
         services.ledger {
             transaction {
                 val issuedClaim1 = issue(CLAIM_1)
-                val attestation1 = issuedClaim1.accept(IDENTITY_C.party)
+                val attestation1 = issuedClaim1.acceptLinearState(IDENTITY_C.party)
                 input(AttestationContract.ID, attestation1)
                 command(keysOf(IDENTITY_C), AttestationContract.Issue)
                 failsWith(AttestationContract.Issue.CONTRACT_RULE_INPUTS)
@@ -54,7 +54,7 @@ class AttestationContractIssueCommandTests : ContractTest() {
         services.ledger {
             transaction {
                 val issuedClaim1 = issue(CLAIM_1)
-                val attestation1 = issuedClaim1.accept(IDENTITY_C.party)
+                val attestation1 = issuedClaim1.acceptLinearState(IDENTITY_C.party)
                 output(AttestationContract.ID, attestation1)
                 output(AttestationContract.ID, attestation1)
                 command(keysOf(IDENTITY_C), AttestationContract.Issue)
@@ -68,7 +68,7 @@ class AttestationContractIssueCommandTests : ContractTest() {
         services.ledger {
             transaction {
                 val issuedClaim1 = issue(CLAIM_1)
-                val attestation1 = issuedClaim1.accept(IDENTITY_C.party)
+                val attestation1 = issuedClaim1.acceptLinearState(IDENTITY_C.party)
                 output(AttestationContract.ID, attestation1)
                 command(keysOf(IDENTITY_A), AttestationContract.Issue)
                 failsWith(AttestationContract.Issue.CONTRACT_RULE_SIGNERS)

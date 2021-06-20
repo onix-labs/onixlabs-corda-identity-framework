@@ -1,11 +1,11 @@
-/**
- * Copyright 2020 Matthew Layton
+/*
+ * Copyright 2020-2021 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -55,8 +55,8 @@ open class Attestation<T : ContractState>(
 
     init {
         check(metadata.size <= 10) { "The number of metadata entries cannot exceed 10." }
-        check(metadata.keys.all { it.length <= 256 }) { "The maximum key length for a metadata entry is 256." }
-        check(metadata.values.all { it.length <= 1024 }) { "The maximum value length for a metadata entry is 1024." }
+        check(metadata.keys.all { it.length <= 256 }) { "The maximum length for a metadata key is 256." }
+        check(metadata.values.all { it.length <= 1024 }) { "The maximum length for a metadata value is 1024." }
     }
 
     override val hash: SecureHash
@@ -95,13 +95,14 @@ open class Attestation<T : ContractState>(
             externalId = linearId.externalId,
             attestor = attestor,
             pointerStateRef = pointer.stateRef.toString(),
-            pointerStateClass = pointer.stateClass.canonicalName,
-            pointerStateLinearId = pointer.stateLinearId?.id,
+            pointerStateType = pointer.stateType.canonicalName,
+            pointerStateLinearId = pointer.getLinearId()?.id,
+            pointerStateExternalId = pointer.getLinearId()?.externalId,
             pointerHash = pointer.hash.toString(),
             status = status,
             previousStateRef = previousStateRef?.toString(),
             hash = hash.toString(),
-            attestationClass = javaClass.canonicalName
+            attestationType = javaClass.canonicalName
         )
         else -> throw IllegalArgumentException("Unrecognised schema: $schema.")
     }
@@ -123,6 +124,7 @@ open class Attestation<T : ContractState>(
      */
     override fun equals(other: Any?): Boolean {
         return this === other || (other is Attestation<*>
+                && other.javaClass == javaClass
                 && other.attestor == attestor
                 && other.attestees == attestees
                 && other.pointer == pointer
@@ -156,10 +158,11 @@ open class Attestation<T : ContractState>(
      * @param other The attestation to compare with the current attestation.
      * @return Returns true if the immutable properties have not changed; otherwise, false.
      */
+    @Suppress("UNCHECKED_CAST")
     internal fun internalImmutableEquals(other: Attestation<*>): Boolean {
         return attestor == other.attestor
                 && linearId == other.linearId
-                && pointer.immutableEquals(other.pointer)
+                && pointer.immutableEquals((other as Attestation<T>).pointer)
                 && immutableEquals(other)
     }
 

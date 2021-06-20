@@ -1,11 +1,11 @@
-/**
- * Copyright 2020 Matthew Layton
+/*
+ * Copyright 2020-2021 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -44,11 +44,14 @@ object AttestationSchema {
         @Column(name = "pointer_state_ref", nullable = false)
         val pointerStateRef: String = "",
 
-        @Column(name = "pointer_state_class", nullable = false)
-        val pointerStateClass: String = "",
+        @Column(name = "pointer_state_type", nullable = false)
+        val pointerStateType: String = "",
 
         @Column(name = "pointer_state_linear_id", nullable = true)
         val pointerStateLinearId: UUID? = null,
+
+        @Column(name = "pointer_state_external_id", nullable = true)
+        val pointerStateExternalId: String? = null,
 
         @Column(name = "pointer_hash", nullable = false)
         val pointerHash: String = "",
@@ -63,7 +66,7 @@ object AttestationSchema {
         @Column(name = "hash", nullable = false, unique = true)
         val hash: String = "",
 
-        @Column(name = "attestation_class", nullable = false)
-        val attestationClass: String = ""
+        @Column(name = "attestation_type", nullable = false)
+        val attestationType: String = ""
     ) : PersistentState()
 }

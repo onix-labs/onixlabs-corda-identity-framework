@@ -1,11 +1,11 @@
-/**
- * Copyright 2020 Matthew Layton
+/*
+ * Copyright 2020-2021 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -52,8 +52,8 @@ object CordaClaimSchema {
         @Column(name = "value", nullable = false, columnDefinition = "clob")
         val value: String = "",
 
-        @Column(name = "value_class", nullable = false)
-        val valueClass: String = "",
+        @Column(name = "value_type", nullable = false)
+        val valueType: String = "",
 
         @Column(name = "previous_state_ref", nullable = true)
         val previousStateRef: String? = null,
@@ -64,7 +64,7 @@ object CordaClaimSchema {
         @Column(name = "hash", nullable = false, unique = true)
         val hash: String = "",
 
-        @Column(name = "claim_class", nullable = false)
-        val claimClass: String = ""
+        @Column(name = "claim_type", nullable = false)
+        val claimType: String = ""
     ) : PersistentState()
 }
