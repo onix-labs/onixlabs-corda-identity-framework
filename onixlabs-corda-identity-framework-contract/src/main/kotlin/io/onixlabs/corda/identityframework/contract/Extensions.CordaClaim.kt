@@ -26,8 +26,11 @@ import net.corda.core.contracts.StateAndRef
  * @param value The amended claim value.
  * @return Returns an amended claim.
  */
-inline fun <T : Any, reified U : CordaClaim<T>> StateAndRef<U>.amend(value: T): U {
-    return U::class.java.cast(state.data.amend(ref, value))
+inline fun <T : Any, reified U : CordaClaim<T>> StateAndRef<U>.amend(value: T): U = try {
+    U::class.java.cast(state.data.amend(ref, value))
+} catch (ex: ClassCastException) {
+    val message = "${ex.message}. Did you forget to override ${U::class.java.simpleName}.amend?"
+    throw IllegalStateException(message, ex)
 }
 
 /**
