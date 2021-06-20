@@ -20,7 +20,7 @@
             <column name="pointer_state_ref" type="nvarchar(128)">
                 <constraints nullable="false"/>
             </column>
-            <column name="pointer_state_class" type="nvarchar(1024)">
+            <column name="pointer_state_type" type="nvarchar(1024)">
                 <constraints nullable="false"/>
             </column>
             <column name="pointer_state_linear_id" type="uuid"/>
@@ -34,7 +34,7 @@
             <column name="hash" type="nvarchar(64)">
                 <constraints nullable="false" unique="true"/>
             </column>
-            <column name="attestation_class" type="nvarchar(1024)">
+            <column name="attestation_type" type="nvarchar(1024)">
                 <constraints nullable="false"/>
             </column>
         </createTable>

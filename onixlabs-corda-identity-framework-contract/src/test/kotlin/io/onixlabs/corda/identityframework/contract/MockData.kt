@@ -1,11 +1,11 @@
-/**
- * Copyright 2020 Matthew Layton
+/*
+ * Copyright 2020-2021 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,6 +32,8 @@ val NOTARY = TestIdentity(DUMMY_NOTARY_NAME)
 
 val CLAIM_1 = CordaClaim(IDENTITY_A.party, IDENTITY_B.party, "example", "Hello, World!")
 val CLAIM_2 = CordaClaim(IDENTITY_B.party, IDENTITY_B.party, "example", 123)
+
+val CLAIM_OF_TYPE_ANY = CordaClaim(IDENTITY_A.party, "example", Any())
 
 val EMPTY_REF = StateRef(SecureHash.zeroHash, 0)
 

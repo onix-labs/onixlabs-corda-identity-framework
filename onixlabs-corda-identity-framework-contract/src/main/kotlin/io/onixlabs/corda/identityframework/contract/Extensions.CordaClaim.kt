@@ -1,11 +1,11 @@
-/**
- * Copyright 2020 Matthew Layton
+/*
+ * Copyright 2020-2021 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *    http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -26,8 +26,11 @@ import net.corda.core.contracts.StateAndRef
  * @param value The amended claim value.
  * @return Returns an amended claim.
  */
-inline fun <T : Any, reified U : CordaClaim<T>> StateAndRef<U>.amend(value: T): U {
-    return U::class.java.cast(state.data.amend(ref, value))
+inline fun <T : Any, reified U : CordaClaim<T>> StateAndRef<U>.amend(value: T): U = try {
+    U::class.java.cast(state.data.amend(ref, value))
+} catch (ex: ClassCastException) {
+    val message = "${ex.message}. Did you forget to override ${U::class.java.simpleName}.amend?"
+    throw IllegalStateException(message, ex)
 }
 
 /**
