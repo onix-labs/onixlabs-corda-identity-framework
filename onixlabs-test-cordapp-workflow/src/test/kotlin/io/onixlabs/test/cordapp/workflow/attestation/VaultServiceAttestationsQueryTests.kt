@@ -46,17 +46,17 @@ class VaultServiceAttestationsQueryTests : FlowTest() {
             }
             .run(nodeC) {
                 claim = it.tx.outRefsOfType<GreetingClaim>().single()
-                val attestation = claim.acceptLinearState(partyC, linearId = UniqueIdentifier("attestation"))
+                val attestation = claim.createAcceptedStaticAttestation(partyC, linearId = UniqueIdentifier("attestation"))
                 IssueAttestationFlow.Initiator(attestation)
             }
             .run(nodeC) {
                 val oldAttestation = it.tx.outRefsOfType<Attestation<GreetingClaim>>().single()
-                val newAttestation = oldAttestation.rejectState()
+                val newAttestation = oldAttestation.reject()
                 AmendAttestationFlow.Initiator(oldAttestation, newAttestation)
             }
             .run(nodeC) {
                 val oldAttestation = it.tx.outRefsOfType<Attestation<GreetingClaim>>().single()
-                val newAttestation = oldAttestation.acceptState()
+                val newAttestation = oldAttestation.accept()
                 AmendAttestationFlow.Initiator(oldAttestation, newAttestation)
             }
             .finally { attestation = it.tx.outRefsOfType<Attestation<GreetingClaim>>().single() }
@@ -99,23 +99,11 @@ class VaultServiceAttestationsQueryTests : FlowTest() {
     }
 
     @Test
-    fun `VaultService equalTo should find the expected claim by pointerStateRef`() {
+    fun `VaultService equalTo should find the expected claim by pointer`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<Attestation<*>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                expression(AttestationEntity::pointerStateRef equalTo attestation.state.data.pointer.stateRef.toString())
-            }
-
-            assertEquals(3, results.count())
-        }
-    }
-
-    @Test
-    fun `VaultService equalTo should find the expected claim by pointerStateLinearId`() {
-        listOf(nodeA, nodeB, nodeC).forEach {
-            val results = it.services.vaultServiceFor<Attestation<*>>().filter {
-                stateStatus(Vault.StateStatus.ALL)
-                expression(AttestationEntity::pointerStateLinearId equalTo claim.state.data.linearId.id)
+                expression(AttestationEntity::pointer equalTo attestation.state.data.pointer.statePointer.toString())
             }
 
             assertEquals(3, results.count())

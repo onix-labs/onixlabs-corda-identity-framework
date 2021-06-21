@@ -36,12 +36,12 @@ class AmendAttestationFlowTests : FlowTest() {
             }
             .run(nodeC) {
                 val issuedClaim = it.tx.outRefsOfType<CordaClaim<String>>().single()
-                val attestation = issuedClaim.acceptLinearState(partyC)
+                val attestation = issuedClaim.createAcceptedLinearAttestation(partyC)
                 IssueAttestationFlow.Initiator(attestation)
             }
             .run(nodeC) {
                 val oldAttestation = it.tx.outRefsOfType<Attestation<CordaClaim<String>>>().single()
-                attestation = oldAttestation.rejectState()
+                attestation = oldAttestation.reject()
                 AmendAttestationFlow.Initiator(oldAttestation, attestation)
             }
             .finally { transaction = it }

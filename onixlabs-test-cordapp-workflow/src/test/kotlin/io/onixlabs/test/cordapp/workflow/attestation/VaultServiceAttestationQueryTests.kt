@@ -22,7 +22,7 @@ import io.onixlabs.corda.core.services.singleOrNull
 import io.onixlabs.corda.core.services.vaultServiceFor
 import io.onixlabs.corda.identityframework.contract.Attestation
 import io.onixlabs.corda.identityframework.contract.AttestationSchema
-import io.onixlabs.corda.identityframework.contract.acceptLinearState
+import io.onixlabs.corda.identityframework.contract.createAcceptedLinearAttestation
 import io.onixlabs.corda.identityframework.workflow.IssueAttestationFlow
 import io.onixlabs.corda.identityframework.workflow.IssueClaimFlow
 import io.onixlabs.test.cordapp.contract.GreetingClaim
@@ -45,7 +45,7 @@ class VaultServiceAttestationQueryTests : FlowTest() {
             }
             .run(nodeC) {
                 claim = it.tx.outRefsOfType<GreetingClaim>().single()
-                val attestation = claim.acceptLinearState(partyC)
+                val attestation = claim.createAcceptedLinearAttestation(partyC)
                 IssueAttestationFlow.Initiator(attestation)
             }
             .finally { attestation = it.tx.outRefsOfType<Attestation<GreetingClaim>>().single() }
@@ -85,7 +85,7 @@ class VaultServiceAttestationQueryTests : FlowTest() {
     }
 
     @Test
-    fun `VaultService equalTo should find the expected claim by pointer`() {
+    fun `VaultService equalTo should find the expected claim by pointer hash`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<*>>().singleOrNull {
                 expression(AttestationSchema.AttestationEntity::pointerHash equalTo attestation.state.data.pointer.hash.toString())
@@ -96,21 +96,10 @@ class VaultServiceAttestationQueryTests : FlowTest() {
     }
 
     @Test
-    fun `VaultService equalTo should find the expected claim by pointerStateRef`() {
+    fun `VaultService equalTo should find the expected claim by pointer`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<*>>().singleOrNull {
-                expression(AttestationSchema.AttestationEntity::pointerStateRef equalTo attestation.state.data.pointer.stateRef.toString())
-            }
-
-            assertEquals(attestation, result)
-        }
-    }
-
-    @Test
-    fun `VaultService equalTo should find the expected claim by pointerStateLinearId`() {
-        listOf(nodeA, nodeB, nodeC).forEach {
-            val result = it.services.vaultServiceFor<Attestation<*>>().singleOrNull {
-                expression(AttestationSchema.AttestationEntity::pointerStateLinearId equalTo GREETING_CLAIM.linearId.id)
+                expression(AttestationSchema.AttestationEntity::pointer equalTo attestation.state.data.pointer.statePointer.toString())
             }
 
             assertEquals(attestation, result)

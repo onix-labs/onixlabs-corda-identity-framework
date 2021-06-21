@@ -26,6 +26,7 @@ import net.corda.core.identity.AbstractParty
 import net.corda.core.schemas.MappedSchema
 import net.corda.core.schemas.PersistentState
 import net.corda.core.schemas.QueryableState
+import net.corda.core.serialization.serialize
 import java.util.*
 
 /**
@@ -94,10 +95,8 @@ open class Attestation<T : ContractState>(
             linearId = linearId.id,
             externalId = linearId.externalId,
             attestor = attestor,
-            pointerStateRef = pointer.stateRef.toString(),
+            pointer = pointer.statePointer.toString(),
             pointerStateType = pointer.stateType.canonicalName,
-            pointerStateLinearId = pointer.getLinearId()?.id,
-            pointerStateExternalId = pointer.getLinearId()?.externalId,
             pointerHash = pointer.hash.toString(),
             status = status,
             previousStateRef = previousStateRef?.toString(),
