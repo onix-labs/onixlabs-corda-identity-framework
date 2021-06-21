@@ -41,7 +41,7 @@ class AmendAttestationFlowTests : FlowTest() {
             }
             .run(nodeC) {
                 val oldAttestation = it.tx.outRefsOfType<Attestation<CordaClaim<String>>>().single()
-                attestation = oldAttestation.reject()
+                attestation = oldAttestation.rejectAttestation()
                 AmendAttestationFlow.Initiator(oldAttestation, attestation)
             }
             .finally { transaction = it }

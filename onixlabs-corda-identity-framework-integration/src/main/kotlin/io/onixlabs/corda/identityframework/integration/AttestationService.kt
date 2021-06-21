@@ -257,7 +257,7 @@ class AttestationService(rpc: CordaRPCOps) : RPCService(rpc) {
         metadata: Map<String, String> = emptyMap(),
         observers: Set<Party> = emptySet()
     ): FlowProgressHandle<SignedTransaction> {
-        val newAttestation = oldAttestation.amend(status, metadata = metadata)
+        val newAttestation = oldAttestation.amendAttestation(status, metadata = metadata)
         return amendAttestation(oldAttestation, newAttestation, observers)
     }
 
@@ -279,7 +279,7 @@ class AttestationService(rpc: CordaRPCOps) : RPCService(rpc) {
         observers: Set<Party> = emptySet(),
         clientId: String = UUID.randomUUID().toString()
     ): FlowHandleWithClientId<SignedTransaction> {
-        val newAttestation = oldAttestation.amend(status, metadata = metadata)
+        val newAttestation = oldAttestation.amendAttestation(status, metadata = metadata)
         return amendAttestation(oldAttestation, newAttestation, observers, clientId)
     }
 
@@ -302,7 +302,7 @@ class AttestationService(rpc: CordaRPCOps) : RPCService(rpc) {
         observers: Set<Party> = emptySet()
     ): FlowProgressHandle<SignedTransaction> {
         val pointer = state.toStaticAttestationPointer()
-        val newAttestation = oldAttestation.amend(status, pointer, metadata)
+        val newAttestation = oldAttestation.amendAttestation(status, pointer, metadata)
         return amendAttestation(oldAttestation, newAttestation, observers)
     }
 
@@ -325,7 +325,7 @@ class AttestationService(rpc: CordaRPCOps) : RPCService(rpc) {
         observers: Set<Party> = emptySet()
     ): FlowProgressHandle<SignedTransaction> {
         val pointer = state.toLinearAttestationPointer()
-        val newAttestation = oldAttestation.amend(status, pointer, metadata)
+        val newAttestation = oldAttestation.amendAttestation(status, pointer, metadata)
         return amendAttestation(oldAttestation, newAttestation, observers)
     }
 
@@ -350,7 +350,7 @@ class AttestationService(rpc: CordaRPCOps) : RPCService(rpc) {
         clientId: String = UUID.randomUUID().toString()
     ): FlowHandleWithClientId<SignedTransaction> {
         val pointer = state.toStaticAttestationPointer()
-        val newAttestation = oldAttestation.amend(status, pointer, metadata)
+        val newAttestation = oldAttestation.amendAttestation(status, pointer, metadata)
         return amendAttestation(oldAttestation, newAttestation, observers, clientId)
     }
 
@@ -375,7 +375,7 @@ class AttestationService(rpc: CordaRPCOps) : RPCService(rpc) {
         clientId: String = UUID.randomUUID().toString()
     ): FlowHandleWithClientId<SignedTransaction> {
         val pointer = state.toLinearAttestationPointer()
-        val newAttestation = oldAttestation.amend(status, pointer, metadata)
+        val newAttestation = oldAttestation.amendAttestation(status, pointer, metadata)
         return amendAttestation(oldAttestation, newAttestation, observers, clientId)
     }
 

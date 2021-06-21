@@ -51,12 +51,12 @@ class VaultServiceAttestationsQueryTests : FlowTest() {
             }
             .run(nodeC) {
                 val oldAttestation = it.tx.outRefsOfType<Attestation<GreetingClaim>>().single()
-                val newAttestation = oldAttestation.reject()
+                val newAttestation = oldAttestation.rejectAttestation()
                 AmendAttestationFlow.Initiator(oldAttestation, newAttestation)
             }
             .run(nodeC) {
                 val oldAttestation = it.tx.outRefsOfType<Attestation<GreetingClaim>>().single()
-                val newAttestation = oldAttestation.accept()
+                val newAttestation = oldAttestation.acceptAttestation()
                 AmendAttestationFlow.Initiator(oldAttestation, newAttestation)
             }
             .finally { attestation = it.tx.outRefsOfType<Attestation<GreetingClaim>>().single() }

@@ -28,7 +28,7 @@ class AttestationContractAmendCommandTests : ContractTest() {
             transaction {
                 val issuedClaim1 = issue(CLAIM_1)
                 val issuedAttestation1 = issue(issuedClaim1.createAcceptedLinearAttestation(IDENTITY_C.party))
-                val amendedAttestation1 = issuedAttestation1.reject()
+                val amendedAttestation1 = issuedAttestation1.rejectAttestation()
                 input(issuedAttestation1.ref)
                 output(AttestationContract.ID, amendedAttestation1)
                 fails()
@@ -45,7 +45,7 @@ class AttestationContractAmendCommandTests : ContractTest() {
                 val issuedClaim1 = issue(CLAIM_1)
                 val issuedAttestation1 = issue(issuedClaim1.createAcceptedLinearAttestation(IDENTITY_C.party))
                 val issuedAttestation2 = issue(issuedClaim1.createAcceptedLinearAttestation(IDENTITY_C.party))
-                val amendedAttestation1 = issuedAttestation1.reject()
+                val amendedAttestation1 = issuedAttestation1.rejectAttestation()
                 input(issuedAttestation1.ref)
                 input(issuedAttestation2.ref)
                 output(AttestationContract.ID, amendedAttestation1)
@@ -61,7 +61,7 @@ class AttestationContractAmendCommandTests : ContractTest() {
             transaction {
                 val issuedClaim1 = issue(CLAIM_1)
                 val issuedAttestation1 = issue(issuedClaim1.createAcceptedLinearAttestation(IDENTITY_C.party))
-                val amendedAttestation1 = issuedAttestation1.reject()
+                val amendedAttestation1 = issuedAttestation1.rejectAttestation()
                 input(issuedAttestation1.ref)
                 output(AttestationContract.ID, amendedAttestation1)
                 output(AttestationContract.ID, amendedAttestation1)
@@ -122,7 +122,7 @@ class AttestationContractAmendCommandTests : ContractTest() {
             transaction {
                 val issuedClaim1 = issue(CLAIM_1)
                 val issuedAttestation1 = issue(issuedClaim1.createAcceptedLinearAttestation(IDENTITY_C.party))
-                val amendedAttestation1 = issuedAttestation1.reject()
+                val amendedAttestation1 = issuedAttestation1.rejectAttestation()
                 input(issuedAttestation1.ref)
                 output(AttestationContract.ID, amendedAttestation1)
                 command(keysOf(IDENTITY_B), AttestationContract.Amend)

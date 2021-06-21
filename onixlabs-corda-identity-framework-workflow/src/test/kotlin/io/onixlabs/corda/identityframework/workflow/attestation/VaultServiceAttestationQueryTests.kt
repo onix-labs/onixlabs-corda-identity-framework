@@ -46,7 +46,7 @@ class VaultServiceAttestationQueryTests : FlowTest() {
             }
             .run(nodeC) {
                 val oldAttestation = it.tx.outRefsOfType<Attestation<CordaClaim<String>>>().single()
-                val newAttestation = oldAttestation.reject()
+                val newAttestation = oldAttestation.rejectAttestation()
                 AmendAttestationFlow.Initiator(oldAttestation, newAttestation)
             }
             .finally { attestation = it.tx.outRefsOfType<Attestation<CordaClaim<String>>>().single() }
