@@ -16,10 +16,7 @@
 
 package io.onixlabs.test.cordapp.contract
 
-import io.onixlabs.corda.identityframework.contract.Attestation
-import io.onixlabs.corda.identityframework.contract.AttestationPointer
-import io.onixlabs.corda.identityframework.contract.AttestationStatus
-import io.onixlabs.corda.identityframework.contract.LinearAttestationPointer
+import io.onixlabs.corda.identityframework.contract.*
 import net.corda.core.contracts.BelongsToContract
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.contracts.StateRef
@@ -46,7 +43,7 @@ class GreetingAttestation private constructor(
     ) : this(
         attestor,
         greeting.state.data.participants.toSet(),
-        LinearAttestationPointer(greeting),
+        StaticAttestationPointer(greeting),
         status,
         metadata,
         linearId,

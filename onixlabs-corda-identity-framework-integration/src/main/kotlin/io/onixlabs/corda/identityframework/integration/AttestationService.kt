@@ -108,7 +108,7 @@ class AttestationService(rpc: CordaRPCOps) : RPCService(rpc) {
         notary: Party? = null,
         observers: Set<Party> = emptySet()
     ): FlowProgressHandle<SignedTransaction> {
-        val attestation = state.attestContractState(attestor, status, metadata, linearId)
+        val attestation = state.createStaticAttestation(attestor, status, metadata, linearId)
         return issueAttestation(attestation, notary, observers)
     }
 
@@ -134,7 +134,7 @@ class AttestationService(rpc: CordaRPCOps) : RPCService(rpc) {
         notary: Party? = null,
         observers: Set<Party> = emptySet()
     ): FlowProgressHandle<SignedTransaction> {
-        val attestation = state.attestLinearState(attestor, status, metadata, linearId)
+        val attestation = state.createLinearAttestation(attestor, status, metadata, linearId)
         return issueAttestation(attestation, notary, observers)
     }
 
@@ -162,7 +162,7 @@ class AttestationService(rpc: CordaRPCOps) : RPCService(rpc) {
         observers: Set<Party> = emptySet(),
         clientId: String = UUID.randomUUID().toString()
     ): FlowHandleWithClientId<SignedTransaction> {
-        val attestation = state.attestContractState(attestor, status, metadata, linearId)
+        val attestation = state.createStaticAttestation(attestor, status, metadata, linearId)
         return issueAttestation(attestation, notary, observers, clientId)
     }
 
@@ -190,7 +190,7 @@ class AttestationService(rpc: CordaRPCOps) : RPCService(rpc) {
         observers: Set<Party> = emptySet(),
         clientId: String = UUID.randomUUID().toString()
     ): FlowHandleWithClientId<SignedTransaction> {
-        val attestation = state.attestLinearState(attestor, status, metadata, linearId)
+        val attestation = state.createLinearAttestation(attestor, status, metadata, linearId)
         return issueAttestation(attestation, notary, observers, clientId)
     }
 
@@ -366,7 +366,7 @@ class AttestationService(rpc: CordaRPCOps) : RPCService(rpc) {
      * @param clientId The client ID of the started flow.
      * @return Returns a flow process handle.
      */
-    fun <T : LinearState> amendAttestation(
+    fun <T : LinearState> amendLinearAttestation(
         oldAttestation: StateAndRef<Attestation<T>>,
         state: StateAndRef<T>,
         status: AttestationStatus = AttestationStatus.REJECTED,

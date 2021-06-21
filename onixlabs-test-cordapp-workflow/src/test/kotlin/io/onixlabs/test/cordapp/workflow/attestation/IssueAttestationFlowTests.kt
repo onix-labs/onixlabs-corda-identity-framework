@@ -17,7 +17,7 @@
 package io.onixlabs.test.cordapp.workflow.attestation
 
 import io.onixlabs.corda.identityframework.contract.Attestation
-import io.onixlabs.corda.identityframework.contract.acceptLinearState
+import io.onixlabs.corda.identityframework.contract.createAcceptedLinearAttestation
 import io.onixlabs.corda.identityframework.workflow.IssueAttestationFlow
 import io.onixlabs.corda.identityframework.workflow.IssueClaimFlow
 import io.onixlabs.test.cordapp.contract.GreetingClaim
@@ -41,7 +41,7 @@ class IssueAttestationFlowTests : FlowTest() {
             }
             .run(nodeC) {
                 val issuedClaim = it.tx.outRefsOfType<GreetingClaim>().single()
-                attestation = issuedClaim.acceptLinearState(partyC)
+                attestation = issuedClaim.createAcceptedLinearAttestation(partyC)
                 IssueAttestationFlow.Initiator(attestation)
             }
             .finally { transaction = it }

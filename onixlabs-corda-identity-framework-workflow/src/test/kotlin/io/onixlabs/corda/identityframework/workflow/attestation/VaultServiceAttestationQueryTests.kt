@@ -41,12 +41,12 @@ class VaultServiceAttestationQueryTests : FlowTest() {
             }
             .run(nodeC) {
                 claim = it.tx.outRefsOfType<CordaClaim<String>>().single()
-                val attestation = claim.acceptLinearState(partyC)
+                val attestation = claim.createAcceptedStaticAttestation(partyC)
                 IssueAttestationFlow.Initiator(attestation)
             }
             .run(nodeC) {
                 val oldAttestation = it.tx.outRefsOfType<Attestation<CordaClaim<String>>>().single()
-                val newAttestation = oldAttestation.rejectState()
+                val newAttestation = oldAttestation.rejectAttestation()
                 AmendAttestationFlow.Initiator(oldAttestation, newAttestation)
             }
             .finally { attestation = it.tx.outRefsOfType<Attestation<CordaClaim<String>>>().single() }
@@ -89,23 +89,11 @@ class VaultServiceAttestationQueryTests : FlowTest() {
     }
 
     @Test
-    fun `VaultService equalTo should find the expected claim by pointerStateRef`() {
+    fun `VaultService equalTo should find the expected claim by pointer`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                expression(AttestationEntity::pointerStateRef equalTo claim.ref.toString())
-            }
-
-            assertEquals(attestation, result)
-        }
-    }
-
-    @Test
-    fun `VaultService equalTo should find the expected claim by pointerStateLinearId`() {
-        listOf(nodeA, nodeB, nodeC).forEach {
-            val result = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
-                stateStatus(Vault.StateStatus.UNCONSUMED)
-                expression(AttestationEntity::pointerStateLinearId equalTo claim.state.data.linearId.id)
+                expression(AttestationEntity::pointer equalTo claim.ref.toString())
             }
 
             assertEquals(attestation, result)

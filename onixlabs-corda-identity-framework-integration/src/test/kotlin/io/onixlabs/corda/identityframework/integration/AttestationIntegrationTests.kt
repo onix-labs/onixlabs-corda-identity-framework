@@ -46,17 +46,17 @@ class AttestationIntegrationTests : IntegrationTest() {
         } ?: fail("Failed to find issued claim.")
 
         // Issue an attestation
-        nodeC.attestationService.issueLinearAttestation(
+        nodeC.attestationService.issueStaticAttestation(
             state = issuedClaim
         ).returnValue.getOrThrow()
 
         // Find the issued attestation
         val issuedAttestation = nodeC.rpc.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
-            expression(AttestationSchema.AttestationEntity::pointerStateRef equalTo issuedClaim.ref.toString())
+            expression(AttestationSchema.AttestationEntity::pointer equalTo issuedClaim.ref.toString())
         } ?: fail("Failed to find issued attestation.")
 
         // Amend the issued attestation
-        nodeC.attestationService.amendAttestation(
+        nodeC.attestationService.amendStaticAttestation(
             oldAttestation = issuedAttestation,
             state = issuedClaim,
             status = AttestationStatus.ACCEPTED
@@ -64,7 +64,7 @@ class AttestationIntegrationTests : IntegrationTest() {
 
         // Find the amended attestation
         val amendedAttestation = nodeC.rpc.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
-            expression(AttestationSchema.AttestationEntity::pointerStateRef equalTo issuedClaim.ref.toString())
+            expression(AttestationSchema.AttestationEntity::pointer equalTo issuedClaim.ref.toString())
         } ?: fail("Failed to find amended attestation.")
 
         // Publish the amended attestation
@@ -77,7 +77,7 @@ class AttestationIntegrationTests : IntegrationTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             it.waitForTransaction(tx.id)
             it.rpc.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
-                expression(AttestationSchema.AttestationEntity::pointerStateRef equalTo issuedClaim.ref.toString())
+                expression(AttestationSchema.AttestationEntity::pointer equalTo issuedClaim.ref.toString())
             } ?: fail("Failed to find published attestation.")
         }
 
