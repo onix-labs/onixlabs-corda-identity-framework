@@ -18,7 +18,6 @@ package io.onixlabs.corda.identityframework.workflow.attestation
 
 import io.onixlabs.corda.core.services.equalTo
 import io.onixlabs.corda.core.services.filter
-import io.onixlabs.corda.core.services.vaultQuery
 import io.onixlabs.corda.core.services.vaultServiceFor
 import io.onixlabs.corda.identityframework.contract.*
 import io.onixlabs.corda.identityframework.contract.AttestationSchema.AttestationEntity
@@ -26,10 +25,6 @@ import io.onixlabs.corda.identityframework.workflow.*
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.contracts.UniqueIdentifier
 import net.corda.core.node.services.Vault
-import net.corda.core.node.services.queryBy
-import net.corda.core.node.services.vault.Builder.equal
-import net.corda.core.node.services.vault.QueryCriteria
-import net.corda.core.node.services.vault.builder
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -46,17 +41,17 @@ class VaultServiceAttestationsQueryTests : FlowTest() {
             }
             .run(nodeC) {
                 claim = it.tx.outRefsOfType<CordaClaim<String>>().single()
-                val attestation = claim.acceptLinearState(partyC, linearId = UniqueIdentifier("attestation"))
+                val attestation = claim.createAcceptedStaticAttestation(partyC, linearId = UniqueIdentifier("attestation"))
                 IssueAttestationFlow.Initiator(attestation)
             }
             .run(nodeC) {
                 val oldAttestation = it.tx.outRefsOfType<Attestation<CordaClaim<String>>>().single()
-                val newAttestation = oldAttestation.rejectState()
+                val newAttestation = oldAttestation.rejectAttestation()
                 AmendAttestationFlow.Initiator(oldAttestation, newAttestation)
             }
             .run(nodeC) {
                 val oldAttestation = it.tx.outRefsOfType<Attestation<CordaClaim<String>>>().single()
-                val newAttestation = oldAttestation.acceptState()
+                val newAttestation = oldAttestation.acceptAttestation()
                 AmendAttestationFlow.Initiator(oldAttestation, newAttestation)
             }
             .finally { attestation = it.tx.outRefsOfType<Attestation<CordaClaim<String>>>().single() }
@@ -99,23 +94,11 @@ class VaultServiceAttestationsQueryTests : FlowTest() {
     }
 
     @Test
-    fun `VaultService equalTo should find the expected claim by pointerStateRef`() {
+    fun `VaultService equalTo should find the expected claim by pointer`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                expression(AttestationEntity::pointerStateRef equalTo claim.ref.toString())
-            }
-
-            assertEquals(3, results.count())
-        }
-    }
-
-    @Test
-    fun `VaultService equalTo should find the expected claim by pointerStateLinearId`() {
-        listOf(nodeA, nodeB, nodeC).forEach {
-            val results = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().filter {
-                stateStatus(Vault.StateStatus.ALL)
-                expression(AttestationEntity::pointerStateLinearId equalTo claim.state.data.linearId.id)
+                expression(AttestationEntity::pointer equalTo claim.ref.toString())
             }
 
             assertEquals(3, results.count())

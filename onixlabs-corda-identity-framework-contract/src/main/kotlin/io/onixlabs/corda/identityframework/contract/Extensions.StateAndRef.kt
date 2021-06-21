@@ -52,7 +52,7 @@ fun <T : LinearState> StateAndRef<T>.toLinearAttestationPointer(): LinearAttesta
  * @param linearId The unique identifier of the attestation.
  * @return Returns an attestation for the specified [StateAndRef].
  */
-fun <T : ContractState> StateAndRef<T>.attestContractState(
+fun <T : ContractState> StateAndRef<T>.createStaticAttestation(
     attestor: AbstractParty,
     status: AttestationStatus,
     metadata: Map<String, String> = emptyMap(),
@@ -76,11 +76,11 @@ fun <T : ContractState> StateAndRef<T>.attestContractState(
  * @param linearId The unique identifier of the attestation.
  * @return Returns an accepted attestation for the specified [StateAndRef].
  */
-fun <T : ContractState> StateAndRef<T>.acceptContractState(
+fun <T : ContractState> StateAndRef<T>.createAcceptedStaticAttestation(
     attestor: AbstractParty,
     metadata: Map<String, String> = emptyMap(),
     linearId: UniqueIdentifier = UniqueIdentifier()
-): Attestation<T> = attestContractState(attestor, AttestationStatus.ACCEPTED, metadata, linearId)
+): Attestation<T> = createStaticAttestation(attestor, AttestationStatus.ACCEPTED, metadata, linearId)
 
 /**
  * Creates a rejected attestation from the specified [StateAndRef].
@@ -91,11 +91,11 @@ fun <T : ContractState> StateAndRef<T>.acceptContractState(
  * @param linearId The unique identifier of the attestation.
  * @return Returns an rejected attestation for the specified [StateAndRef].
  */
-fun <T : ContractState> StateAndRef<T>.rejectContractState(
+fun <T : ContractState> StateAndRef<T>.createRejectedStaticAttestation(
     attestor: AbstractParty,
     metadata: Map<String, String> = emptyMap(),
     linearId: UniqueIdentifier = UniqueIdentifier()
-): Attestation<T> = attestContractState(attestor, AttestationStatus.REJECTED, metadata, linearId)
+): Attestation<T> = createStaticAttestation(attestor, AttestationStatus.REJECTED, metadata, linearId)
 
 /**
  * Creates an attestation from the specified [StateAndRef].
@@ -107,7 +107,7 @@ fun <T : ContractState> StateAndRef<T>.rejectContractState(
  * @param linearId The unique identifier of the attestation.
  * @return Returns an attestation for the specified [StateAndRef].
  */
-fun <T : LinearState> StateAndRef<T>.attestLinearState(
+fun <T : LinearState> StateAndRef<T>.createLinearAttestation(
     attestor: AbstractParty,
     status: AttestationStatus,
     metadata: Map<String, String> = emptyMap(),
@@ -131,11 +131,11 @@ fun <T : LinearState> StateAndRef<T>.attestLinearState(
  * @param linearId The unique identifier of the attestation.
  * @return Returns an accepted attestation for the specified [StateAndRef].
  */
-fun <T : LinearState> StateAndRef<T>.acceptLinearState(
+fun <T : LinearState> StateAndRef<T>.createAcceptedLinearAttestation(
     attestor: AbstractParty,
     metadata: Map<String, String> = emptyMap(),
     linearId: UniqueIdentifier = UniqueIdentifier()
-): Attestation<T> = attestLinearState(attestor, AttestationStatus.ACCEPTED, metadata, linearId)
+): Attestation<T> = createLinearAttestation(attestor, AttestationStatus.ACCEPTED, metadata, linearId)
 
 /**
  * Creates a rejected attestation from the specified [StateAndRef].
@@ -146,8 +146,8 @@ fun <T : LinearState> StateAndRef<T>.acceptLinearState(
  * @param linearId The unique identifier of the attestation.
  * @return Returns an rejected attestation for the specified [StateAndRef].
  */
-fun <T : LinearState> StateAndRef<T>.rejectLinearState(
+fun <T : LinearState> StateAndRef<T>.createRejectedLinearAttestation(
     attestor: AbstractParty,
     metadata: Map<String, String> = emptyMap(),
     linearId: UniqueIdentifier = UniqueIdentifier()
-): Attestation<T> = attestLinearState(attestor, AttestationStatus.REJECTED, metadata, linearId)
+): Attestation<T> = createLinearAttestation(attestor, AttestationStatus.REJECTED, metadata, linearId)

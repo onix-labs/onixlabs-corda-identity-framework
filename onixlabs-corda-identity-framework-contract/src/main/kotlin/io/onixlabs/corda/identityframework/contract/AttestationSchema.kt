@@ -41,17 +41,11 @@ object AttestationSchema {
         @Column(name = "attestor", nullable = false)
         val attestor: AbstractParty = NULL_PARTY,
 
-        @Column(name = "pointer_state_ref", nullable = false)
-        val pointerStateRef: String = "",
+        @Column(name = "pointer_state_pointer", nullable = false)
+        val pointer: String = "",
 
         @Column(name = "pointer_state_type", nullable = false)
         val pointerStateType: String = "",
-
-        @Column(name = "pointer_state_linear_id", nullable = true)
-        val pointerStateLinearId: UUID? = null,
-
-        @Column(name = "pointer_state_external_id", nullable = true)
-        val pointerStateExternalId: String? = null,
 
         @Column(name = "pointer_hash", nullable = false)
         val pointerHash: String = "",

@@ -17,13 +17,12 @@
             <column name="attestor" type="nvarchar(256)">
                 <constraints nullable="false"/>
             </column>
-            <column name="pointer_state_ref" type="nvarchar(128)">
+            <column name="pointer_state_pointer" type="nvarchar(1024)">
                 <constraints nullable="false"/>
             </column>
             <column name="pointer_state_type" type="nvarchar(1024)">
                 <constraints nullable="false"/>
             </column>
-            <column name="pointer_state_linear_id" type="uuid"/>
             <column name="pointer_hash" type="nvarchar(64)">
                 <constraints nullable="false"/>
             </column>

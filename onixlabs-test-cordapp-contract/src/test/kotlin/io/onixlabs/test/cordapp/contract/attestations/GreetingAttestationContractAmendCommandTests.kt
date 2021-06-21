@@ -18,8 +18,8 @@ package io.onixlabs.test.cordapp.contract.attestations
 
 import io.onixlabs.corda.identityframework.contract.AttestationContract
 import io.onixlabs.corda.identityframework.contract.AttestationStatus
-import io.onixlabs.corda.identityframework.contract.acceptState
-import io.onixlabs.corda.identityframework.contract.rejectState
+import io.onixlabs.corda.identityframework.contract.acceptAttestation
+import io.onixlabs.corda.identityframework.contract.rejectAttestation
 import io.onixlabs.test.cordapp.contract.*
 import net.corda.testing.node.ledger
 import org.junit.jupiter.api.Test
@@ -33,7 +33,7 @@ class GreetingAttestationContractAmendCommandTests : ContractTest() {
                 val issuedClaim1 = issue(GREETING_CLAIM)
                 val attestation = GreetingAttestation(IDENTITY_C.party, issuedClaim1, AttestationStatus.ACCEPTED)
                 val issuedAttestation1 = issue(attestation, issuedClaim1)
-                val amendedAttestation1 = issuedAttestation1.rejectState()
+                val amendedAttestation1 = issuedAttestation1.rejectAttestation()
                 input(issuedAttestation1.ref)
                 output(GreetingAttestationContract.ID, amendedAttestation1)
                 reference(issuedClaim1.ref)
@@ -52,7 +52,7 @@ class GreetingAttestationContractAmendCommandTests : ContractTest() {
                 val issuedClaim2 = issue(GREETING_CLAIM)
                 val attestation = GreetingAttestation(IDENTITY_C.party, issuedClaim1, AttestationStatus.ACCEPTED)
                 val issuedAttestation1 = issue(attestation, issuedClaim1)
-                val amendedAttestation1 = issuedAttestation1.rejectState()
+                val amendedAttestation1 = issuedAttestation1.rejectAttestation()
                 input(issuedAttestation1.ref)
                 output(GreetingAttestationContract.ID, amendedAttestation1)
                 reference(issuedClaim1.ref)
@@ -71,7 +71,7 @@ class GreetingAttestationContractAmendCommandTests : ContractTest() {
                 val issuedClaim2 = issue(GREETING_CLAIM)
                 val attestation = GreetingAttestation(IDENTITY_C.party, issuedClaim1, AttestationStatus.ACCEPTED)
                 val issuedAttestation1 = issue(attestation, issuedClaim1)
-                val amendedAttestation1 = issuedAttestation1.rejectState()
+                val amendedAttestation1 = issuedAttestation1.rejectAttestation()
                 input(issuedAttestation1.ref)
                 output(GreetingAttestationContract.ID, amendedAttestation1)
                 reference(issuedClaim2.ref)
@@ -88,7 +88,7 @@ class GreetingAttestationContractAmendCommandTests : ContractTest() {
                 val issuedClaim1 = issue(GREETING_CLAIM)
                 val attestation = GreetingAttestation(IDENTITY_C.party, issuedClaim1, AttestationStatus.ACCEPTED)
                 val issuedAttestation1 = issue(attestation, issuedClaim1)
-                val amendedAttestation1 = issuedAttestation1.acceptState()
+                val amendedAttestation1 = issuedAttestation1.acceptAttestation()
                 input(issuedAttestation1.ref)
                 output(GreetingAttestationContract.ID, amendedAttestation1)
                 reference(issuedClaim1.ref)

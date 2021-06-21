@@ -40,8 +40,8 @@ import java.security.PublicKey
 @Suspendable
 fun FlowLogic<*>.checkHasAttestedStateBeenWitnessed(attestation: Attestation<*>) {
     if (attestation.pointer.resolve(serviceHub) == null) {
-        val message = "A state with the specified state reference has not been witnessed:"
-        throw FlowException("$message ${attestation.pointer.stateRef}.")
+        val message = "A state with the pointer value has not been witnessed:"
+        throw FlowException("$message ${attestation.pointer.statePointer}.")
     }
 }
 

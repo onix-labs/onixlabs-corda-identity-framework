@@ -27,7 +27,7 @@ class AttestationContractIssueCommandTests : ContractTest() {
         services.ledger {
             transaction {
                 val issuedClaim1 = issue(CLAIM_1)
-                val attestation1 = issuedClaim1.acceptLinearState(IDENTITY_C.party)
+                val attestation1 = issuedClaim1.createAcceptedLinearAttestation(IDENTITY_C.party)
                 output(AttestationContract.ID, attestation1)
                 fails()
                 command(keysOf(IDENTITY_C), AttestationContract.Issue)
@@ -41,7 +41,7 @@ class AttestationContractIssueCommandTests : ContractTest() {
         services.ledger {
             transaction {
                 val issuedClaim1 = issue(CLAIM_1)
-                val attestation1 = issuedClaim1.acceptLinearState(IDENTITY_C.party)
+                val attestation1 = issuedClaim1.createAcceptedLinearAttestation(IDENTITY_C.party)
                 input(AttestationContract.ID, attestation1)
                 command(keysOf(IDENTITY_C), AttestationContract.Issue)
                 failsWith(AttestationContract.Issue.CONTRACT_RULE_INPUTS)
@@ -54,7 +54,7 @@ class AttestationContractIssueCommandTests : ContractTest() {
         services.ledger {
             transaction {
                 val issuedClaim1 = issue(CLAIM_1)
-                val attestation1 = issuedClaim1.acceptLinearState(IDENTITY_C.party)
+                val attestation1 = issuedClaim1.createAcceptedLinearAttestation(IDENTITY_C.party)
                 output(AttestationContract.ID, attestation1)
                 output(AttestationContract.ID, attestation1)
                 command(keysOf(IDENTITY_C), AttestationContract.Issue)
@@ -68,7 +68,7 @@ class AttestationContractIssueCommandTests : ContractTest() {
         services.ledger {
             transaction {
                 val issuedClaim1 = issue(CLAIM_1)
-                val attestation1 = issuedClaim1.acceptLinearState(IDENTITY_C.party)
+                val attestation1 = issuedClaim1.createAcceptedLinearAttestation(IDENTITY_C.party)
                 output(AttestationContract.ID, attestation1)
                 command(keysOf(IDENTITY_A), AttestationContract.Issue)
                 failsWith(AttestationContract.Issue.CONTRACT_RULE_SIGNERS)

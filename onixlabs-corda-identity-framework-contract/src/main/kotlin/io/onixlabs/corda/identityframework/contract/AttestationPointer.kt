@@ -34,14 +34,52 @@ import java.util.*
  * Represents the base class for attestation pointer implementations.
  *
  * @param T The underlying [ContractState] type.
- * @property stateRef The [StateRef] of the witnessed state being attested.
  * @property stateType The [Class] of the witnessed state being attested.
- * @property hash The unique hash of the attestation pointer.
+ * @property statePointer The pointer to the witnessed state being attested.
+ * @property hash The hash of the attestation pointer.
+ *
+ * Note that attestation pointer hashes should be unique for static attestation pointers since they point to the
+ * attested state's [StateRef], however attestation pointer hashes for linear attestation pointers will not be unique
+ * since they point to the attested state's [UniqueIdentifier].
  */
 @CordaSerializable
 sealed class AttestationPointer<T : ContractState> : SingularResolvable<T>, Hashable {
     abstract val stateType: Class<T>
-    abstract val stateRef: StateRef
+    abstract val statePointer: Any
+
+    final override val hash: SecureHash
+        get() = SecureHash.sha256("$stateType$statePointer")
+
+    /**
+     * Determines whether the specified object is equal to the current object.
+     *
+     * @param other The object to compare with the current object.
+     * @return Returns true if the specified object is equal to the current object; otherwise, false.
+     */
+    final override fun equals(other: Any?): Boolean {
+        return this === other || (other is AttestationPointer<*>
+                && other.javaClass == javaClass
+                && other.stateType == stateType
+                && other.statePointer == statePointer)
+    }
+
+    /**
+     * Serves as the default hash function.
+     *
+     * @return Returns a hash code for the current object.
+     */
+    final override fun hashCode(): Int {
+        return Objects.hash(stateType, statePointer)
+    }
+
+    /**
+     * Serves as the default hash function.
+     *
+     * @return Returns a hash code for the current object.
+     */
+    final override fun toString(): String {
+        return toDataClassString()
+    }
 
     /**
      * Determines whether any immutable properties of this object have changed.
@@ -50,16 +88,6 @@ sealed class AttestationPointer<T : ContractState> : SingularResolvable<T>, Hash
      * @return Returns true if the immutable properties remain unchanged; otherwise, false.
      */
     internal abstract fun immutableEquals(other: AttestationPointer<T>): Boolean
-
-    /**
-     * Determines whether this [SingularResolvable] is pointing to the specified [StateAndRef] instance.
-     *
-     * @param stateAndRef The [StateAndRef] to determine being pointed to.
-     * @return Returns true if this [SingularResolvable] is pointing to the specified [StateAndRef]; otherwise, false.
-     */
-    override fun isPointingTo(stateAndRef: StateAndRef<T>): Boolean {
-        return stateAndRef.ref == stateRef
-    }
 
     /**
      * Checks the claim and value class types of the specified state to ensure they match the expected types.
@@ -75,77 +103,46 @@ sealed class AttestationPointer<T : ContractState> : SingularResolvable<T>, Hash
             }
         }
     }
-
-    /**
-     * Gets the state linearId if this [AttestationPointer] is a [LinearAttestationPointer]; otherwise, null.
-     * @return Returns the state linearId if this [AttestationPointer] is a [LinearAttestationPointer]; otherwise, null.
-     */
-    internal fun getLinearId(): UniqueIdentifier? {
-        return if (this is LinearAttestationPointer<*>) stateLinearId else null
-    }
 }
 
 /**
  * Represents a linear attestation pointer to a [LinearState].
  *
- * @param T The underlying [LinearState] type.
+ * The intention of a linear attestation pointer is to evolve with the linear state that they point to. In this case
+ * the linear state being witnessed and attested is free to evolve without losing attestation, since the attestation
+ * points to the state by it's linear ID. Whilst this behavior is deliberate, it might incur some security concerns;
+ * for example, the state being witnessed and attested may evolve to contain erroneous data, however its attestation
+ * will remain unchanged until the attestor amends it.
  *
+ * To mitigate these security concerns, the intention is that developers will derive a custom attestation and decide
+ * on the attestation's validity based on some other factor about the underlying state.
+ *
+ * @param T The underlying [LinearState] type.
  * @property stateType The [Class] of the witnessed state being attested.
- * @property stateRef The [StateRef] of the witnessed state being attested.
- * @property stateLinearId The [UniqueIdentifier] of the witnessed state being attested.
- * @property hash The unique hash of the attestation pointer.
+ * @property statePointer The pointer to the witnessed state being attested.
+ * @property hash The hash of the attestation pointer.
  */
 class LinearAttestationPointer<T : LinearState> internal constructor(
     override val stateType: Class<T>,
-    override val stateRef: StateRef,
-    val stateLinearId: UniqueIdentifier
+    override val statePointer: UniqueIdentifier
 ) : AttestationPointer<T>() {
 
-    constructor(stateAndRef: StateAndRef<T>) : this(
-        stateType = stateAndRef.state.data.javaClass,
-        stateRef = stateAndRef.ref,
-        stateLinearId = stateAndRef.state.data.linearId
-    )
+    constructor(stateAndRef: StateAndRef<T>) : this(stateAndRef.state.data.javaClass, stateAndRef.state.data.linearId)
 
     private val criteria: QueryCriteria = vaultQuery(stateType) {
-        stateStatus(Vault.StateStatus.ALL)
+        stateStatus(Vault.StateStatus.UNCONSUMED)
         relevancyStatus(Vault.RelevancyStatus.ALL)
-        stateRefs(stateRef)
-        linearIds(stateLinearId)
-    }
-
-    override val hash: SecureHash
-        get() = SecureHash.sha256("$stateType$stateRef$stateLinearId")
-
-    /**
-     * Determines whether the specified object is equal to the current object.
-     *
-     * @param other The object to compare with the current object.
-     * @return Returns true if the specified object is equal to the current object; otherwise, false.
-     */
-    override fun equals(other: Any?): Boolean {
-        return this === other || (other is LinearAttestationPointer<*>
-                && other.stateType == stateType
-                && other.stateRef == stateRef
-                && other.stateLinearId == stateLinearId)
+        linearIds(statePointer)
     }
 
     /**
-     * Serves as the default hash function.
+     * Determines whether this [SingularResolvable] is pointing to the specified [StateAndRef] instance.
      *
-     * @return Returns a hash code for the current object.
+     * @param stateAndRef The [StateAndRef] to determine being pointed to.
+     * @return Returns true if this [SingularResolvable] is pointing to the specified [StateAndRef]; otherwise, false.
      */
-    override fun hashCode(): Int {
-        return Objects.hash(stateType, stateRef, stateLinearId)
-    }
-
-    /**
-     * Serves as the default hash function.
-     *
-     * @return Returns a hash code for the current object.
-     */
-    override fun toString(): String {
-        return toDataClassString()
+    override fun isPointingTo(stateAndRef: StateAndRef<T>): Boolean {
+        return statePointer == stateAndRef.state.data.linearId
     }
 
     /**
@@ -194,66 +191,46 @@ class LinearAttestationPointer<T : LinearState> internal constructor(
     override fun immutableEquals(other: AttestationPointer<T>): Boolean {
         return other is LinearAttestationPointer<*>
                 && other.stateType == stateType
-                && other.stateLinearId == stateLinearId
+                && other.statePointer == statePointer
     }
 }
 
 /**
  * Represents a static attestation pointer to a [ContractState].
  *
- * @param T The underlying [LinearState] type.
+ * The intention of a static attestation pointer is to point specifically to a version of a state by its [StateRef].
+ * Any evolution of the state being witnessed and attested therefore renders existing attestations useless since
+ * they no longer point to a relevant state on the ledger, and must be amended to point to the latest state version.
  *
+ * In most cases, static attestation pointers may be considered safer than linear attestation pointers, since they
+ * do not permit state evolution.
+ *
+ * @param T The underlying [LinearState] type.
  * @property stateType The [Class] of the witnessed state being attested.
- * @property stateRef The [StateRef] of the witnessed state being attested.
- * @property hash The unique hash of the attestation pointer.
+ * @property statePointer The pointer to the witnessed state being attested.
+ * @property hash The hash of the attestation pointer.
  */
 class StaticAttestationPointer<T : ContractState> internal constructor(
     override val stateType: Class<T>,
-    override val stateRef: StateRef
+    override val statePointer: StateRef
 ) : AttestationPointer<T>() {
 
-    constructor(stateAndRef: StateAndRef<T>) : this(
-        stateType = stateAndRef.state.data.javaClass,
-        stateRef = stateAndRef.ref
-    )
+    constructor(stateAndRef: StateAndRef<T>) : this(stateAndRef.state.data.javaClass, stateAndRef.ref)
 
     private val criteria: QueryCriteria = vaultQuery(stateType) {
         stateStatus(Vault.StateStatus.ALL)
         relevancyStatus(Vault.RelevancyStatus.ALL)
-        stateRefs(stateRef)
-    }
-
-    override val hash: SecureHash
-        get() = SecureHash.sha256("$stateType$stateRef")
-
-    /**
-     * Determines whether the specified object is equal to the current object.
-     *
-     * @param other The object to compare with the current object.
-     * @return Returns true if the specified object is equal to the current object; otherwise, false.
-     */
-    override fun equals(other: Any?): Boolean {
-        return this === other || (other is StaticAttestationPointer<*>
-                && other.stateType == stateType
-                && other.stateRef == stateRef)
+        stateRefs(statePointer)
     }
 
     /**
-     * Serves as the default hash function.
+     * Determines whether this [SingularResolvable] is pointing to the specified [StateAndRef] instance.
      *
-     * @return Returns a hash code for the current object.
+     * @param stateAndRef The [StateAndRef] to determine being pointed to.
+     * @return Returns true if this [SingularResolvable] is pointing to the specified [StateAndRef]; otherwise, false.
      */
-    override fun hashCode(): Int {
-        return Objects.hash(stateType, stateRef)
-    }
-
-    /**
-     * Serves as the default hash function.
-     *
-     * @return Returns a hash code for the current object.
-     */
-    override fun toString(): String {
-        return toDataClassString()
+    override fun isPointingTo(stateAndRef: StateAndRef<T>): Boolean {
+        return statePointer == stateAndRef.ref
     }
 
     /**
