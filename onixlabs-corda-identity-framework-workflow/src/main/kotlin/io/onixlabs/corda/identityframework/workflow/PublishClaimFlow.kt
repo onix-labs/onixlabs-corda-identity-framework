@@ -17,6 +17,7 @@
 package io.onixlabs.corda.identityframework.workflow
 
 import co.paralleluniverse.fibers.Suspendable
+import io.onixlabs.corda.core.workflow.InitializeFlowStep
 import io.onixlabs.corda.core.workflow.currentStep
 import io.onixlabs.corda.core.workflow.findTransaction
 import io.onixlabs.corda.core.workflow.initiateFlows
@@ -26,6 +27,7 @@ import net.corda.core.flows.*
 import net.corda.core.identity.Party
 import net.corda.core.transactions.SignedTransaction
 import net.corda.core.utilities.ProgressTracker
+import net.corda.core.utilities.ProgressTracker.Step
 
 /**
  * Represents the flow for publishing a claim.
@@ -42,17 +44,17 @@ class PublishClaimFlow(
 
     companion object {
         @JvmStatic
-        fun tracker() = ProgressTracker(INITIALIZING, SENDING)
+        fun tracker() = ProgressTracker(InitializeFlowStep, SendClaimTransactionStep)
 
         private const val FLOW_VERSION_1 = 1
     }
 
     @Suspendable
     override fun call(): SignedTransaction {
-        currentStep(INITIALIZING)
+        currentStep(InitializeFlowStep)
         val transaction = findTransaction(claim)
 
-        currentStep(SENDING)
+        currentStep(SendClaimTransactionStep)
         sessions.forEach { subFlow(SendTransactionFlow(it, transaction)) }
 
         return transaction
@@ -73,21 +75,21 @@ class PublishClaimFlow(
     ) : FlowLogic<SignedTransaction>() {
 
         private companion object {
-            object PUBLISHING : ProgressTracker.Step("Publishing claim transaction.") {
+            object PublishClaimTransactionStep : Step("Publishing claim transaction.") {
                 override fun childProgressTracker() = tracker()
             }
         }
 
-        override val progressTracker = ProgressTracker(PUBLISHING)
+        override val progressTracker = ProgressTracker(PublishClaimTransactionStep)
 
         @Suspendable
         override fun call(): SignedTransaction {
-            currentStep(PUBLISHING)
+            currentStep(PublishClaimTransactionStep)
             return subFlow(
                 PublishClaimFlow(
                     claim,
                     initiateFlows(observers),
-                    PUBLISHING.childProgressTracker()
+                    PublishClaimTransactionStep.childProgressTracker()
                 )
             )
         }

@@ -16,55 +16,24 @@
 
 package io.onixlabs.corda.identityframework.workflow
 
-import net.corda.core.flows.CollectSignaturesFlow
-import net.corda.core.flows.FinalityFlow
 import net.corda.core.utilities.ProgressTracker.Step
 
 /**
- * The progress tracker step that occurs when a flow is initializing.
+ * Represents a progress tracker step indicating that a claim transaction is being sent.
  */
-object INITIALIZING : Step("Initializing flow.")
+object SendClaimTransactionStep : Step("Sending claim transaction.")
 
 /**
- * The progress tracker step that occurs when a flow is generating a transaction.
+ * Represents a progress tracker step indicating that a claim transaction is being received.
  */
-object GENERATING : Step("Generating initial transaction.")
+object ReceiveClaimTransactionStep : Step("Receiving claim transaction.")
 
 /**
- * The progress tracker step that occurs when a flow is verifying an initial transaction.
+ * Represents a progress tracker step indicating that an attestation transaction is being sent.
  */
-object VERIFYING : Step("Verifying initial transaction.")
+object SendAttestationTransactionStep : Step("Sending claim transaction.")
 
 /**
- * The progress tracker step that occurs when a flow is signing an initial transaction.
+ * Represents a progress tracker step indicating that an attestation transaction is being received.
  */
-object SIGNING : Step("Signing initial transaction.")
-
-/**
- * The progress tracker step that occurs when a flow is gathering counter-party signatures (counter-signing).
- */
-object COUNTERSIGNING : Step("Gathering counter-party signatures.") {
-    override fun childProgressTracker() = CollectSignaturesFlow.tracker()
-}
-
-/**
- * The progress tracker step that occurs when a flow is finalizing a transaction.
- */
-object FINALIZING : Step("Finalizing signed transaction.") {
-    override fun childProgressTracker() = FinalityFlow.tracker()
-}
-
-/**
- * The progress tracker step that occurs when a flow is recording a transaction.
- */
-object RECORDING : Step("Recording finalized transaction.")
-
-/**
- * The progress tracker step that occurs when a flow is sending a transaction.
- */
-object SENDING : Step("Sending transaction.")
-
-/**
- * The progress tracker step that occurs when a flow is receiving a transaction.
- */
-object RECEIVING : Step("Receiving transaction.")
+object ReceiveAttestationTransactionStep : Step("Receiving claim transaction.")

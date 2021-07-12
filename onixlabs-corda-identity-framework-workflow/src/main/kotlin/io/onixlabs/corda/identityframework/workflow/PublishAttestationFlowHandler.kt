@@ -17,6 +17,7 @@
 package io.onixlabs.corda.identityframework.workflow
 
 import co.paralleluniverse.fibers.Suspendable
+import io.onixlabs.corda.core.workflow.ReceiveStatesToRecordStep
 import io.onixlabs.corda.core.workflow.currentStep
 import net.corda.core.flows.FlowLogic
 import net.corda.core.flows.FlowSession
@@ -25,6 +26,7 @@ import net.corda.core.flows.ReceiveTransactionFlow
 import net.corda.core.node.StatesToRecord
 import net.corda.core.transactions.SignedTransaction
 import net.corda.core.utilities.ProgressTracker
+import net.corda.core.utilities.ProgressTracker.Step
 
 /**
  * Represents the flow handler for published attestations.
@@ -39,12 +41,12 @@ class PublishAttestationFlowHandler(
 
     companion object {
         @JvmStatic
-        fun tracker() = ProgressTracker(RECEIVING)
+        fun tracker() = ProgressTracker(ReceiveAttestationTransactionStep)
     }
 
     @Suspendable
     override fun call(): SignedTransaction {
-        currentStep(RECEIVING)
+        currentStep(ReceiveAttestationTransactionStep)
         return subFlow(ReceiveTransactionFlow(session, statesToRecord = StatesToRecord.ALL_VISIBLE))
     }
 
@@ -57,17 +59,22 @@ class PublishAttestationFlowHandler(
     private class Handler(private val session: FlowSession) : FlowLogic<SignedTransaction>() {
 
         private companion object {
-            object RECEIVING : ProgressTracker.Step("Receiving attestation transaction.") {
+            object ReceivePublishedAttestationTransactionStep : Step("Receiving published attestation transaction.") {
                 override fun childProgressTracker() = tracker()
             }
         }
 
-        override val progressTracker = ProgressTracker(RECEIVING)
+        override val progressTracker = ProgressTracker(ReceivePublishedAttestationTransactionStep)
 
         @Suspendable
         override fun call(): SignedTransaction {
-            currentStep(RECEIVING)
-            return subFlow(PublishAttestationFlowHandler(session, RECEIVING.childProgressTracker()))
+            currentStep(ReceivePublishedAttestationTransactionStep)
+            return subFlow(
+                PublishAttestationFlowHandler(
+                    session,
+                    ReceivePublishedAttestationTransactionStep.childProgressTracker()
+                )
+            )
         }
     }
 }

@@ -17,15 +17,14 @@
 package io.onixlabs.corda.identityframework.workflow
 
 import co.paralleluniverse.fibers.Suspendable
-import io.onixlabs.corda.core.workflow.checkSufficientSessions
-import io.onixlabs.corda.core.workflow.currentStep
-import io.onixlabs.corda.core.workflow.initiateFlows
+import io.onixlabs.corda.core.workflow.*
 import io.onixlabs.corda.identityframework.contract.CordaClaim
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.flows.*
 import net.corda.core.identity.Party
 import net.corda.core.transactions.SignedTransaction
 import net.corda.core.utilities.ProgressTracker
+import net.corda.core.utilities.ProgressTracker.Step
 
 /**
  * Represents the flow for revoking a claim.
@@ -42,22 +41,30 @@ class RevokeClaimFlow(
 
     companion object {
         @JvmStatic
-        fun tracker() = ProgressTracker(INITIALIZING, GENERATING, VERIFYING, SIGNING, FINALIZING)
+        fun tracker() = ProgressTracker(
+            InitializeFlowStep,
+            BuildTransactionStep,
+            VerifyTransactionStep,
+            SignTransactionStep,
+            SendStatesToRecordStep,
+            FinalizeTransactionStep
+        )
 
         private const val FLOW_VERSION_1 = 1
     }
 
     @Suspendable
     override fun call(): SignedTransaction {
-        currentStep(INITIALIZING)
+        currentStep(InitializeFlowStep)
         checkSufficientSessions(sessions, claim.state.data)
 
-        val transaction = transaction(claim.state.notary) {
+        val transaction = buildTransaction(claim.state.notary) {
             addRevokedClaim(claim)
         }
 
-        val signedTransaction = verifyAndSign(transaction, claim.state.data.issuer.owningKey)
-        return finalize(signedTransaction, sessions)
+        verifyTransaction(transaction)
+        val signedTransaction = signTransaction(transaction)
+        return finalizeTransaction(signedTransaction, sessions)
     }
 
     /**
@@ -75,18 +82,18 @@ class RevokeClaimFlow(
     ) : FlowLogic<SignedTransaction>() {
 
         private companion object {
-            object REVOKING : ProgressTracker.Step("Revoking claim.") {
+            object RevokeClaimStep : Step("Revoking claim.") {
                 override fun childProgressTracker() = tracker()
             }
         }
 
-        override val progressTracker = ProgressTracker(REVOKING)
+        override val progressTracker = ProgressTracker(RevokeClaimStep)
 
         @Suspendable
         override fun call(): SignedTransaction {
-            currentStep(REVOKING)
+            currentStep(RevokeClaimStep)
             val sessions = initiateFlows(observers, claim.state.data)
-            return subFlow(RevokeClaimFlow(claim, sessions, REVOKING.childProgressTracker()))
+            return subFlow(RevokeClaimFlow(claim, sessions, RevokeClaimStep.childProgressTracker()))
         }
     }
 }

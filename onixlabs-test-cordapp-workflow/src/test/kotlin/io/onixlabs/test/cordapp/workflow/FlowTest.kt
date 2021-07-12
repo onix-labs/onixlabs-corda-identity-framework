@@ -25,6 +25,7 @@ import net.corda.testing.node.MockNetwork
 import net.corda.testing.node.MockNetworkParameters
 import net.corda.testing.node.StartedMockNode
 import net.corda.testing.node.TestCordapp
+import net.corda.testing.node.internal.cordappsForPackages
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.TestInstance
@@ -64,13 +65,14 @@ abstract class FlowTest {
     private fun setup() {
         _network = MockNetwork(
             MockNetworkParameters(
-                cordappsForAllNodes = listOf(
-                    TestCordapp.findCordapp("io.onixlabs.corda.identityframework.contract"),
-                    TestCordapp.findCordapp("io.onixlabs.corda.identityframework.workflow"),
-                    TestCordapp.findCordapp("io.onixlabs.test.cordapp.contract")
-                ),
-                networkParameters = testNetworkParameters(
-                    minimumPlatformVersion = 8
+                networkParameters = testNetworkParameters(minimumPlatformVersion = 10),
+                cordappsForAllNodes = cordappsForPackages(
+                    "io.onixlabs.corda.core.workflow",
+                    "io.onixlabs.corda.identityframework.contract",
+                    "io.onixlabs.corda.identityframework.workflow",
+                    "io.onixlabs.test.cordapp.contract",
+                    "net.corda.testing.internal.vault",
+                    "net.corda.testing.contracts"
                 )
             )
         )

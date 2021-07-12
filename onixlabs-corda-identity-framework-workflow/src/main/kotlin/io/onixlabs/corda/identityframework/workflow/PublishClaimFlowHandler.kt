@@ -25,6 +25,7 @@ import net.corda.core.flows.ReceiveTransactionFlow
 import net.corda.core.node.StatesToRecord
 import net.corda.core.transactions.SignedTransaction
 import net.corda.core.utilities.ProgressTracker
+import net.corda.core.utilities.ProgressTracker.Step
 
 /**
  * Represents the flow handler for published claims.
@@ -39,12 +40,12 @@ class PublishClaimFlowHandler(
 
     companion object {
         @JvmStatic
-        fun tracker() = ProgressTracker(RECEIVING)
+        fun tracker() = ProgressTracker(ReceiveClaimTransactionStep)
     }
 
     @Suspendable
     override fun call(): SignedTransaction {
-        currentStep(RECEIVING)
+        currentStep(ReceiveClaimTransactionStep)
         return subFlow(ReceiveTransactionFlow(session, statesToRecord = StatesToRecord.ALL_VISIBLE))
     }
 
@@ -57,17 +58,22 @@ class PublishClaimFlowHandler(
     private class Handler(private val session: FlowSession) : FlowLogic<SignedTransaction>() {
 
         private companion object {
-            object RECEIVING : ProgressTracker.Step("Receiving claim transaction.") {
+            object ReceivePublishedClaimTransactionStep : Step("Receiving published claim transaction.") {
                 override fun childProgressTracker() = tracker()
             }
         }
 
-        override val progressTracker = ProgressTracker(RECEIVING)
+        override val progressTracker = ProgressTracker(ReceivePublishedClaimTransactionStep)
 
         @Suspendable
         override fun call(): SignedTransaction {
-            currentStep(RECEIVING)
-            return subFlow(PublishClaimFlowHandler(session, RECEIVING.childProgressTracker()))
+            currentStep(ReceivePublishedClaimTransactionStep)
+            return subFlow(
+                PublishClaimFlowHandler(
+                    session,
+                    ReceivePublishedClaimTransactionStep.childProgressTracker()
+                )
+            )
         }
     }
 }

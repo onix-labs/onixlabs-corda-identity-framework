@@ -17,15 +17,13 @@
 package io.onixlabs.corda.identityframework.workflow
 
 import co.paralleluniverse.fibers.Suspendable
-import io.onixlabs.corda.core.workflow.checkSufficientSessions
-import io.onixlabs.corda.core.workflow.currentStep
-import io.onixlabs.corda.core.workflow.getPreferredNotary
-import io.onixlabs.corda.core.workflow.initiateFlows
+import io.onixlabs.corda.core.workflow.*
 import io.onixlabs.corda.identityframework.contract.CordaClaim
 import net.corda.core.flows.*
 import net.corda.core.identity.Party
 import net.corda.core.transactions.SignedTransaction
 import net.corda.core.utilities.ProgressTracker
+import net.corda.core.utilities.ProgressTracker.Step
 
 /**
  * Represents the flow for issuing a claim.
@@ -44,23 +42,31 @@ class IssueClaimFlow(
 
     companion object {
         @JvmStatic
-        fun tracker() = ProgressTracker(INITIALIZING, GENERATING, VERIFYING, SIGNING, FINALIZING)
+        fun tracker() = ProgressTracker(
+            InitializeFlowStep,
+            BuildTransactionStep,
+            VerifyTransactionStep,
+            SignTransactionStep,
+            SendStatesToRecordStep,
+            FinalizeTransactionStep
+        )
 
         private const val FLOW_VERSION_1 = 1
     }
 
     @Suspendable
     override fun call(): SignedTransaction {
-        currentStep(INITIALIZING)
+        currentStep(InitializeFlowStep)
         checkSufficientSessions(sessions, claim)
         checkClaimExists(claim)
 
-        val transaction = transaction(notary) {
+        val transaction = buildTransaction(notary) {
             addIssuedClaim(claim)
         }
 
-        val signedTransaction = verifyAndSign(transaction, claim.issuer.owningKey)
-        return finalize(signedTransaction, sessions)
+        verifyTransaction(transaction)
+        val signedTransaction = signTransaction(transaction)
+        return finalizeTransaction(signedTransaction, sessions)
     }
 
     /**
@@ -80,23 +86,23 @@ class IssueClaimFlow(
     ) : FlowLogic<SignedTransaction>() {
 
         private companion object {
-            object ISSUING : ProgressTracker.Step("Issuing claim.") {
+            object IssueClaimStep : Step("Issuing claim.") {
                 override fun childProgressTracker() = tracker()
             }
         }
 
-        override val progressTracker = ProgressTracker(ISSUING)
+        override val progressTracker = ProgressTracker(IssueClaimStep)
 
         @Suspendable
         override fun call(): SignedTransaction {
-            currentStep(ISSUING)
+            currentStep(IssueClaimStep)
             val sessions = initiateFlows(observers, claim)
             return subFlow(
                 IssueClaimFlow(
                     claim,
                     notary ?: getPreferredNotary(),
                     sessions,
-                    ISSUING.childProgressTracker()
+                    IssueClaimStep.childProgressTracker()
                 )
             )
         }
