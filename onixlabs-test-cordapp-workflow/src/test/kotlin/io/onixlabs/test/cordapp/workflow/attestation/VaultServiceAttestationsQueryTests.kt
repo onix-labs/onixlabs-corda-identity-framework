@@ -21,9 +21,7 @@ import io.onixlabs.corda.core.services.filter
 import io.onixlabs.corda.core.services.vaultServiceFor
 import io.onixlabs.corda.identityframework.contract.*
 import io.onixlabs.corda.identityframework.contract.AttestationSchema.AttestationEntity
-import io.onixlabs.corda.identityframework.workflow.AmendAttestationFlow
-import io.onixlabs.corda.identityframework.workflow.IssueAttestationFlow
-import io.onixlabs.corda.identityframework.workflow.IssueClaimFlow
+import io.onixlabs.corda.identityframework.workflow.*
 import io.onixlabs.test.cordapp.contract.GreetingClaim
 import io.onixlabs.test.cordapp.workflow.FlowTest
 import io.onixlabs.test.cordapp.workflow.Pipeline
@@ -63,11 +61,12 @@ class VaultServiceAttestationsQueryTests : FlowTest() {
     }
 
     @Test
-    fun `VaultService should find the expected claim by linear ID`() {
+    fun `VaultService should find the expected attestation by linear ID`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<Attestation<*>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
                 linearIds(attestation.state.data.linearId)
+                attestationType()
             }
 
             assertEquals(3, results.count())
@@ -75,11 +74,12 @@ class VaultServiceAttestationsQueryTests : FlowTest() {
     }
 
     @Test
-    fun `VaultService equalTo should find the expected claim by external ID`() {
+    fun `VaultService equalTo should find the expected attestation by external ID`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<Attestation<*>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                expression(AttestationEntity::externalId equalTo attestation.state.data.linearId.externalId)
+                externalIds(attestation.state.data.linearId.externalId)
+                attestationType()
             }
 
             assertEquals(3, results.count())
@@ -87,11 +87,12 @@ class VaultServiceAttestationsQueryTests : FlowTest() {
     }
 
     @Test
-    fun `VaultService equalTo should find the expected claim by attestor`() {
+    fun `VaultService equalTo should find the expected attestation by attestor`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<Attestation<*>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                expression(AttestationEntity::attestor equalTo attestation.state.data.attestor)
+                attestationAttestor(attestation.state.data.attestor)
+                attestationType()
             }
 
             assertEquals(3, results.count())
@@ -99,11 +100,12 @@ class VaultServiceAttestationsQueryTests : FlowTest() {
     }
 
     @Test
-    fun `VaultService equalTo should find the expected claim by pointer`() {
+    fun `VaultService equalTo should find the expected attestation by pointer`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<Attestation<*>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                expression(AttestationEntity::pointer equalTo attestation.state.data.pointer.statePointer.toString())
+                attestationPointer(attestation.state.data.pointer.statePointer)
+                attestationType()
             }
 
             assertEquals(3, results.count())
@@ -111,11 +113,12 @@ class VaultServiceAttestationsQueryTests : FlowTest() {
     }
 
     @Test
-    fun `VaultService equalTo should find the expected claim by pointerHash`() {
+    fun `VaultService equalTo should find the expected attestation by pointerHash`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<Attestation<*>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                expression(AttestationEntity::pointerHash equalTo attestation.state.data.pointer.hash.toString())
+                attestationPointerHash(attestation.state.data.pointer.hash)
+                attestationType()
             }
 
             assertEquals(3, results.count())
@@ -123,11 +126,12 @@ class VaultServiceAttestationsQueryTests : FlowTest() {
     }
 
     @Test
-    fun `VaultService equalTo should find the expected claim by status (ACCEPTED)`() {
+    fun `VaultService equalTo should find the expected attestation by status (ACCEPTED)`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<Attestation<*>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                expression(AttestationEntity::status equalTo AttestationStatus.ACCEPTED)
+                attestationStatus(AttestationStatus.ACCEPTED)
+                attestationType()
             }
 
             assertEquals(2, results.count())
@@ -135,11 +139,12 @@ class VaultServiceAttestationsQueryTests : FlowTest() {
     }
 
     @Test
-    fun `VaultService equalTo should find the expected claim by status (REJECTED)`() {
+    fun `VaultService equalTo should find the expected attestation by status (REJECTED)`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<Attestation<*>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                expression(AttestationEntity::status equalTo AttestationStatus.REJECTED)
+                attestationStatus(AttestationStatus.REJECTED)
+                attestationType()
             }
 
             assertEquals(1, results.count())
@@ -147,11 +152,12 @@ class VaultServiceAttestationsQueryTests : FlowTest() {
     }
 
     @Test
-    fun `VaultService equalTo should find the expected claim by previousStateRef`() {
+    fun `VaultService equalTo should find the expected attestation by previousStateRef`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<Attestation<*>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                expression(AttestationEntity::previousStateRef equalTo attestation.state.data.previousStateRef?.toString())
+                attestationPreviousStateRef(attestation.state.data.previousStateRef)
+                attestationType()
             }
 
             assertEquals(1, results.count())
@@ -159,11 +165,12 @@ class VaultServiceAttestationsQueryTests : FlowTest() {
     }
 
     @Test
-    fun `VaultService equalTo should find the expected claim by hash`() {
+    fun `VaultService equalTo should find the expected attestation by hash`() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<Attestation<*>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                expression(AttestationEntity::hash equalTo attestation.state.data.hash.toString())
+                attestationHash(attestation.state.data.hash)
+                attestationType()
             }
 
             assertEquals(1, results.count())

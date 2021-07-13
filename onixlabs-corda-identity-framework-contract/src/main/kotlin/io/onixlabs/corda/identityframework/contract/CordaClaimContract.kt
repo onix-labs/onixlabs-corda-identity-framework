@@ -27,7 +27,8 @@ import java.security.PublicKey
 
 /**
  * Represents the smart contract for corda claims.
- * This contract is open to allow developers to implement their own corda claim contracts.
+ * This contract is open to allow developers to implement their own corda claim contracts, however it has been designed
+ * such that derived contracts will respect and not circumvent the underlying constraints in the parent contract.
  */
 open class CordaClaimContract : Contract {
 
@@ -74,7 +75,7 @@ open class CordaClaimContract : Contract {
     }
 
     /**
-     * Represents the command to amend evolvable claims.
+     * Represents the command to amend corda claims.
      */
     object Amend : CordaClaimContractCommand {
         internal const val CONTRACT_RULE_INPUTS =
@@ -100,7 +101,7 @@ open class CordaClaimContract : Contract {
     }
 
     /**
-     * Represents the command to revoke evolvable claims.
+     * Represents the command to revoke corda claims.
      */
     object Revoke : CordaClaimContractCommand {
         internal const val CONTRACT_RULE_INPUTS =
@@ -114,7 +115,7 @@ open class CordaClaimContract : Contract {
     }
 
     /**
-     * Provides the ability to extend the rules for issuing evolvable claims.
+     * Provides the ability to extend the rules for issuing corda claims.
      *
      * @param transaction The ledger transaction to verify.
      * @param signers The signers of the transaction.
@@ -122,7 +123,7 @@ open class CordaClaimContract : Contract {
     protected open fun onVerifyIssue(transaction: LedgerTransaction, signers: Set<PublicKey>) = requireThat { }
 
     /**
-     * Provides the ability to extend the rules for amending evolvable claims.
+     * Provides the ability to extend the rules for amending corda claims.
      *
      * @param transaction The ledger transaction to verify.
      * @param signers The signers of the transaction.
@@ -130,7 +131,7 @@ open class CordaClaimContract : Contract {
     protected open fun onVerifyAmend(transaction: LedgerTransaction, signers: Set<PublicKey>) = requireThat { }
 
     /**
-     * Provides the ability to extend the rules for revoking evolvable claims.
+     * Provides the ability to extend the rules for revoking corda claims.
      *
      * @param transaction The ledger transaction to verify.
      * @param signers The signers of the transaction.

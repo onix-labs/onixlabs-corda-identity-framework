@@ -16,15 +16,13 @@
 
 package io.onixlabs.test.cordapp.workflow.claims
 
-import io.onixlabs.corda.core.services.equalTo
 import io.onixlabs.corda.core.services.filter
 import io.onixlabs.corda.core.services.isNull
 import io.onixlabs.corda.core.services.vaultServiceFor
 import io.onixlabs.corda.identityframework.contract.CordaClaim
 import io.onixlabs.corda.identityframework.contract.CordaClaimSchema
 import io.onixlabs.corda.identityframework.contract.amend
-import io.onixlabs.corda.identityframework.workflow.AmendClaimFlow
-import io.onixlabs.corda.identityframework.workflow.IssueClaimFlow
+import io.onixlabs.corda.identityframework.workflow.*
 import io.onixlabs.test.cordapp.contract.GreetingClaim
 import io.onixlabs.test.cordapp.workflow.FlowTest
 import io.onixlabs.test.cordapp.workflow.Pipeline
@@ -57,6 +55,7 @@ class VaultServiceClaimsQueryTests : FlowTest() {
             val results = it.services.vaultServiceFor<GreetingClaim>().filter {
                 stateStatus(Vault.StateStatus.ALL)
                 linearIds(GREETING_CLAIM.linearId)
+                claimType()
             }
 
             assertEquals(2, results.count())
@@ -69,6 +68,7 @@ class VaultServiceClaimsQueryTests : FlowTest() {
             val results = it.services.vaultServiceFor<GreetingClaim>().filter {
                 stateStatus(Vault.StateStatus.ALL)
                 expression(CordaClaimSchema.CordaClaimEntity::externalId.isNull())
+                claimType()
             }
 
             assertEquals(2, results.count())
@@ -80,7 +80,8 @@ class VaultServiceClaimsQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<GreetingClaim>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                expression(CordaClaimSchema.CordaClaimEntity::issuer equalTo GREETING_CLAIM.issuer)
+                claimIssuer(GREETING_CLAIM.issuer)
+                claimType()
             }
 
             assertEquals(2, results.count())
@@ -92,7 +93,8 @@ class VaultServiceClaimsQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<GreetingClaim>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                expression(CordaClaimSchema.CordaClaimEntity::holder equalTo GREETING_CLAIM.holder)
+                claimHolder(GREETING_CLAIM.holder)
+                claimType()
             }
 
             assertEquals(2, results.count())
@@ -104,7 +106,8 @@ class VaultServiceClaimsQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<GreetingClaim>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                expression(CordaClaimSchema.CordaClaimEntity::property equalTo GREETING_CLAIM.property)
+                claimProperty(GREETING_CLAIM.property)
+                claimType()
             }
 
             assertEquals(2, results.count())
@@ -116,7 +119,8 @@ class VaultServiceClaimsQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<GreetingClaim>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                expression(CordaClaimSchema.CordaClaimEntity::value equalTo GREETING_CLAIM.value)
+                claimValue(GREETING_CLAIM.value)
+                claimType()
             }
 
             assertEquals(1, results.count())
@@ -128,7 +132,8 @@ class VaultServiceClaimsQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<GreetingClaim>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                expression(CordaClaimSchema.CordaClaimEntity::previousStateRef.isNull())
+                claimPreviousStateRef(GREETING_CLAIM.previousStateRef)
+                claimType()
             }
 
             assertEquals(1, results.count())
@@ -140,7 +145,8 @@ class VaultServiceClaimsQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<GreetingClaim>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                expression(CordaClaimSchema.CordaClaimEntity::isSelfIssued equalTo GREETING_CLAIM.isSelfIssued)
+                claimIsSelfIssued(GREETING_CLAIM.isSelfIssued)
+                claimType()
             }
 
             assertEquals(2, results.count())
@@ -152,7 +158,8 @@ class VaultServiceClaimsQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<GreetingClaim>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                expression(CordaClaimSchema.CordaClaimEntity::hash equalTo GREETING_CLAIM.hash.toString())
+                claimHash(GREETING_CLAIM.hash)
+                claimType()
             }
 
             assertEquals(1, results.count())

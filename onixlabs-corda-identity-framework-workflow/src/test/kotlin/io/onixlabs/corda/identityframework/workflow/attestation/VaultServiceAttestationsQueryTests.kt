@@ -16,11 +16,9 @@
 
 package io.onixlabs.corda.identityframework.workflow.attestation
 
-import io.onixlabs.corda.core.services.equalTo
 import io.onixlabs.corda.core.services.filter
 import io.onixlabs.corda.core.services.vaultServiceFor
 import io.onixlabs.corda.identityframework.contract.*
-import io.onixlabs.corda.identityframework.contract.AttestationSchema.AttestationEntity
 import io.onixlabs.corda.identityframework.workflow.*
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.contracts.UniqueIdentifier
@@ -41,7 +39,8 @@ class VaultServiceAttestationsQueryTests : FlowTest() {
             }
             .run(nodeC) {
                 claim = it.tx.outRefsOfType<CordaClaim<String>>().single()
-                val attestation = claim.createAcceptedStaticAttestation(partyC, linearId = UniqueIdentifier("attestation"))
+                val attestation =
+                    claim.createAcceptedStaticAttestation(partyC, linearId = UniqueIdentifier("attestation"))
                 IssueAttestationFlow.Initiator(attestation)
             }
             .run(nodeC) {
@@ -63,6 +62,7 @@ class VaultServiceAttestationsQueryTests : FlowTest() {
             val results = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
                 linearIds(attestation.state.data.linearId)
+                attestationType()
             }
 
             assertEquals(3, results.count())
@@ -74,7 +74,8 @@ class VaultServiceAttestationsQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                expression(AttestationEntity::externalId equalTo attestation.state.data.linearId.externalId)
+                externalIds(attestation.state.data.linearId.externalId)
+                attestationType()
             }
 
             assertEquals(3, results.count())
@@ -86,7 +87,8 @@ class VaultServiceAttestationsQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                expression(AttestationEntity::attestor equalTo attestation.state.data.attestor)
+                attestationAttestor(attestation.state.data.attestor)
+                attestationType()
             }
 
             assertEquals(3, results.count())
@@ -98,7 +100,8 @@ class VaultServiceAttestationsQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                expression(AttestationEntity::pointer equalTo claim.ref.toString())
+                attestationPointer(claim.ref)
+                attestationType()
             }
 
             assertEquals(3, results.count())
@@ -110,7 +113,8 @@ class VaultServiceAttestationsQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                expression(AttestationEntity::pointerHash equalTo attestation.state.data.pointer.hash.toString())
+                attestationPointerHash(attestation.state.data.pointer.hash)
+                attestationType()
             }
 
             assertEquals(3, results.count())
@@ -122,7 +126,8 @@ class VaultServiceAttestationsQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                expression(AttestationEntity::status equalTo AttestationStatus.ACCEPTED)
+                attestationStatus(AttestationStatus.ACCEPTED)
+                attestationType()
             }
 
             assertEquals(2, results.count())
@@ -134,7 +139,8 @@ class VaultServiceAttestationsQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                expression(AttestationEntity::status equalTo AttestationStatus.REJECTED)
+                attestationStatus(AttestationStatus.REJECTED)
+                attestationType()
             }
 
             assertEquals(1, results.count())
@@ -146,7 +152,8 @@ class VaultServiceAttestationsQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                expression(AttestationEntity::previousStateRef equalTo attestation.state.data.previousStateRef?.toString())
+                attestationPreviousStateRef(attestation.state.data.previousStateRef)
+                attestationType()
             }
 
             assertEquals(1, results.count())
@@ -158,7 +165,8 @@ class VaultServiceAttestationsQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                expression(AttestationEntity::hash equalTo attestation.state.data.hash.toString())
+                attestationHash(attestation.state.data.hash)
+                attestationType()
             }
 
             assertEquals(1, results.count())

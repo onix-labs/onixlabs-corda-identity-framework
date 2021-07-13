@@ -16,12 +16,14 @@
 
 package io.onixlabs.corda.identityframework.workflow.attestation
 
-import io.onixlabs.corda.core.services.equalTo
 import io.onixlabs.corda.core.services.isNull
 import io.onixlabs.corda.core.services.singleOrNull
 import io.onixlabs.corda.core.services.vaultServiceFor
-import io.onixlabs.corda.identityframework.contract.*
+import io.onixlabs.corda.identityframework.contract.Attestation
 import io.onixlabs.corda.identityframework.contract.AttestationSchema.AttestationEntity
+import io.onixlabs.corda.identityframework.contract.CordaClaim
+import io.onixlabs.corda.identityframework.contract.createAcceptedStaticAttestation
+import io.onixlabs.corda.identityframework.contract.rejectAttestation
 import io.onixlabs.corda.identityframework.workflow.*
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.node.services.Vault
@@ -58,6 +60,7 @@ class VaultServiceAttestationQueryTests : FlowTest() {
             val result = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
                 linearIds(attestation.state.data.linearId)
+                attestationType()
             }
 
             assertEquals(attestation, result)
@@ -70,6 +73,7 @@ class VaultServiceAttestationQueryTests : FlowTest() {
             val result = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
                 expression(AttestationEntity::externalId.isNull())
+                attestationType()
             }
 
             assertEquals(attestation, result)
@@ -81,7 +85,8 @@ class VaultServiceAttestationQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                expression(AttestationEntity::attestor equalTo attestation.state.data.attestor)
+                attestationAttestor(attestation.state.data.attestor)
+                attestationType()
             }
 
             assertEquals(attestation, result)
@@ -93,7 +98,8 @@ class VaultServiceAttestationQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                expression(AttestationEntity::pointer equalTo claim.ref.toString())
+                attestationPointer(claim.ref)
+                attestationType()
             }
 
             assertEquals(attestation, result)
@@ -105,7 +111,8 @@ class VaultServiceAttestationQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                expression(AttestationEntity::pointerHash equalTo attestation.state.data.pointer.hash.toString())
+                attestationPointerHash(attestation.state.data.pointer.hash)
+                attestationType()
             }
 
             assertEquals(attestation, result)
@@ -117,7 +124,8 @@ class VaultServiceAttestationQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                expression(AttestationEntity::status equalTo attestation.state.data.status)
+                attestationStatus(attestation.state.data.status)
+                attestationType()
             }
 
             assertEquals(attestation, result)
@@ -129,7 +137,8 @@ class VaultServiceAttestationQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                expression(AttestationEntity::previousStateRef equalTo attestation.state.data.previousStateRef?.toString())
+                attestationPreviousStateRef(attestation.state.data.previousStateRef)
+                attestationType()
             }
 
             assertEquals(attestation, result)
@@ -141,7 +150,8 @@ class VaultServiceAttestationQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                expression(AttestationEntity::hash equalTo attestation.state.data.hash.toString())
+                attestationHash(attestation.state.data.hash)
+                attestationType()
             }
 
             assertEquals(attestation, result)

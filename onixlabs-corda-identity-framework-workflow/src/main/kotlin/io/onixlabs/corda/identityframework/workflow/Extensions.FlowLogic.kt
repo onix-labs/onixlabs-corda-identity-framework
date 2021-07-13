@@ -18,18 +18,11 @@ package io.onixlabs.corda.identityframework.workflow
 
 import co.paralleluniverse.fibers.Suspendable
 import io.onixlabs.corda.core.services.any
-import io.onixlabs.corda.core.services.equalTo
 import io.onixlabs.corda.core.services.vaultServiceFor
-import io.onixlabs.corda.core.workflow.currentStep
 import io.onixlabs.corda.identityframework.contract.Attestation
-import io.onixlabs.corda.identityframework.contract.AttestationSchema
 import io.onixlabs.corda.identityframework.contract.CordaClaim
-import io.onixlabs.corda.identityframework.contract.CordaClaimSchema
-import net.corda.core.flows.*
-import net.corda.core.identity.Party
-import net.corda.core.transactions.SignedTransaction
-import net.corda.core.transactions.TransactionBuilder
-import java.security.PublicKey
+import net.corda.core.flows.FlowException
+import net.corda.core.flows.FlowLogic
 
 /**
  * Checks whether the state for the specified attestation has been witnessed by this node.
@@ -54,7 +47,9 @@ fun FlowLogic<*>.checkHasAttestedStateBeenWitnessed(attestation: Attestation<*>)
 @Suspendable
 fun FlowLogic<*>.checkClaimExists(claim: CordaClaim<*>) {
     val claimExists = serviceHub.vaultServiceFor(claim.javaClass).any {
-        expression(CordaClaimSchema.CordaClaimEntity::hash equalTo claim.hash.toString())
+        claimType(claim.javaClass)
+        claimValueType(claim.value.javaClass)
+        claimHash(claim.hash)
     }
 
     if (claimExists) {
@@ -71,7 +66,9 @@ fun FlowLogic<*>.checkClaimExists(claim: CordaClaim<*>) {
 @Suspendable
 fun FlowLogic<*>.checkAttestationExists(attestation: Attestation<*>) {
     val attestationExists = serviceHub.vaultServiceFor(attestation.javaClass).any {
-        expression(AttestationSchema.AttestationEntity::hash equalTo attestation.hash.toString())
+        attestationType(attestation.javaClass)
+        attestationPointerType(attestation.pointer.stateType)
+        attestationHash(attestation.hash)
     }
 
     if (attestationExists) {
