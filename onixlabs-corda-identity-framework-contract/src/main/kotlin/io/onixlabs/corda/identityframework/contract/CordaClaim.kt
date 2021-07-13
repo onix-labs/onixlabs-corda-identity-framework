@@ -73,7 +73,7 @@ open class CordaClaim<T : Any>(
     val isSelfIssued: Boolean
         get() = issuer == holder
 
-    override val hash: SecureHash
+    final override val hash: SecureHash
         get() = SecureHash.sha256("$issuer$holder$property$value$previousStateRef")
 
     override val participants: List<AbstractParty>
@@ -130,6 +130,7 @@ open class CordaClaim<T : Any>(
      */
     override fun equals(other: Any?): Boolean {
         return this === other || (other is CordaClaim<*>
+                && other.javaClass == javaClass
                 && other.issuer == issuer
                 && other.holder == holder
                 && other.property == property
@@ -148,7 +149,7 @@ open class CordaClaim<T : Any>(
     }
 
     /**
-     * Ensures that the immutable properties of this claim have not changed.
+     * Ensures that the properties considered immutable across state transitions do not change.
      *
      * @param other The Corda claim to compare with the current Corda claim.
      * @return Returns true if the immutable properties have not changed; otherwise, false.
@@ -163,9 +164,9 @@ open class CordaClaim<T : Any>(
     }
 
     /**
-     * Ensures immutable property checks in derived classes.
+     * Ensures that the properties considered immutable across state transitions do not change.
      *
-     * @param other The attestation to compare with the current Corda claim.
+     * @param other The Corda claim to compare with the current Corda claim.
      * @return Returns true if the immutable properties have not changed; otherwise, false.
      */
     protected open fun immutableEquals(other: CordaClaim<*>): Boolean = true
