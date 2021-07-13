@@ -39,6 +39,7 @@ abstract class AbstractClaim<T : Any> {
      */
     override fun equals(other: Any?): Boolean {
         return this === other || (other is AbstractClaim<*>
+                && other.javaClass == javaClass
                 && other.property == property
                 && other.value == value)
     }

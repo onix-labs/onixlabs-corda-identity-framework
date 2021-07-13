@@ -14,7 +14,7 @@ buildscript {
         junit_version = '5.3.1'
 
         onixlabs_group = 'io.onixlabs'
-        onixlabs_corda_core_release_version = '2.1.0'
+        onixlabs_corda_core_release_version = '2.1.1'
 
         cordapp_platform_version = 10
         cordapp_contract_name = 'ONIXLabs Corda Identity Framework Contract'
