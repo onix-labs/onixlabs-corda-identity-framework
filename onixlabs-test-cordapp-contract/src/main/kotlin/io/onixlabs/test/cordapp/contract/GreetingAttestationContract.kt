@@ -16,20 +16,17 @@
 
 package io.onixlabs.test.cordapp.contract
 
+import io.onixlabs.corda.core.contract.ContractID
 import io.onixlabs.corda.identityframework.contract.AttestationContract
 import io.onixlabs.corda.identityframework.contract.AttestationStatus
 import net.corda.core.contracts.Contract
-import net.corda.core.contracts.ContractClassName
 import net.corda.core.contracts.requireThat
 import net.corda.core.transactions.LedgerTransaction
 import java.security.PublicKey
 
 class GreetingAttestationContract : AttestationContract(), Contract {
 
-    companion object {
-        @JvmStatic
-        val ID: ContractClassName = this::class.java.enclosingClass.canonicalName
-    }
+    companion object : ContractID
 
     internal object Issue {
         const val CONTRACT_RULE_REFERENCES =

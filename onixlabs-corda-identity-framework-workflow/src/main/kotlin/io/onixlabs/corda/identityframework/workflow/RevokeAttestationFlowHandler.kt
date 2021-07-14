@@ -65,20 +65,20 @@ class RevokeAttestationFlowHandler(
     private class Handler(private val session: FlowSession) : FlowLogic<SignedTransaction>() {
 
         private companion object {
-            object ObserveRevokedAttestationStep : Step("Observing revoked attestation.") {
+            object HandleRevokedAttestationStep : Step("Handling revoked attestation.") {
                 override fun childProgressTracker(): ProgressTracker = tracker()
             }
         }
 
-        override val progressTracker = ProgressTracker(ObserveRevokedAttestationStep)
+        override val progressTracker = ProgressTracker(HandleRevokedAttestationStep)
 
         @Suspendable
         override fun call(): SignedTransaction {
-            currentStep(ObserveRevokedAttestationStep)
+            currentStep(HandleRevokedAttestationStep)
             return subFlow(
                 RevokeAttestationFlowHandler(
                     session,
-                    progressTracker = ObserveRevokedAttestationStep.childProgressTracker()
+                    progressTracker = HandleRevokedAttestationStep.childProgressTracker()
                 )
             )
         }

@@ -17,7 +17,6 @@
 package io.onixlabs.corda.identityframework.workflow
 
 import co.paralleluniverse.fibers.Suspendable
-import io.onixlabs.corda.core.workflow.ReceiveStatesToRecordStep
 import io.onixlabs.corda.core.workflow.currentStep
 import net.corda.core.flows.FlowLogic
 import net.corda.core.flows.FlowSession
@@ -59,20 +58,20 @@ class PublishAttestationFlowHandler(
     private class Handler(private val session: FlowSession) : FlowLogic<SignedTransaction>() {
 
         private companion object {
-            object ReceivePublishedAttestationTransactionStep : Step("Receiving published attestation transaction.") {
+            object HandlePublishedAttestationStep : Step("Handling published attestation.") {
                 override fun childProgressTracker() = tracker()
             }
         }
 
-        override val progressTracker = ProgressTracker(ReceivePublishedAttestationTransactionStep)
+        override val progressTracker = ProgressTracker(HandlePublishedAttestationStep)
 
         @Suspendable
         override fun call(): SignedTransaction {
-            currentStep(ReceivePublishedAttestationTransactionStep)
+            currentStep(HandlePublishedAttestationStep)
             return subFlow(
                 PublishAttestationFlowHandler(
                     session,
-                    ReceivePublishedAttestationTransactionStep.childProgressTracker()
+                    HandlePublishedAttestationStep.childProgressTracker()
                 )
             )
         }

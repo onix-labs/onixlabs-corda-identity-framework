@@ -16,19 +16,16 @@
 
 package io.onixlabs.test.cordapp.contract
 
+import io.onixlabs.corda.core.contract.ContractID
 import io.onixlabs.corda.identityframework.contract.CordaClaimContract
 import net.corda.core.contracts.Contract
-import net.corda.core.contracts.ContractClassName
 import net.corda.core.contracts.requireThat
 import net.corda.core.transactions.LedgerTransaction
 import java.security.PublicKey
 
 class GreetingClaimContract : CordaClaimContract(), Contract {
 
-    companion object {
-        @JvmStatic
-        val ID: ContractClassName = this::class.java.enclosingClass.canonicalName
-    }
+    companion object : ContractID
 
     internal object Issue {
         const val CONTRACT_RULE_OUTPUT_PROPERTY =
