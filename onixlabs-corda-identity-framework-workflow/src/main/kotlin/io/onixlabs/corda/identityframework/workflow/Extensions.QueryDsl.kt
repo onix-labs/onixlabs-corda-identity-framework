@@ -4,9 +4,13 @@ import io.onixlabs.corda.core.services.QueryDsl
 import io.onixlabs.corda.core.services.QueryDslContext
 import io.onixlabs.corda.core.services.equalTo
 import io.onixlabs.corda.core.services.isNull
-import io.onixlabs.corda.identityframework.contract.*
-import io.onixlabs.corda.identityframework.contract.AttestationSchema.AttestationEntity
-import io.onixlabs.corda.identityframework.contract.CordaClaimSchema.CordaClaimEntity
+import io.onixlabs.corda.identityframework.contract.attestations.AttestationSchema.AttestationEntity
+import io.onixlabs.corda.identityframework.contract.claims.CordaClaimSchema.CordaClaimEntity
+import io.onixlabs.corda.identityframework.contract.attestations.Attestation
+import io.onixlabs.corda.identityframework.contract.attestations.AttestationStatus
+import io.onixlabs.corda.identityframework.contract.attestations.AttestationTypeInfo
+import io.onixlabs.corda.identityframework.contract.claims.ClaimTypeInfo
+import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
 import net.corda.core.contracts.ContractState
 import net.corda.core.contracts.StateRef
 import net.corda.core.crypto.SecureHash

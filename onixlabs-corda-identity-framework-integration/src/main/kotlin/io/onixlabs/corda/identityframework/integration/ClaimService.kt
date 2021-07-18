@@ -17,12 +17,12 @@
 package io.onixlabs.corda.identityframework.integration
 
 import io.onixlabs.corda.core.integration.RPCService
-import io.onixlabs.corda.identityframework.contract.CordaClaim
+import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
 import io.onixlabs.corda.identityframework.contract.amend
-import io.onixlabs.corda.identityframework.workflow.AmendClaimFlow
-import io.onixlabs.corda.identityframework.workflow.IssueClaimFlow
-import io.onixlabs.corda.identityframework.workflow.PublishClaimFlow
-import io.onixlabs.corda.identityframework.workflow.RevokeClaimFlow
+import io.onixlabs.corda.identityframework.workflow.claims.AmendClaimFlow
+import io.onixlabs.corda.identityframework.workflow.claims.IssueClaimFlow
+import io.onixlabs.corda.identityframework.workflow.claims.PublishClaimFlow
+import io.onixlabs.corda.identityframework.workflow.claims.RevokeClaimFlow
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.contracts.UniqueIdentifier
 import net.corda.core.identity.AbstractParty

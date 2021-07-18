@@ -16,8 +16,12 @@
 
 package io.onixlabs.test.cordapp.contract
 
-import io.onixlabs.corda.identityframework.contract.AttestationContract
-import io.onixlabs.corda.identityframework.contract.CordaClaimContract
+import io.onixlabs.corda.identityframework.contract.attestations.AttestationContract
+import io.onixlabs.corda.identityframework.contract.claims.CordaClaimContract
+import io.onixlabs.test.cordapp.contract.attestations.GreetingAttestation
+import io.onixlabs.test.cordapp.contract.attestations.GreetingAttestationContract
+import io.onixlabs.test.cordapp.contract.claims.GreetingClaim
+import io.onixlabs.test.cordapp.contract.claims.GreetingClaimContract
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.crypto.SecureHash
 import net.corda.core.node.NotaryInfo

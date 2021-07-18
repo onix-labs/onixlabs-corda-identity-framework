@@ -19,8 +19,8 @@ package io.onixlabs.corda.identityframework.workflow
 import co.paralleluniverse.fibers.Suspendable
 import io.onixlabs.corda.core.services.any
 import io.onixlabs.corda.core.services.vaultServiceFor
-import io.onixlabs.corda.identityframework.contract.Attestation
-import io.onixlabs.corda.identityframework.contract.CordaClaim
+import io.onixlabs.corda.identityframework.contract.attestations.Attestation
+import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
 import net.corda.core.flows.FlowException
 import net.corda.core.flows.FlowLogic
 

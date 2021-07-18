@@ -16,10 +16,10 @@
 
 package io.onixlabs.corda.identityframework.workflow
 
-import io.onixlabs.corda.identityframework.contract.Attestation
-import io.onixlabs.corda.identityframework.contract.AttestationContract
-import io.onixlabs.corda.identityframework.contract.CordaClaim
-import io.onixlabs.corda.identityframework.contract.CordaClaimContract
+import io.onixlabs.corda.identityframework.contract.attestations.Attestation
+import io.onixlabs.corda.identityframework.contract.attestations.AttestationContract
+import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
+import io.onixlabs.corda.identityframework.contract.claims.CordaClaimContract
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.transactions.TransactionBuilder
 

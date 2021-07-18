@@ -16,6 +16,10 @@
 
 package io.onixlabs.corda.identityframework.contract
 
+import io.onixlabs.corda.identityframework.contract.attestations.Attestation
+import io.onixlabs.corda.identityframework.contract.attestations.AttestationStatus
+import io.onixlabs.corda.identityframework.contract.attestations.LinearAttestationPointer
+import io.onixlabs.corda.identityframework.contract.attestations.StaticAttestationPointer
 import net.corda.core.contracts.ContractState
 import net.corda.core.contracts.LinearState
 import net.corda.core.contracts.StateAndRef

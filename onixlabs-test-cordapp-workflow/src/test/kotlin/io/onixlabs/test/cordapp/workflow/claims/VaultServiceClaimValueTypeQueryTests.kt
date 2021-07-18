@@ -16,16 +16,14 @@
 
 package io.onixlabs.test.cordapp.workflow.claims
 
-import io.onixlabs.corda.core.services.equalTo
 import io.onixlabs.corda.core.services.filter
 import io.onixlabs.corda.core.services.vaultServiceFor
-import io.onixlabs.corda.identityframework.contract.CordaClaim
-import io.onixlabs.corda.identityframework.contract.CordaClaimSchema
-import io.onixlabs.corda.identityframework.workflow.IssueClaimFlow
+import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
+import io.onixlabs.corda.identityframework.workflow.claims.IssueClaimFlow
 import io.onixlabs.corda.identityframework.workflow.claimProperty
 import io.onixlabs.corda.identityframework.workflow.claimType
 import io.onixlabs.corda.identityframework.workflow.claimValueType
-import io.onixlabs.test.cordapp.contract.GreetingClaim
+import io.onixlabs.test.cordapp.contract.claims.GreetingClaim
 import io.onixlabs.test.cordapp.workflow.FlowTest
 import io.onixlabs.test.cordapp.workflow.Pipeline
 import net.corda.core.node.services.Vault

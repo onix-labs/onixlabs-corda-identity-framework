@@ -16,7 +16,7 @@
 
 package io.onixlabs.test.cordapp.workflow
 
-import io.onixlabs.test.cordapp.contract.GreetingClaim
+import io.onixlabs.test.cordapp.contract.claims.GreetingClaim
 import net.corda.core.identity.CordaX500Name
 import net.corda.core.identity.Party
 import net.corda.testing.common.internal.testNetworkParameters
@@ -24,7 +24,6 @@ import net.corda.testing.core.singleIdentity
 import net.corda.testing.node.MockNetwork
 import net.corda.testing.node.MockNetworkParameters
 import net.corda.testing.node.StartedMockNode
-import net.corda.testing.node.TestCordapp
 import net.corda.testing.node.internal.cordappsForPackages
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll

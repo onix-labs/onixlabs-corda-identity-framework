@@ -16,8 +16,8 @@
 
 package io.onixlabs.test.cordapp.contract.attestations
 
-import io.onixlabs.corda.identityframework.contract.AttestationContract
-import io.onixlabs.corda.identityframework.contract.AttestationStatus
+import io.onixlabs.corda.identityframework.contract.attestations.AttestationContract
+import io.onixlabs.corda.identityframework.contract.attestations.AttestationStatus
 import io.onixlabs.test.cordapp.contract.*
 import net.corda.testing.node.ledger
 import org.junit.jupiter.api.Test

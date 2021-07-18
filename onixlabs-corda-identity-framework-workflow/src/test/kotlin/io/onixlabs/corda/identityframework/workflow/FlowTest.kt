@@ -16,7 +16,7 @@
 
 package io.onixlabs.corda.identityframework.workflow
 
-import io.onixlabs.corda.identityframework.contract.CordaClaim
+import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
 import net.corda.core.contracts.TypeOnlyCommandData
 import net.corda.core.contracts.UniqueIdentifier
 import net.corda.core.crypto.NullKeys.NULL_PARTY

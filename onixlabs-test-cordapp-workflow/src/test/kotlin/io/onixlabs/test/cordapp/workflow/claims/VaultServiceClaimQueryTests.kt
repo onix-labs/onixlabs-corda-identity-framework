@@ -19,10 +19,12 @@ package io.onixlabs.test.cordapp.workflow.claims
 import io.onixlabs.corda.core.services.isNull
 import io.onixlabs.corda.core.services.singleOrNull
 import io.onixlabs.corda.core.services.vaultServiceFor
-import io.onixlabs.corda.identityframework.contract.CordaClaimSchema
+import io.onixlabs.corda.identityframework.contract.claims.CordaClaimSchema
 import io.onixlabs.corda.identityframework.contract.amend
 import io.onixlabs.corda.identityframework.workflow.*
-import io.onixlabs.test.cordapp.contract.GreetingClaim
+import io.onixlabs.corda.identityframework.workflow.claims.AmendClaimFlow
+import io.onixlabs.corda.identityframework.workflow.claims.IssueClaimFlow
+import io.onixlabs.test.cordapp.contract.claims.GreetingClaim
 import io.onixlabs.test.cordapp.workflow.FlowTest
 import io.onixlabs.test.cordapp.workflow.Pipeline
 import net.corda.core.contracts.StateAndRef

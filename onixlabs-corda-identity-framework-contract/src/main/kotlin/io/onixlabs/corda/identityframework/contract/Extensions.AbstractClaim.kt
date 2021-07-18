@@ -16,6 +16,10 @@
 
 package io.onixlabs.corda.identityframework.contract
 
+import io.onixlabs.corda.core.toTypedClass
+import io.onixlabs.corda.identityframework.contract.claims.AbstractClaim
+import io.onixlabs.corda.identityframework.contract.claims.ClaimTypeInfo
+
 private typealias Claims = Iterable<AbstractClaim<*>>
 
 /**
@@ -114,7 +118,7 @@ fun <T, U : AbstractClaim<in T>> Claims.filterByType(claimType: Class<U>, valueT
  */
 inline fun <reified T : AbstractClaim<*>> Claims.filterByType(): List<T> {
     val claimTypeInfo = object : ClaimTypeInfo<T>() {}
-    return filterByType(claimTypeInfo.claimType, claimTypeInfo.claimValueType)
+    return filterByType(claimTypeInfo.claimType.toTypedClass(), claimTypeInfo.claimValueType)
 }
 
 /**

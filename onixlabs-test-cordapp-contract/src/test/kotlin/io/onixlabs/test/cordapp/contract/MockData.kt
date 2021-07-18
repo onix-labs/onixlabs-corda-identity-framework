@@ -16,6 +16,7 @@
 
 package io.onixlabs.test.cordapp.contract
 
+import io.onixlabs.test.cordapp.contract.claims.GreetingClaim
 import net.corda.core.identity.CordaX500Name
 import net.corda.testing.core.DUMMY_NOTARY_NAME
 import net.corda.testing.core.TestIdentity

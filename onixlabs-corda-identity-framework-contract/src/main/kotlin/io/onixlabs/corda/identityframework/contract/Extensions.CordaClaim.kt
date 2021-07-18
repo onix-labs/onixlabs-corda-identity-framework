@@ -16,6 +16,9 @@
 
 package io.onixlabs.corda.identityframework.contract
 
+import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
+import io.onixlabs.corda.identityframework.contract.claims.LinearClaimPointer
+import io.onixlabs.corda.identityframework.contract.claims.StaticClaimPointer
 import net.corda.core.contracts.StateAndRef
 
 /**
