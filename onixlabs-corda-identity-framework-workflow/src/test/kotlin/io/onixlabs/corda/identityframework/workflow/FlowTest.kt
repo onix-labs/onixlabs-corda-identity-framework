@@ -16,6 +16,7 @@
 
 package io.onixlabs.corda.identityframework.workflow
 
+import io.onixlabs.corda.identityframework.contract.accounts.Account
 import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
 import net.corda.core.contracts.TypeOnlyCommandData
 import net.corda.core.contracts.UniqueIdentifier
@@ -47,12 +48,10 @@ abstract class FlowTest {
     protected val CLAIM_2 by lazy { CordaClaim(partyB, "Number", 123, LINEAR_ID_2) }
     protected val CLAIM_3 by lazy { CordaClaim(partyC, "Time", Instant.now(), LINEAR_ID_3) }
 
-    protected class CustomCordaClaim : CordaClaim<BigDecimal>(NULL_PARTY, "Custom", BigDecimal.ZERO)
-
-    protected val CONTRACT_STATE by lazy { DummyContract.SingleOwnerState(owner = partyA) }
-    protected val LINEAR_STATE by lazy { DummyLinearContract.State(participants = listOf(partyA)) }
-
-    protected object COMMAND : TypeOnlyCommandData()
+    protected val ACCOUNT_1_FOR_PARTY_A by lazy { Account(partyA) }
+    protected val ACCOUNT_2_FOR_PARTY_A by lazy { Account(partyA) }
+    protected val ACCOUNT_1_FOR_PARTY_B by lazy { Account(partyB) }
+    protected val ACCOUNT_2_FOR_PARTY_B by lazy { Account(partyB) }
 
     private lateinit var _network: MockNetwork
     protected val network: MockNetwork get() = _network

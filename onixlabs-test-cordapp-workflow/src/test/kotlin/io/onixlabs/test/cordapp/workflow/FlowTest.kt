@@ -16,6 +16,7 @@
 
 package io.onixlabs.test.cordapp.workflow
 
+import io.onixlabs.corda.identityframework.contract.accounts.Account
 import io.onixlabs.test.cordapp.contract.claims.GreetingClaim
 import net.corda.core.identity.CordaX500Name
 import net.corda.core.identity.Party
@@ -33,6 +34,9 @@ import org.junit.jupiter.api.TestInstance
 abstract class FlowTest {
 
     protected val GREETING_CLAIM by lazy { GreetingClaim(partyA, partyB) }
+
+    protected val ACCOUNT_FOR_PARTY_A by lazy { Account(partyA) }
+    protected val ACCOUNT_FOR_PARTY_B by lazy { Account(partyB) }
 
     private lateinit var _network: MockNetwork
     protected val network: MockNetwork get() = _network

@@ -32,7 +32,7 @@ object CordaClaimSchema {
     }
 
     @Entity
-    @Table(name = "corda_claim_states")
+    @Table(name = "onixlabs_corda_claim_states")
     class CordaClaimEntity(
         @Column(name = "linear_id", nullable = false)
         val linearId: UUID = UUID.randomUUID(),
@@ -43,8 +43,20 @@ object CordaClaimSchema {
         @Column(name = "issuer", nullable = false)
         val issuer: AbstractParty = NULL_PARTY,
 
+        @Column(name = "issuer_account_linear_id", nullable = true)
+        val issuerAccountLinearId: UUID? = null,
+
+        @Column(name = "issuer_account_external_id", nullable = true)
+        val issuerAccountExternalId: String? = null,
+
         @Column(name = "holder", nullable = false)
         val holder: AbstractParty = NULL_PARTY,
+
+        @Column(name = "holder_account_linear_id", nullable = true)
+        val holderAccountLinearId: UUID? = null,
+
+        @Column(name = "holder_account_external_id", nullable = true)
+        val holderAccountExternalId: String? = null,
 
         @Column(name = "property", nullable = false)
         val property: String = "",

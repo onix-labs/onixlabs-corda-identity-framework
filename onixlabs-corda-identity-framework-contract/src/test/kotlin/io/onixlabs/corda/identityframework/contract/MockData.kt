@@ -16,6 +16,8 @@
 
 package io.onixlabs.corda.identityframework.contract
 
+import io.onixlabs.corda.identityframework.contract.accounts.Account
+import io.onixlabs.corda.identityframework.contract.accounts.AccountContract
 import io.onixlabs.corda.identityframework.contract.attestations.Attestation
 import io.onixlabs.corda.identityframework.contract.attestations.AttestationPointer
 import io.onixlabs.corda.identityframework.contract.attestations.AttestationStatus
@@ -23,6 +25,7 @@ import io.onixlabs.corda.identityframework.contract.claims.Claim
 import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
 import io.onixlabs.corda.identityframework.contract.claims.CordaClaimContract
 import net.corda.core.contracts.BelongsToContract
+import net.corda.core.contracts.ContractState
 import net.corda.core.contracts.StateRef
 import net.corda.core.contracts.UniqueIdentifier
 import net.corda.core.crypto.SecureHash
@@ -38,6 +41,8 @@ val NOTARY = TestIdentity(DUMMY_NOTARY_NAME)
 
 val CLAIM_1 = CordaClaim(IDENTITY_A.party, IDENTITY_B.party, "example", "Hello, World!")
 val CLAIM_2 = CordaClaim(IDENTITY_B.party, IDENTITY_B.party, "example", 123)
+
+val ACCOUNT_A = Account(IDENTITY_A.party)
 
 val EMPTY_REF = StateRef(SecureHash.zeroHash, 0)
 
@@ -77,3 +82,13 @@ class CustomAttestation(
     linearId,
     previousStateRef
 )
+
+@BelongsToContract(AccountContract::class)
+object NotAnAccount : ContractState {
+    override val participants: List<AbstractParty> get() = listOf(IDENTITY_A.party)
+}
+
+@BelongsToContract(AccountContract::class)
+object AccountOwnerIsNotParticipant : Account(IDENTITY_A.party) {
+    override val participants: List<AbstractParty> get() = listOf(IDENTITY_B.party)
+}

@@ -20,6 +20,7 @@ import co.paralleluniverse.fibers.Suspendable
 import io.onixlabs.corda.core.workflow.*
 import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
 import io.onixlabs.corda.identityframework.workflow.addIssuedClaim
+import io.onixlabs.corda.identityframework.workflow.checkAccountExists
 import io.onixlabs.corda.identityframework.workflow.checkClaimExists
 import net.corda.core.flows.*
 import net.corda.core.identity.Party
@@ -61,6 +62,8 @@ class IssueClaimFlow(
         currentStep(InitializeFlowStep)
         checkSufficientSessions(sessions, claim)
         checkClaimExists(claim)
+        checkAccountExists(claim.issuer)
+        checkAccountExists(claim.holder)
 
         val transaction = buildTransaction(notary) {
             addIssuedClaim(claim)
