@@ -4,15 +4,18 @@ import io.onixlabs.corda.core.services.QueryDsl
 import io.onixlabs.corda.core.services.QueryDslContext
 import io.onixlabs.corda.core.services.equalTo
 import io.onixlabs.corda.core.services.isNull
-import io.onixlabs.corda.identityframework.contract.attestations.AttestationSchema.AttestationEntity
-import io.onixlabs.corda.identityframework.contract.claims.CordaClaimSchema.CordaClaimEntity
+import io.onixlabs.corda.identityframework.contract.accounts.Account
+import io.onixlabs.corda.identityframework.contract.accounts.AccountSchema.AccountEntity
 import io.onixlabs.corda.identityframework.contract.attestations.Attestation
+import io.onixlabs.corda.identityframework.contract.attestations.AttestationSchema.AttestationEntity
 import io.onixlabs.corda.identityframework.contract.attestations.AttestationStatus
 import io.onixlabs.corda.identityframework.contract.attestations.AttestationTypeInfo
 import io.onixlabs.corda.identityframework.contract.claims.ClaimTypeInfo
 import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
+import io.onixlabs.corda.identityframework.contract.claims.CordaClaimSchema.CordaClaimEntity
 import net.corda.core.contracts.ContractState
 import net.corda.core.contracts.StateRef
+import net.corda.core.contracts.UniqueIdentifier
 import net.corda.core.crypto.SecureHash
 import net.corda.core.identity.AbstractParty
 
@@ -27,6 +30,28 @@ fun QueryDsl<out CordaClaim<*>>.claimIssuer(value: AbstractParty) {
 }
 
 /**
+ * Adds a vault query expression to filter by claim issuer account equal to the specified value.
+ *
+ * @param value The value to filter by in the vault query expression.
+ */
+@QueryDslContext
+fun QueryDsl<out CordaClaim<*>>.claimIssuerAccount(value: Account) {
+    claimIssuer(value.toAccountParty())
+}
+
+/**
+ * Adds a vault query expression to filter by claim issuer account ID equal to the specified value.
+ *
+ * @param value The value to filter by in the vault query expression.
+ */
+@QueryDslContext
+fun QueryDsl<out CordaClaim<*>>.claimIssuerAccountId(value: UniqueIdentifier) {
+    expression(CordaClaimEntity::issuerAccountLinearId equalTo value.id)
+    if (value.externalId == null) expression(CordaClaimEntity::issuerAccountExternalId.isNull())
+    else expression(CordaClaimEntity::issuerAccountExternalId equalTo value.externalId)
+}
+
+/**
  * Adds a vault query expression to filter by claim holder equal to the specified value.
  *
  * @param value The value to filter by in the vault query expression.
@@ -34,6 +59,28 @@ fun QueryDsl<out CordaClaim<*>>.claimIssuer(value: AbstractParty) {
 @QueryDslContext
 fun QueryDsl<out CordaClaim<*>>.claimHolder(value: AbstractParty) {
     expression(CordaClaimEntity::holder equalTo value)
+}
+
+/**
+ * Adds a vault query expression to filter by claim holder account equal to the specified value.
+ *
+ * @param value The value to filter by in the vault query expression.
+ */
+@QueryDslContext
+fun QueryDsl<out CordaClaim<*>>.claimHolderAccount(value: Account) {
+    claimHolder(value.toAccountParty())
+}
+
+/**
+ * Adds a vault query expression to filter by claim holder account ID equal to the specified value.
+ *
+ * @param value The value to filter by in the vault query expression.
+ */
+@QueryDslContext
+fun QueryDsl<out CordaClaim<*>>.claimHolderAccountId(value: UniqueIdentifier) {
+    expression(CordaClaimEntity::holderAccountLinearId equalTo value.id)
+    if (value.externalId == null) expression(CordaClaimEntity::holderAccountExternalId.isNull())
+    else expression(CordaClaimEntity::holderAccountExternalId equalTo value.externalId)
 }
 
 /**
@@ -218,4 +265,14 @@ inline fun <reified T : Attestation<*>> QueryDsl<in T>.attestationType() {
         attestationType(attestationType)
         attestationStateType?.let { expression(AttestationEntity::pointerStateType equalTo it.canonicalName) }
     }
+}
+
+/**
+ * Adds a vault query expression to filter by account owner equal to the specified value.
+ *
+ * @param value The value to filter by in the vault query expression.
+ */
+@QueryDslContext
+fun QueryDsl<out Account>.accountOwner(value: AbstractParty) {
+    expression(AccountEntity::owner equalTo value)
 }

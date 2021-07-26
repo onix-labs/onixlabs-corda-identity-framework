@@ -16,6 +16,8 @@
 
 package io.onixlabs.corda.identityframework.workflow
 
+import io.onixlabs.corda.identityframework.contract.accounts.Account
+import io.onixlabs.corda.identityframework.contract.accounts.AccountContract
 import io.onixlabs.corda.identityframework.contract.attestations.Attestation
 import io.onixlabs.corda.identityframework.contract.attestations.AttestationContract
 import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
@@ -43,6 +45,17 @@ fun TransactionBuilder.addIssuedClaim(claim: CordaClaim<*>): TransactionBuilder 
 fun TransactionBuilder.addIssuedAttestation(attestation: Attestation<*>): TransactionBuilder = apply {
     addOutputState(attestation)
     addCommand(AttestationContract.Issue, attestation.attestor.owningKey)
+}
+
+/**
+ * Adds an account for issuance to a transaction builder, including the required command.
+ *
+ * @param account The account to add to the transaction.
+ * @return Returns the current transaction builder.
+ */
+fun TransactionBuilder.addIssuedAccount(account: Account): TransactionBuilder = apply {
+    addOutputState(account)
+    addCommand(AccountContract.Issue, account.owner.owningKey)
 }
 
 /**
@@ -78,6 +91,22 @@ fun TransactionBuilder.addAmendedAttestation(
 }
 
 /**
+ * Adds an account for amendment to a transaction builder, including the required command.
+ *
+ * @param oldAccount The old account to be consumed in the transaction.
+ * @param newAccount The new account to be created in the transaction.
+ * @return Returns the current transaction builder.
+ */
+fun TransactionBuilder.addAmendedAccount(
+    oldAccount: StateAndRef<Account>,
+    newAccount: Account
+): TransactionBuilder = apply {
+    addInputState(oldAccount)
+    addOutputState(newAccount)
+    addCommand(AccountContract.Amend, newAccount.owner.owningKey)
+}
+
+/**
  * Adds a claim for revocation to a transaction builder, including the required command.
  *
  * @param claim The claim to add to the transaction.
@@ -97,4 +126,15 @@ fun TransactionBuilder.addRevokedClaim(claim: StateAndRef<CordaClaim<*>>): Trans
 fun TransactionBuilder.addRevokedAttestation(attestation: StateAndRef<Attestation<*>>): TransactionBuilder = apply {
     addInputState(attestation)
     addCommand(AttestationContract.Revoke, attestation.state.data.attestor.owningKey)
+}
+
+/**
+ * Adds an account for revocation to a transaction builder, including the required command.
+ *
+ * @param account The account to add to the transaction.
+ * @return Returns the current transaction builder.
+ */
+fun TransactionBuilder.addRevokedAccount(account: StateAndRef<Account>): TransactionBuilder = apply {
+    addInputState(account)
+    addCommand(AccountContract.Revoke, account.state.data.owner.owningKey)
 }

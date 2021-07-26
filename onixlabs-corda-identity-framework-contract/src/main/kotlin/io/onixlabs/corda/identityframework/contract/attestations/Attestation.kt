@@ -18,6 +18,7 @@ package io.onixlabs.corda.identityframework.contract.attestations
 
 import io.onixlabs.corda.core.contract.ChainState
 import io.onixlabs.corda.core.contract.Hashable
+import io.onixlabs.corda.identityframework.contract.accountLinearId
 import io.onixlabs.corda.identityframework.contract.attestations.AttestationSchema.AttestationEntity
 import io.onixlabs.corda.identityframework.contract.attestations.AttestationSchema.AttestationSchemaV1
 import io.onixlabs.corda.identityframework.contract.toDataClassString
@@ -95,6 +96,8 @@ open class Attestation<T : ContractState>(
             linearId = linearId.id,
             externalId = linearId.externalId,
             attestor = attestor,
+            attestorAccountLinearId = attestor.accountLinearId?.id,
+            attestorAccountExternalId = attestor.accountLinearId?.externalId,
             pointer = pointer.statePointer.toString(),
             pointerStateType = pointer.stateType.canonicalName,
             pointerHash = pointer.hash.toString(),

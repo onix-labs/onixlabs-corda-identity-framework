@@ -19,10 +19,12 @@ package io.onixlabs.corda.identityframework.workflow
 import co.paralleluniverse.fibers.Suspendable
 import io.onixlabs.corda.core.services.any
 import io.onixlabs.corda.core.services.vaultServiceFor
+import io.onixlabs.corda.identityframework.contract.accounts.AccountParty
 import io.onixlabs.corda.identityframework.contract.attestations.Attestation
 import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
 import net.corda.core.flows.FlowException
 import net.corda.core.flows.FlowLogic
+import net.corda.core.identity.AbstractParty
 
 /**
  * Checks whether the state for the specified attestation has been witnessed by this node.
@@ -73,5 +75,23 @@ fun FlowLogic<*>.checkAttestationExists(attestation: Attestation<*>) {
 
     if (attestationExists) {
         throw FlowException("An attestation with the specified hash already exists: ${attestation.hash}.")
+    }
+}
+
+/**
+ * Checks whether an account exists for the specified party, if the party is an [AccountParty].
+ * If the specified party is not an [AccountParty] then this function will be ignored.
+ *
+ * @param party The party for which to find an account.
+ * @throws FlowException if the account does not exist.
+ */
+@Suspendable
+fun FlowLogic<*>.checkAccountExists(party: AbstractParty) {
+    if (party is AccountParty) {
+        val accountDoesNotExist = party.getAccountResolver(party.accountType).resolve(serviceHub) == null
+
+        if (accountDoesNotExist) {
+            throw FlowException("An attestation with the specified linear ID does not exist: ${party.accountLinearId}.")
+        }
     }
 }

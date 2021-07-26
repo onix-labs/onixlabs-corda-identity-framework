@@ -30,7 +30,7 @@ object AttestationSchema {
     }
 
     @Entity
-    @Table(name = "attestation_states")
+    @Table(name = "onixlabs_attestation_states")
     class AttestationEntity(
         @Column(name = "linear_id", nullable = false)
         val linearId: UUID = UUID.randomUUID(),
@@ -40,6 +40,12 @@ object AttestationSchema {
 
         @Column(name = "attestor", nullable = false)
         val attestor: AbstractParty = NULL_PARTY,
+
+        @Column(name = "attestor_account_linear_id", nullable = true)
+        val attestorAccountLinearId: UUID? = null,
+
+        @Column(name = "attestor_account_external_id", nullable = true)
+        val attestorAccountExternalId: String? = null,
 
         @Column(name = "pointer_state_pointer", nullable = false)
         val pointer: String = "",

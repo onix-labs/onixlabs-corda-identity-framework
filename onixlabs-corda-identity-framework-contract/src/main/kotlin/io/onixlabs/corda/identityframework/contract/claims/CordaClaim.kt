@@ -18,6 +18,7 @@ package io.onixlabs.corda.identityframework.contract.claims
 
 import io.onixlabs.corda.core.contract.ChainState
 import io.onixlabs.corda.core.contract.Hashable
+import io.onixlabs.corda.identityframework.contract.accountLinearId
 import io.onixlabs.corda.identityframework.contract.claims.CordaClaimSchema.CordaClaimEntity
 import io.onixlabs.corda.identityframework.contract.claims.CordaClaimSchema.CordaClaimSchemaV1
 import net.corda.core.contracts.BelongsToContract
@@ -101,7 +102,11 @@ open class CordaClaim<T : Any>(
             linearId = linearId.id,
             externalId = linearId.externalId,
             issuer = issuer,
+            issuerAccountLinearId = issuer.accountLinearId?.id,
+            issuerAccountExternalId = issuer.accountLinearId?.externalId,
             holder = holder,
+            holderAccountLinearId = holder.accountLinearId?.id,
+            holderAccountExternalId = holder.accountLinearId?.externalId,
             property = property,
             value = value.toString(),
             valueType = value.javaClass.canonicalName,

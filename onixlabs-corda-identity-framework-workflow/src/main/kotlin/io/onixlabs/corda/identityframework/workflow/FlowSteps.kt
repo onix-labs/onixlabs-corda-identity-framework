@@ -37,3 +37,13 @@ object SendAttestationTransactionStep : Step("Sending claim transaction.")
  * Represents a progress tracker step indicating that an attestation transaction is being received.
  */
 object ReceiveAttestationTransactionStep : Step("Receiving claim transaction.")
+
+/**
+ * Represents a progress tracker step indicating that an account transaction is being sent.
+ */
+object SendAccountTransactionStep : Step("Sending account transaction.")
+
+/**
+ * Represents a progress tracker step indicating that an account transaction is being received.
+ */
+object ReceiveAccountTransactionStep : Step("Receiving account transaction.")
