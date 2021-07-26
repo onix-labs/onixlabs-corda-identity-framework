@@ -90,13 +90,8 @@ class AccountParty internal constructor(
      * @return Returns true if the specified object is equal to the current object; otherwise, false.
      */
     override fun equals(other: Any?): Boolean {
-        return this === other || when (other) {
-            is AccountParty -> other.party == party
-                    && other.accountLinearId == accountLinearId
-                    && other.accountType == accountType
-            is AbstractParty -> other == party
-            else -> false
-        }
+        return if (other !is AccountParty) super.equals(other)
+        else other.party == party && other.accountLinearId == accountLinearId && other.accountType == accountType
     }
 
     /**
