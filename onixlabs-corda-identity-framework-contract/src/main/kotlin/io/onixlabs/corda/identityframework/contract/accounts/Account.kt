@@ -18,6 +18,7 @@ package io.onixlabs.corda.identityframework.contract.accounts
 
 import io.onixlabs.corda.identityframework.contract.accounts.AccountSchema.AccountEntity
 import io.onixlabs.corda.identityframework.contract.accounts.AccountSchema.AccountSchemaV1
+import io.onixlabs.corda.identityframework.contract.claims.AbstractClaim
 import io.onixlabs.corda.identityframework.contract.toDataClassString
 import net.corda.core.contracts.BelongsToContract
 import net.corda.core.contracts.LinearState
@@ -38,6 +39,7 @@ import java.util.*
 @BelongsToContract(AccountContract::class)
 open class Account(
     val owner: AbstractParty,
+    val claims: Set<AbstractClaim<*>> = emptySet(),
     override val linearId: UniqueIdentifier = UniqueIdentifier()
 ) : LinearState, QueryableState {
 
@@ -51,11 +53,7 @@ open class Account(
      * @return Returns a persistent state entity.
      */
     override fun generateMappedObject(schema: MappedSchema): PersistentState = when (schema) {
-        is AccountSchemaV1 -> AccountEntity(
-            linearId = linearId.id,
-            externalId = linearId.externalId,
-            owner = owner
-        )
+        is AccountSchemaV1 -> AccountEntity.fromAccount(this)
         else -> throw IllegalArgumentException("Unrecognised schema: $schema.")
     }
 

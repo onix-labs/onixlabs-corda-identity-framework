@@ -21,5 +21,43 @@
         <addPrimaryKey columnNames="output_index, transaction_id"
                        constraintName="PK_onixlabs_account_states"
                        tableName="onixlabs_account_states"/>
+        <createIndex tableName="onixlabs_account_states" indexName="IDX_account_id">
+            <column name="linear_id"/>
+        </createIndex>
+        <createIndex tableName="onixlabs_account_states" indexName="IDX_owner">
+            <column name="owner"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ONIXLabs" id="create-onixlabs_account_claims">
+        <createTable tableName="onixlabs_account_claims">
+            <column name="output_index" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="transaction_id" type="nvarchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id" type="uuid">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="property" type="nvarchar(256)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="clob">
+                <constraints nullable="false"/>
+            </column>
+            <column name="hash" type="nvarchar(64)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="id"
+                       constraintName="PK_onixlabs_account_claims"
+                       tableName="onixlabs_account_claims"/>
+        <createIndex tableName="onixlabs_account_claims" indexName="IDX_account_claim_index">
+            <column name="hash"/>
+        </createIndex>
+        <createIndex tableName="onixlabs_account_claims" indexName="IDX_transaction_reference">
+            <column name="output_index"/>
+            <column name="transaction_id"/>
+        </createIndex>
     </changeSet>
 </databaseChangeLog>

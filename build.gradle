@@ -14,7 +14,7 @@ buildscript {
         junit_version = '5.3.1'
 
         onixlabs_group = 'io.onixlabs'
-        onixlabs_corda_core_release_version = '2.1.2'
+        onixlabs_corda_core_release_version = '3.0.0-rc1'
 
         cordapp_platform_version = 10
         cordapp_contract_name = 'ONIXLabs Corda Identity Framework Contract'
@@ -43,8 +43,8 @@ buildscript {
     }
 }
 
-group 'io.onixlabs'
-version '3.0.0-rc1'
+group getProperty('group')
+version getProperty('version')
 
 subprojects {
     repositories {
