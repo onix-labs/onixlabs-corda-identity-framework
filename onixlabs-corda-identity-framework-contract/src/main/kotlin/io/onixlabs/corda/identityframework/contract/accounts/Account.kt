@@ -33,7 +33,7 @@ import java.util.*
  *
  * @property owner The owner of the account.
  * @property linearId The unique identifier of the account.
- * @property participants THe participants of this account; namely the owner.
+ * @property participants The participants of this account; namely the owner.
  */
 @BelongsToContract(AccountContract::class)
 open class Account(
