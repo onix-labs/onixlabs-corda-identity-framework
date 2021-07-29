@@ -17,6 +17,7 @@
 package io.onixlabs.corda.identityframework.contract.claims
 
 import io.onixlabs.corda.identityframework.contract.toDataClassString
+import net.corda.core.crypto.SecureHash
 import net.corda.core.serialization.CordaSerializable
 import java.util.*
 
@@ -31,6 +32,15 @@ import java.util.*
 abstract class AbstractClaim<T : Any> {
     abstract val property: String
     abstract val value: T
+
+    /**
+     * Computes the unique hash of this claim.
+     *
+     * @return Return's the unique hash of this claim.
+     */
+    fun computeHash(): SecureHash {
+        return SecureHash.sha256("$javaClass$property$value${value.javaClass}")
+    }
 
     /**
      * Determines whether the specified object is equal to the current object.

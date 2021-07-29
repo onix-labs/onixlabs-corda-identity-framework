@@ -22,6 +22,7 @@ import net.corda.core.crypto.SecureHash
 import net.corda.core.identity.AbstractParty
 import net.corda.core.schemas.MappedSchema
 import net.corda.core.schemas.PersistentState
+import net.corda.core.schemas.StatePersistable
 import java.util.*
 import javax.persistence.*
 
@@ -117,5 +118,5 @@ object AccountSchema {
             JoinColumn(name = "output_index", referencedColumnName = "output_index")
         )
         val account: AccountEntity = AccountEntity()
-    )
+    ) : StatePersistable
 }

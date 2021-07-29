@@ -75,7 +75,7 @@ open class CordaClaim<T : Any>(
         get() = issuer == holder
 
     final override val hash: SecureHash
-        get() = SecureHash.sha256("$issuer$holder$property$value${value.javaClass}$previousStateRef")
+        get() = computeHash().concatenate(SecureHash.sha256("$issuer$holder$previousStateRef"))
 
     override val participants: List<AbstractParty>
         get() = setOf(issuer, holder).toList()
