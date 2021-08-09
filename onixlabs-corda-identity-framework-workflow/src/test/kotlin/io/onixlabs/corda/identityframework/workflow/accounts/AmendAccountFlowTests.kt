@@ -71,6 +71,8 @@ class AmendAccountFlowTests : FlowTest() {
                     ?: fail("Failed to find a recorded account.")
 
                 assertEquals(account, recordedAccount)
+                assertEquals(5, recordedAccount.claims.size)
+                assert(recordedAccount.claims.containsAll(ACCOUNT_CLAIMS))
             }
         }
     }

@@ -18,29 +18,22 @@ package io.onixlabs.corda.identityframework.contract.accounts
 
 import io.onixlabs.corda.identityframework.contract.claims.AbstractClaim
 import net.corda.core.crypto.NullKeys.NULL_PARTY
-import net.corda.core.crypto.SecureHash
 import net.corda.core.identity.AbstractParty
-import net.corda.core.schemas.MappedSchema
-import net.corda.core.schemas.PersistentState
-import net.corda.core.schemas.StatePersistable
+import net.corda.core.schemas.*
+import java.io.Serializable
 import java.util.*
 import javax.persistence.*
+import kotlin.jvm.Transient
 
 object AccountSchema {
 
     object AccountSchemaV1 :
         MappedSchema(AccountSchema.javaClass, 1, listOf(AccountEntity::class.java, AccountClaim::class.java)) {
-        override val migrationResource: String = "account-schema.changelog-master"
+        override val migrationResource = super.migrationResource
     }
 
     @Entity
-    @Table(
-        name = "onixlabs_account_states",
-        indexes = [
-            Index(name = "account_id_index", columnList = "linear_id"),
-            Index(name = "owner_index", columnList = "owner")
-        ]
-    )
+    @Table(name = "onixlabs_account_states")
     class AccountEntity(
         @Column(name = "linear_id", nullable = false)
         val linearId: UUID = UUID.randomUUID(),
@@ -51,58 +44,23 @@ object AccountSchema {
         @Column(name = "owner", nullable = false)
         val owner: AbstractParty = NULL_PARTY,
 
-        @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST])
+        @OneToMany(cascade = [CascadeType.PERSIST])
         @JoinColumns(
-            JoinColumn(name = "transaction_id", referencedColumnName = "transaction_id"),
-            JoinColumn(name = "output_index", referencedColumnName = "output_index")
+            JoinColumn(name = "output_index", referencedColumnName = "output_index"),
+            JoinColumn(name = "transaction_id", referencedColumnName = "transaction_id")
         )
-        @OrderColumn
-        val claims: MutableSet<AccountClaim> = mutableSetOf()
+        val claims: List<AccountClaim> = emptyList()
     ) : PersistentState() {
-
-        companion object {
-            fun fromAccount(account: Account): AccountEntity {
-                val accountEntity = AccountEntity(
-                    linearId = account.linearId.id,
-                    externalId = account.linearId.externalId,
-                    owner = account.owner
-                )
-
-                mapClaimsToAccountClaims(accountEntity, account.claims)
-
-                return accountEntity
-            }
-
-            private fun mapClaimsToAccountClaims(accountEntity: AccountEntity, claims: Set<AbstractClaim<*>>) {
-                claims.forEach {
-                    val hash = with(it) { SecureHash.sha256("$property$value${value.javaClass}$javaClass") }
-
-                    val claim = AccountClaim(
-                        property = it.property,
-                        value = it.value.toString(),
-                        hash = hash.toString(),
-                        account = accountEntity
-                    )
-
-                    accountEntity.claims.add(claim)
-                }
-            }
-        }
+        constructor(account: Account) : this(
+            account.linearId.id,
+            account.linearId.externalId,
+            account.owner,
+            account.claims.map { AccountClaim(it) })
     }
 
     @Entity
-    @Table(
-        name = "onixlabs_account_claims",
-        indexes = [
-            Index(name = "account_claim_index", columnList = "hash", unique = false)
-        ]
-    )
+    @Table(name = "onixlabs_account_claims")
     class AccountClaim(
-        @Id
-        @GeneratedValue
-        @Column(name = "id", unique = true, nullable = false)
-        val id: UUID = UUID.randomUUID(),
-
         @Column(name = "property", nullable = false)
         val property: String = "",
 
@@ -112,11 +70,25 @@ object AccountSchema {
         @Column(name = "hash", nullable = false)
         val hash: String = "",
 
-        @ManyToOne(fetch = FetchType.LAZY)
-        @JoinColumns(
-            JoinColumn(name = "transaction_id", referencedColumnName = "transaction_id"),
-            JoinColumn(name = "output_index", referencedColumnName = "output_index")
+        @EmbeddedId
+        override val compositeKey: Key
+        ) : IndirectStatePersistable<Key> {
+        constructor(claim: AbstractClaim<*>) : this(
+            //UUID.randomUUID(),
+            claim.property,
+            claim.value.toString(),
+            claim.computeHash().toString(),
+            Key()
         )
-        val account: AccountEntity = AccountEntity()
-    ) : StatePersistable
+    }
+
+    class Key(override val stateRef: PersistentStateRef? = null) : DirectStatePersistable, Serializable {
+        override fun equals(other: Any?): Boolean {
+            return this === other || (other is Key && other.stateRef == stateRef)
+        }
+
+        override fun hashCode(): Int {
+            return Objects.hash(stateRef)
+        }
+    }
 }

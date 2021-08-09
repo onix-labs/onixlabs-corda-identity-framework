@@ -66,6 +66,8 @@ class PublishAccountFlowTests : FlowTest() {
                     ?: fail("Failed to find a recorded account.")
 
                 assertEquals(account, recordedAccount)
+                assertEquals(5, recordedAccount.state.data.claims.size)
+                assert(recordedAccount.state.data.claims.containsAll(ACCOUNT_CLAIMS))
             }
         }
     }

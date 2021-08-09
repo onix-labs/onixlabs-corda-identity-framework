@@ -17,16 +17,13 @@
 package io.onixlabs.corda.identityframework.workflow
 
 import io.onixlabs.corda.identityframework.contract.accounts.Account
+import io.onixlabs.corda.identityframework.contract.claims.Claim
 import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
-import net.corda.core.contracts.TypeOnlyCommandData
 import net.corda.core.contracts.UniqueIdentifier
-import net.corda.core.crypto.NullKeys.NULL_PARTY
 import net.corda.core.identity.CordaX500Name
 import net.corda.core.identity.Party
 import net.corda.testing.common.internal.testNetworkParameters
-import net.corda.testing.contracts.DummyContract
 import net.corda.testing.core.singleIdentity
-import net.corda.testing.internal.vault.DummyLinearContract
 import net.corda.testing.node.MockNetwork
 import net.corda.testing.node.MockNetworkParameters
 import net.corda.testing.node.StartedMockNode
@@ -34,7 +31,6 @@ import net.corda.testing.node.internal.cordappsForPackages
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.TestInstance
-import java.math.BigDecimal
 import java.time.Instant
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -48,9 +44,19 @@ abstract class FlowTest {
     protected val CLAIM_2 by lazy { CordaClaim(partyB, "Number", 123, LINEAR_ID_2) }
     protected val CLAIM_3 by lazy { CordaClaim(partyC, "Time", Instant.now(), LINEAR_ID_3) }
 
-    protected val ACCOUNT_1_FOR_PARTY_A by lazy { Account(partyA) }
+    protected val ACCOUNT_CLAIMS by lazy {
+        setOf(
+            Claim("string", "abc"),
+            Claim("integer", 123),
+            Claim("decimal", (123.45).toBigDecimal()),
+            Claim("boolean", true),
+            Claim("instant", Instant.MIN)
+        )
+    }
+
+    protected val ACCOUNT_1_FOR_PARTY_A by lazy { Account(partyA, ACCOUNT_CLAIMS) }
     protected val ACCOUNT_2_FOR_PARTY_A by lazy { Account(partyA) }
-    protected val ACCOUNT_1_FOR_PARTY_B by lazy { Account(partyB) }
+    protected val ACCOUNT_1_FOR_PARTY_B by lazy { Account(partyB, ACCOUNT_CLAIMS) }
     protected val ACCOUNT_2_FOR_PARTY_B by lazy { Account(partyB) }
 
     private lateinit var _network: MockNetwork

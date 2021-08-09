@@ -53,7 +53,7 @@ open class Account(
      * @return Returns a persistent state entity.
      */
     override fun generateMappedObject(schema: MappedSchema): PersistentState = when (schema) {
-        is AccountSchemaV1 -> AccountEntity.fromAccount(this)
+        is AccountSchemaV1 -> AccountEntity(this)
         else -> throw IllegalArgumentException("Unrecognised schema: $schema.")
     }
 
