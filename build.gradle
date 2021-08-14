@@ -84,6 +84,11 @@ subprojects {
         }
     }
 
+    task sourceJar(type: Jar) {
+        from sourceSets.main.allSource
+        archiveClassifier = "sources"
+    }
+
     jar { exclude '**/log4j2*.xml' }
 
     test {

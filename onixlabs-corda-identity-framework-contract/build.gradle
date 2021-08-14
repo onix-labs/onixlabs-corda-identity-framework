@@ -53,6 +53,7 @@ publishing {
             groupId = project.parent.group
             version = project.parent.version
             artifactId = 'onixlabs-corda-identity-framework-contract'
+            artifact sourceJar
             from components.java
         }
     }
