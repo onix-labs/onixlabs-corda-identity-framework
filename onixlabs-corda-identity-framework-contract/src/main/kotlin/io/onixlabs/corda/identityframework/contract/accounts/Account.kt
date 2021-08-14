@@ -76,6 +76,7 @@ open class Account(
         return this === other || (other is Account
                 && other.javaClass == javaClass
                 && other.owner == owner
+                && other.claims == claims
                 && other.linearId == linearId)
     }
 
@@ -85,7 +86,7 @@ open class Account(
      * @return Returns a hash code for the current object.
      */
     override fun hashCode(): Int {
-        return Objects.hash(owner, linearId, javaClass)
+        return Objects.hash(owner, claims, linearId, javaClass)
     }
 
     /**

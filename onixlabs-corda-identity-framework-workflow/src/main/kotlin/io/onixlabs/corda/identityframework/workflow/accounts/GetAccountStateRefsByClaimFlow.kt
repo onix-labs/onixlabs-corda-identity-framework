@@ -24,6 +24,13 @@ import net.corda.core.flows.StartableByRPC
 import net.corda.core.flows.StartableByService
 import java.sql.ResultSet
 
+/**
+ * Gets a [List] of [StateRef] for accounts by querying for account claims.
+ *
+ * @property property The property of a claim linked to an account.
+ * @property value The value of a claim linked to an account.
+ * @property hash The hash of a claim linked to an account.
+ */
 @StartableByRPC
 @StartableByService
 class GetAccountStateRefsByClaimFlow(
