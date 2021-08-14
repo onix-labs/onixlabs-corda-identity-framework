@@ -20,9 +20,7 @@ import io.onixlabs.corda.core.services.QueryDsl
 import io.onixlabs.corda.core.services.QueryDslContext
 import io.onixlabs.corda.core.services.equalTo
 import io.onixlabs.corda.identityframework.contract.accounts.Account
-import io.onixlabs.corda.identityframework.contract.accounts.AccountSchema.AccountClaim
 import io.onixlabs.corda.identityframework.contract.accounts.AccountSchema.AccountEntity
-import io.onixlabs.corda.identityframework.contract.claims.AbstractClaim
 import net.corda.core.identity.AbstractParty
 
 /**
@@ -33,34 +31,4 @@ import net.corda.core.identity.AbstractParty
 @QueryDslContext
 fun QueryDsl<out Account>.accountOwner(value: AbstractParty) {
     expression(AccountEntity::owner equalTo value)
-}
-
-/**
- * Adds a vault query expression to filter by account claim equal to the specified value.
- *
- * @param value The value to filter by in the vault query expression.
- */
-@QueryDslContext
-fun QueryDsl<out Account>.accountClaim(value: AbstractClaim<*>) {
-    expression(AccountClaim::hash equalTo value.computeHash().toString())
-}
-
-/**
- * Adds a vault query expression to filter by account claim equal property to the specified value.
- *
- * @param value The value to filter by in the vault query expression.
- */
-@QueryDslContext
-fun QueryDsl<out Account>.accountClaimProperty(value: String) {
-    expression(AccountClaim::property equalTo value)
-}
-
-/**
- * Adds a vault query expression to filter by account claim equal value to the specified value.
- *
- * @param value The value to filter by in the vault query expression.
- */
-@QueryDslContext
-fun QueryDsl<out Account>.accountClaimValue(value: Any) {
-    expression(AccountClaim::value equalTo value.toString())
 }

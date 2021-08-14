@@ -21,12 +21,6 @@
         <addPrimaryKey columnNames="output_index, transaction_id"
                        constraintName="PK_onixlabs_account_states"
                        tableName="onixlabs_account_states"/>
-        <createIndex tableName="onixlabs_account_states" indexName="IDX_account_id">
-            <column name="linear_id"/>
-        </createIndex>
-        <createIndex tableName="onixlabs_account_states" indexName="IDX_owner">
-            <column name="owner"/>
-        </createIndex>
     </changeSet>
     <changeSet author="ONIXLabs" id="create-onixlabs_account_claims">
         <createTable tableName="onixlabs_account_claims">
@@ -52,9 +46,6 @@
         <addPrimaryKey columnNames="id"
                        constraintName="PK_onixlabs_account_claims"
                        tableName="onixlabs_account_claims"/>
-        <createIndex tableName="onixlabs_account_claims" indexName="IDX_account_claim_index">
-            <column name="hash"/>
-        </createIndex>
         <createIndex tableName="onixlabs_account_claims" indexName="IDX_transaction_reference">
             <column name="output_index"/>
             <column name="transaction_id"/>

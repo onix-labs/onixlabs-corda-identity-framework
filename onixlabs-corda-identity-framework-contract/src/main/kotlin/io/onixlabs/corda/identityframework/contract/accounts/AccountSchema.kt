@@ -16,20 +16,18 @@
 
 package io.onixlabs.corda.identityframework.contract.accounts
 
-import io.onixlabs.corda.identityframework.contract.claims.AbstractClaim
 import net.corda.core.crypto.NullKeys.NULL_PARTY
 import net.corda.core.identity.AbstractParty
-import net.corda.core.schemas.*
-import java.io.Serializable
+import net.corda.core.schemas.MappedSchema
+import net.corda.core.schemas.PersistentState
 import java.util.*
 import javax.persistence.*
-import kotlin.jvm.Transient
 
 object AccountSchema {
 
     object AccountSchemaV1 :
-        MappedSchema(AccountSchema.javaClass, 1, listOf(AccountEntity::class.java, AccountClaim::class.java)) {
-        override val migrationResource = super.migrationResource
+        MappedSchema(AccountSchema.javaClass, 1, listOf(AccountEntity::class.java, AccountClaimEntity::class.java)) {
+        override val migrationResource = "account-schema.changelog-master"
     }
 
     @Entity
@@ -44,23 +42,48 @@ object AccountSchema {
         @Column(name = "owner", nullable = false)
         val owner: AbstractParty = NULL_PARTY,
 
-        @OneToMany(cascade = [CascadeType.PERSIST])
+        @OneToMany(fetch = FetchType.LAZY, cascade = [CascadeType.PERSIST])
         @JoinColumns(
-            JoinColumn(name = "output_index", referencedColumnName = "output_index"),
-            JoinColumn(name = "transaction_id", referencedColumnName = "transaction_id")
+            JoinColumn(name = "transaction_id", referencedColumnName = "transaction_id"),
+            JoinColumn(name = "output_index", referencedColumnName = "output_index")
         )
-        val claims: List<AccountClaim> = emptyList()
+        @OrderColumn
+        val claims: MutableSet<AccountClaimEntity> = mutableSetOf()
     ) : PersistentState() {
-        constructor(account: Account) : this(
-            account.linearId.id,
-            account.linearId.externalId,
-            account.owner,
-            account.claims.map { AccountClaim(it) })
+
+        companion object {
+            fun fromAccount(account: Account): AccountEntity {
+                val entity = AccountEntity(
+                    account.linearId.id,
+                    account.linearId.externalId,
+                    account.owner
+                )
+
+                account.claims.forEach {
+                    val claimEntity = AccountClaimEntity(
+                        null,
+                        it.property,
+                        it.value.toString(),
+                        it.computeHash().toString(),
+                        entity
+                    )
+
+                    entity.claims.add(claimEntity)
+                }
+
+                return entity
+            }
+        }
     }
 
     @Entity
     @Table(name = "onixlabs_account_claims")
-    class AccountClaim(
+    class AccountClaimEntity(
+        @Id
+        @GeneratedValue
+        @Column(name = "id", unique = true, nullable = true)
+        val id: UUID? = null,
+
         @Column(name = "property", nullable = false)
         val property: String = "",
 
@@ -70,25 +93,11 @@ object AccountSchema {
         @Column(name = "hash", nullable = false)
         val hash: String = "",
 
-        @EmbeddedId
-        override val compositeKey: Key
-        ) : IndirectStatePersistable<Key> {
-        constructor(claim: AbstractClaim<*>) : this(
-            //UUID.randomUUID(),
-            claim.property,
-            claim.value.toString(),
-            claim.computeHash().toString(),
-            Key()
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumns(
+            JoinColumn(name = "transaction_id", referencedColumnName = "transaction_id"),
+            JoinColumn(name = "output_index", referencedColumnName = "output_index")
         )
-    }
-
-    class Key(override val stateRef: PersistentStateRef? = null) : DirectStatePersistable, Serializable {
-        override fun equals(other: Any?): Boolean {
-            return this === other || (other is Key && other.stateRef == stateRef)
-        }
-
-        override fun hashCode(): Int {
-            return Objects.hash(stateRef)
-        }
-    }
+        val account: AccountEntity? = null
+    )
 }
