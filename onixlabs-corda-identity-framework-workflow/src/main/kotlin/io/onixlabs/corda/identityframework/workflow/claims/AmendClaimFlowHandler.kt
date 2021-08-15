@@ -65,20 +65,20 @@ class AmendClaimFlowHandler(
     private class Handler(private val session: FlowSession) : FlowLogic<SignedTransaction>() {
 
         private companion object {
-            object HandlingAmendedClaimStep : Step("Handling amended claim.") {
+            object HandleAmendedClaimStep : Step("Handling amended claim.") {
                 override fun childProgressTracker(): ProgressTracker = tracker()
             }
         }
 
-        override val progressTracker = ProgressTracker(HandlingAmendedClaimStep)
+        override val progressTracker = ProgressTracker(HandleAmendedClaimStep)
 
         @Suspendable
         override fun call(): SignedTransaction {
-            currentStep(HandlingAmendedClaimStep)
+            currentStep(HandleAmendedClaimStep)
             return subFlow(
                 AmendClaimFlowHandler(
                     session,
-                    progressTracker = HandlingAmendedClaimStep.childProgressTracker()
+                    progressTracker = HandleAmendedClaimStep.childProgressTracker()
                 )
             )
         }
