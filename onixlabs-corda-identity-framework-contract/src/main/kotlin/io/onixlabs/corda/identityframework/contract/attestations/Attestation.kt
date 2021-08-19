@@ -65,7 +65,7 @@ open class Attestation<T : ContractState>(
         get() = SecureHash.sha256("$attestor$pointer$previousStateRef")
 
     override val participants: List<AbstractParty>
-        get() = (attestees + attestor).toList()
+        get() = (attestees + attestor).distinct()
 
     /**
      * Amends this attestation.
