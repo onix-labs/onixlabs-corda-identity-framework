@@ -17,10 +17,7 @@
 package io.onixlabs.corda.identityframework.workflow.claims
 
 import co.paralleluniverse.fibers.Suspendable
-import io.onixlabs.corda.core.workflow.InitializeFlowStep
-import io.onixlabs.corda.core.workflow.currentStep
-import io.onixlabs.corda.core.workflow.findTransaction
-import io.onixlabs.corda.core.workflow.initiateFlows
+import io.onixlabs.corda.core.workflow.*
 import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
 import io.onixlabs.corda.identityframework.workflow.SendClaimTransactionStep
 import net.corda.core.contracts.StateAndRef
@@ -54,11 +51,7 @@ class PublishClaimFlow(
     override fun call(): SignedTransaction {
         currentStep(InitializeFlowStep)
         val transaction = findTransaction(claim)
-
-        currentStep(SendClaimTransactionStep)
-        sessions.forEach { subFlow(SendTransactionFlow(it, transaction)) }
-
-        return transaction
+        return publishTransaction(transaction, sessions, SendClaimTransactionStep)
     }
 
     /**
@@ -76,21 +69,21 @@ class PublishClaimFlow(
     ) : FlowLogic<SignedTransaction>() {
 
         private companion object {
-            object PublishClaimTransactionStep : Step("Publishing claim transaction.") {
+            object PublishClaimStep : Step("Publishing claim.") {
                 override fun childProgressTracker() = tracker()
             }
         }
 
-        override val progressTracker = ProgressTracker(PublishClaimTransactionStep)
+        override val progressTracker = ProgressTracker(PublishClaimStep)
 
         @Suspendable
         override fun call(): SignedTransaction {
-            currentStep(PublishClaimTransactionStep)
+            currentStep(PublishClaimStep)
             return subFlow(
                 PublishClaimFlow(
                     claim,
                     initiateFlows(observers),
-                    PublishClaimTransactionStep.childProgressTracker()
+                    PublishClaimStep.childProgressTracker()
                 )
             )
         }

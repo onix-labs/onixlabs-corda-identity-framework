@@ -17,10 +17,7 @@
 package io.onixlabs.corda.identityframework.workflow.accounts
 
 import co.paralleluniverse.fibers.Suspendable
-import io.onixlabs.corda.core.workflow.InitializeFlowStep
-import io.onixlabs.corda.core.workflow.currentStep
-import io.onixlabs.corda.core.workflow.findTransaction
-import io.onixlabs.corda.core.workflow.initiateFlows
+import io.onixlabs.corda.core.workflow.*
 import io.onixlabs.corda.identityframework.contract.accounts.Account
 import io.onixlabs.corda.identityframework.workflow.SendAccountTransactionStep
 import net.corda.core.contracts.StateAndRef
@@ -45,7 +42,10 @@ class PublishAccountFlow(
 
     companion object {
         @JvmStatic
-        fun tracker() = ProgressTracker(InitializeFlowStep, SendAccountTransactionStep)
+        fun tracker() = ProgressTracker(
+            InitializeFlowStep,
+            SendAccountTransactionStep
+        )
 
         private const val FLOW_VERSION_1 = 1
     }
@@ -54,11 +54,7 @@ class PublishAccountFlow(
     override fun call(): SignedTransaction {
         currentStep(InitializeFlowStep)
         val transaction = findTransaction(account)
-
-        currentStep(SendAccountTransactionStep)
-        sessions.forEach { subFlow(SendTransactionFlow(it, transaction)) }
-
-        return transaction
+        return publishTransaction(transaction, sessions, SendAccountTransactionStep)
     }
 
     /**
@@ -76,21 +72,21 @@ class PublishAccountFlow(
     ) : FlowLogic<SignedTransaction>() {
 
         private companion object {
-            object PublishAccountTransactionStep : Step("Publishing account transaction.") {
+            object PublishAccountStep : Step("Publishing account.") {
                 override fun childProgressTracker() = tracker()
             }
         }
 
-        override val progressTracker = ProgressTracker(PublishAccountTransactionStep)
+        override val progressTracker = ProgressTracker(PublishAccountStep)
 
         @Suspendable
         override fun call(): SignedTransaction {
-            currentStep(PublishAccountTransactionStep)
+            currentStep(PublishAccountStep)
             return subFlow(
                 PublishAccountFlow(
                     account,
                     initiateFlows(observers),
-                    PublishAccountTransactionStep.childProgressTracker()
+                    PublishAccountStep.childProgressTracker()
                 )
             )
         }

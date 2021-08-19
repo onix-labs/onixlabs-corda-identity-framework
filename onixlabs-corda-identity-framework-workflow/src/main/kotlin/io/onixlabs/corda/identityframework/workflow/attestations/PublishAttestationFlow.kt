@@ -17,10 +17,7 @@
 package io.onixlabs.corda.identityframework.workflow.attestations
 
 import co.paralleluniverse.fibers.Suspendable
-import io.onixlabs.corda.core.workflow.InitializeFlowStep
-import io.onixlabs.corda.core.workflow.currentStep
-import io.onixlabs.corda.core.workflow.findTransaction
-import io.onixlabs.corda.core.workflow.initiateFlows
+import io.onixlabs.corda.core.workflow.*
 import io.onixlabs.corda.identityframework.contract.attestations.Attestation
 import io.onixlabs.corda.identityframework.workflow.SendAttestationTransactionStep
 import net.corda.core.contracts.StateAndRef
@@ -45,7 +42,10 @@ class PublishAttestationFlow(
 
     companion object {
         @JvmStatic
-        fun tracker() = ProgressTracker(InitializeFlowStep, SendAttestationTransactionStep)
+        fun tracker() = ProgressTracker(
+            InitializeFlowStep,
+            SendAttestationTransactionStep
+        )
 
         private const val FLOW_VERSION_1 = 1
     }
@@ -54,11 +54,7 @@ class PublishAttestationFlow(
     override fun call(): SignedTransaction {
         currentStep(InitializeFlowStep)
         val transaction = findTransaction(attestation)
-
-        currentStep(SendAttestationTransactionStep)
-        sessions.forEach { subFlow(SendTransactionFlow(it, transaction)) }
-
-        return transaction
+        return publishTransaction(transaction, sessions, SendAttestationTransactionStep)
     }
 
     /**
@@ -76,21 +72,21 @@ class PublishAttestationFlow(
     ) : FlowLogic<SignedTransaction>() {
 
         private companion object {
-            object PublishAttestationTransactionStep : Step("Publishing attestation transaction.") {
+            object PublishAttestationStep : Step("Publishing attestation.") {
                 override fun childProgressTracker() = tracker()
             }
         }
 
-        override val progressTracker = ProgressTracker(PublishAttestationTransactionStep)
+        override val progressTracker = ProgressTracker(PublishAttestationStep)
 
         @Suspendable
         override fun call(): SignedTransaction {
-            currentStep(PublishAttestationTransactionStep)
+            currentStep(PublishAttestationStep)
             return subFlow(
                 PublishAttestationFlow(
                     attestation,
                     initiateFlows(observers),
-                    PublishAttestationTransactionStep.childProgressTracker()
+                    PublishAttestationStep.childProgressTracker()
                 )
             )
         }

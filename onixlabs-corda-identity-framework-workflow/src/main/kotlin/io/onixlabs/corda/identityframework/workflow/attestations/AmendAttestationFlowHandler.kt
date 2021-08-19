@@ -65,7 +65,7 @@ class AmendAttestationFlowHandler(
     private class Handler(private val session: FlowSession) : FlowLogic<SignedTransaction>() {
 
         private companion object {
-            object HandleAmendedAttestationStep : Step("Handling amended attestation.") {
+            object HandleAmendedAttestationStep : Step("Handling attestation amendment.") {
                 override fun childProgressTracker(): ProgressTracker = tracker()
             }
         }

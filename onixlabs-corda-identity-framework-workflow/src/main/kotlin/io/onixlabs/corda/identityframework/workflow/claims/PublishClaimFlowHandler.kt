@@ -18,12 +18,11 @@ package io.onixlabs.corda.identityframework.workflow.claims
 
 import co.paralleluniverse.fibers.Suspendable
 import io.onixlabs.corda.core.workflow.currentStep
+import io.onixlabs.corda.core.workflow.publishTransactionHandler
 import io.onixlabs.corda.identityframework.workflow.ReceiveClaimTransactionStep
 import net.corda.core.flows.FlowLogic
 import net.corda.core.flows.FlowSession
 import net.corda.core.flows.InitiatedBy
-import net.corda.core.flows.ReceiveTransactionFlow
-import net.corda.core.node.StatesToRecord
 import net.corda.core.transactions.SignedTransaction
 import net.corda.core.utilities.ProgressTracker
 import net.corda.core.utilities.ProgressTracker.Step
@@ -46,8 +45,7 @@ class PublishClaimFlowHandler(
 
     @Suspendable
     override fun call(): SignedTransaction {
-        currentStep(ReceiveClaimTransactionStep)
-        return subFlow(ReceiveTransactionFlow(session, statesToRecord = StatesToRecord.ALL_VISIBLE))
+        return publishTransactionHandler(session, progressTrackerStep = ReceiveClaimTransactionStep)
     }
 
     /**
@@ -59,7 +57,7 @@ class PublishClaimFlowHandler(
     private class Handler(private val session: FlowSession) : FlowLogic<SignedTransaction>() {
 
         private companion object {
-            object HandlePublishedClaimStep : Step("Handling published claim.") {
+            object HandlePublishedClaimStep : Step("Handling claim publication.") {
                 override fun childProgressTracker() = tracker()
             }
         }

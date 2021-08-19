@@ -64,7 +64,7 @@ class RevokeAccountFlowHandler(
     private class Handler(private val session: FlowSession) : FlowLogic<SignedTransaction>() {
 
         private companion object {
-            object HandleRevokedAccountStep : Step("Handling revoked account.") {
+            object HandleRevokedAccountStep : Step("Handling account revocation.") {
                 override fun childProgressTracker(): ProgressTracker = tracker()
             }
         }

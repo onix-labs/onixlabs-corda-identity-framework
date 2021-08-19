@@ -65,7 +65,7 @@ class RevokeAttestationFlowHandler(
     private class Handler(private val session: FlowSession) : FlowLogic<SignedTransaction>() {
 
         private companion object {
-            object HandleRevokedAttestationStep : Step("Handling revoked attestation.") {
+            object HandleRevokedAttestationStep : Step("Handling attestation revocation.") {
                 override fun childProgressTracker(): ProgressTracker = tracker()
             }
         }

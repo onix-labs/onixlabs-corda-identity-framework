@@ -64,7 +64,7 @@ class IssueAccountFlowHandler(
     private class Handler(private val session: FlowSession) : FlowLogic<SignedTransaction>() {
 
         private companion object {
-            object HandleIssuedAccountStep : Step("Handling issued account.") {
+            object HandleIssuedAccountStep : Step("Handling account issuance.") {
                 override fun childProgressTracker(): ProgressTracker = tracker()
             }
         }

@@ -28,7 +28,6 @@ import net.corda.core.crypto.SecureHash
 import net.corda.core.node.services.Vault
 import net.corda.testing.node.StartedMockNode
 import org.junit.jupiter.api.Test
-import java.time.Duration
 import java.time.Instant
 import kotlin.test.assertEquals
 
@@ -222,7 +221,7 @@ class VaultServiceAccountClaimQueryTests : FlowTest() {
             }
 
             assertEquals(account, result)
-            //assertEquals(result!!.state.data.claims.filterByProperty("boolean").single().value, true)
+            assertEquals(result!!.state.data.claims.filterByProperty("boolean").single().value, true)
         }
     }
 

@@ -40,13 +40,30 @@ class GetAccountStateRefsByClaimFlow(
 ) : FlowLogic<List<StateRef>>() {
 
     private companion object {
+
+        /**
+         * The name of the transaction ID column.
+         */
         const val TRANSACTION_ID = "transaction_id"
+
+        /**
+         * The name of the transaction output index column.
+         */
         const val OUTPUT_INDEX = "output_index"
     }
 
     @Suspendable
     override fun call(): List<StateRef> {
-        return if (property == null && value == null && hash == null) emptyList() else executeQuery(buildString {
+        return if (property == null && value == null && hash == null) emptyList() else executeQuery()
+    }
+
+    /**
+     * Builds the SQL query.
+     *
+     * @return Returns a [String] representing the SQL query to be executed.
+     */
+    private fun buildQuery(): String {
+        return buildString {
             val criteria = mutableListOf<String>()
 
             property?.let { criteria.add("property = '$it'") }
@@ -56,29 +73,37 @@ class GetAccountStateRefsByClaimFlow(
             appendln("select $TRANSACTION_ID, $OUTPUT_INDEX")
             appendln("from onixlabs_account_claims")
             appendln("where ${criteria.joinToString("\nand ")}")
-        })
+        }
     }
 
+    /**
+     * Executes the SQL query.
+     *
+     * @return Returns a [List] of [StateRef] representing the recorded accounts.
+     */
     @Suspendable
-    private fun executeQuery(query: String): List<StateRef> {
+    private fun executeQuery(): List<StateRef> {
         return with(serviceHub.jdbcSession()) {
-            val nativeQuery = nativeSQL(query)
-            prepareStatement(nativeQuery).use {
+            prepareStatement(nativeSQL(buildQuery())).use {
                 it.executeQuery().use(::getStateRefsFromResults)
             }
         }
     }
 
+    /**
+     * Gets a [List] of [StateRef] representing the recorded accounts.
+     *
+     * @param results The [ResultSet] from the executed SQL query containing the table query data.
+     * @return Returns a [List] of [StateRef] representing the recorded accounts.
+     */
     @Suspendable
     private fun getStateRefsFromResults(results: ResultSet): List<StateRef> {
-        val stateRefs = mutableListOf<StateRef>()
-
-        while (results.next()) {
-            val txHash = SecureHash.parse(results.getString(TRANSACTION_ID))
-            val index = results.getInt(OUTPUT_INDEX)
-            stateRefs.add(StateRef(txHash, index))
+        return mutableListOf<StateRef>().apply {
+            while (results.next()) {
+                val txHash = SecureHash.parse(results.getString(TRANSACTION_ID))
+                val index = results.getInt(OUTPUT_INDEX)
+                add(StateRef(txHash, index))
+            }
         }
-
-        return stateRefs
     }
 }
