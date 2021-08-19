@@ -16,8 +16,8 @@
 
 package io.onixlabs.test.cordapp.workflow.claims
 
-import io.onixlabs.corda.identityframework.workflow.IssueClaimFlow
-import io.onixlabs.test.cordapp.contract.GreetingClaim
+import io.onixlabs.corda.identityframework.workflow.claims.IssueClaimFlow
+import io.onixlabs.test.cordapp.contract.claims.GreetingClaim
 import io.onixlabs.test.cordapp.workflow.FlowTest
 import io.onixlabs.test.cordapp.workflow.Pipeline
 import net.corda.core.transactions.SignedTransaction

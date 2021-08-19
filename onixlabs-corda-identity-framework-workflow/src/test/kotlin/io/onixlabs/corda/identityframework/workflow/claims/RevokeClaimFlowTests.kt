@@ -16,11 +16,9 @@
 
 package io.onixlabs.corda.identityframework.workflow.claims
 
-import io.onixlabs.corda.identityframework.contract.CordaClaim
+import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
 import io.onixlabs.corda.identityframework.workflow.FlowTest
-import io.onixlabs.corda.identityframework.workflow.IssueClaimFlow
 import io.onixlabs.corda.identityframework.workflow.Pipeline
-import io.onixlabs.corda.identityframework.workflow.RevokeClaimFlow
 import net.corda.core.transactions.SignedTransaction
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail

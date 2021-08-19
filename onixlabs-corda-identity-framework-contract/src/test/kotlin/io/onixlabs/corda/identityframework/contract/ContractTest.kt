@@ -16,6 +16,11 @@
 
 package io.onixlabs.corda.identityframework.contract
 
+import io.onixlabs.corda.identityframework.contract.attestations.Attestation
+import io.onixlabs.corda.identityframework.contract.attestations.AttestationContract
+import io.onixlabs.corda.identityframework.contract.attestations.LinearAttestationPointer
+import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
+import io.onixlabs.corda.identityframework.contract.claims.CordaClaimContract
 import net.corda.core.contracts.*
 import net.corda.core.crypto.SecureHash
 import net.corda.core.identity.AbstractParty
@@ -42,7 +47,7 @@ abstract class ContractTest {
     @BeforeEach
     private fun setup() {
         val networkParameters = testNetworkParameters(
-            minimumPlatformVersion = 8,
+            minimumPlatformVersion = 10,
             notaries = listOf(NotaryInfo(NOTARY.party, true))
         )
         _services = MockServices(cordapps, IDENTITY_A, networkParameters, IDENTITY_B, IDENTITY_C)

@@ -18,18 +18,13 @@ package io.onixlabs.corda.identityframework.workflow
 
 import co.paralleluniverse.fibers.Suspendable
 import io.onixlabs.corda.core.services.any
-import io.onixlabs.corda.core.services.equalTo
 import io.onixlabs.corda.core.services.vaultServiceFor
-import io.onixlabs.corda.core.workflow.currentStep
-import io.onixlabs.corda.identityframework.contract.Attestation
-import io.onixlabs.corda.identityframework.contract.AttestationSchema
-import io.onixlabs.corda.identityframework.contract.CordaClaim
-import io.onixlabs.corda.identityframework.contract.CordaClaimSchema
-import net.corda.core.flows.*
-import net.corda.core.identity.Party
-import net.corda.core.transactions.SignedTransaction
-import net.corda.core.transactions.TransactionBuilder
-import java.security.PublicKey
+import io.onixlabs.corda.identityframework.contract.accounts.AccountParty
+import io.onixlabs.corda.identityframework.contract.attestations.Attestation
+import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
+import net.corda.core.flows.FlowException
+import net.corda.core.flows.FlowLogic
+import net.corda.core.identity.AbstractParty
 
 /**
  * Checks whether the state for the specified attestation has been witnessed by this node.
@@ -54,7 +49,9 @@ fun FlowLogic<*>.checkHasAttestedStateBeenWitnessed(attestation: Attestation<*>)
 @Suspendable
 fun FlowLogic<*>.checkClaimExists(claim: CordaClaim<*>) {
     val claimExists = serviceHub.vaultServiceFor(claim.javaClass).any {
-        expression(CordaClaimSchema.CordaClaimEntity::hash equalTo claim.hash.toString())
+        claimType(claim.javaClass)
+        claimValueType(claim.value.javaClass)
+        claimHash(claim.hash)
     }
 
     if (claimExists) {
@@ -71,7 +68,9 @@ fun FlowLogic<*>.checkClaimExists(claim: CordaClaim<*>) {
 @Suspendable
 fun FlowLogic<*>.checkAttestationExists(attestation: Attestation<*>) {
     val attestationExists = serviceHub.vaultServiceFor(attestation.javaClass).any {
-        expression(AttestationSchema.AttestationEntity::hash equalTo attestation.hash.toString())
+        attestationType(attestation.javaClass)
+        attestationPointerType(attestation.pointer.stateType)
+        attestationHash(attestation.hash)
     }
 
     if (attestationExists) {
@@ -80,68 +79,19 @@ fun FlowLogic<*>.checkAttestationExists(attestation: Attestation<*>) {
 }
 
 /**
- * Generates an unsigned transaction.
+ * Checks whether an account exists for the specified party, if the party is an [AccountParty].
+ * If the specified party is not an [AccountParty] then this function will be ignored.
  *
- * @param notary The notary to assign to the transaction.
- * @param action The context in which the [TransactionBuilder] will build the transaction.
- * @return Returns an unsigned transaction.
+ * @param party The party for which to find an account.
+ * @throws FlowException if the account does not exist.
  */
 @Suspendable
-internal fun FlowLogic<*>.transaction(
-    notary: Party,
-    action: TransactionBuilder.() -> TransactionBuilder
-): TransactionBuilder {
-    currentStep(GENERATING)
-    return with(TransactionBuilder(notary)) { action(this) }
-}
+fun FlowLogic<*>.checkAccountExists(party: AbstractParty) {
+    if (party is AccountParty) {
+        val accountDoesNotExist = party.getAccountResolver(party.accountType).resolve(serviceHub) == null
 
-/**
- * Verifies and signs an unsigned transaction.
- *
- * @param builder The unsigned transaction to verify and sign.
- * @param signingKey The initial signing ket for the transaction.
- * @return Returns a verified and signed transaction.
- */
-@Suspendable
-internal fun FlowLogic<*>.verifyAndSign(
-    builder: TransactionBuilder,
-    signingKey: PublicKey
-): SignedTransaction {
-    currentStep(VERIFYING)
-    builder.verify(serviceHub)
-
-    currentStep(SIGNING)
-    return serviceHub.signInitialTransaction(builder, signingKey)
-}
-
-/**
- * Gathers counter-party signatures for a partially signed transaction.
- *
- * @param transaction The signed transaction for which to obtain additional signatures.
- * @param sessions The flow sessions for the required signing counter-parties.
- * @return Returns a signed transaction.
- */
-@Suspendable
-internal fun FlowLogic<*>.countersign(
-    transaction: SignedTransaction,
-    sessions: Set<FlowSession>
-): SignedTransaction {
-    currentStep(COUNTERSIGNING)
-    return subFlow(CollectSignaturesFlow(transaction, sessions, COUNTERSIGNING.childProgressTracker()))
-}
-
-/**
- * Finalizes and records a signed transaction to the vault.
- *
- * @param transaction The transaction to finalize and record.
- * @param sessions The flow sessions for counter-parties who are expected to finalize and record the transaction.
- * @return Returns a finalized and recorded transaction.
- */
-@Suspendable
-internal fun FlowLogic<*>.finalize(
-    transaction: SignedTransaction,
-    sessions: Set<FlowSession> = emptySet()
-): SignedTransaction {
-    currentStep(FINALIZING)
-    return subFlow(FinalityFlow(transaction, sessions, FINALIZING.childProgressTracker()))
+        if (accountDoesNotExist) {
+            throw FlowException("An attestation with the specified linear ID does not exist: ${party.accountLinearId}.")
+        }
+    }
 }

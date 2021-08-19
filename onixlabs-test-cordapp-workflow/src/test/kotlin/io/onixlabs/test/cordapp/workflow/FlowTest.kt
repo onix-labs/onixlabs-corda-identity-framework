@@ -16,7 +16,8 @@
 
 package io.onixlabs.test.cordapp.workflow
 
-import io.onixlabs.test.cordapp.contract.GreetingClaim
+import io.onixlabs.corda.identityframework.contract.accounts.Account
+import io.onixlabs.test.cordapp.contract.claims.GreetingClaim
 import net.corda.core.identity.CordaX500Name
 import net.corda.core.identity.Party
 import net.corda.testing.common.internal.testNetworkParameters
@@ -24,7 +25,7 @@ import net.corda.testing.core.singleIdentity
 import net.corda.testing.node.MockNetwork
 import net.corda.testing.node.MockNetworkParameters
 import net.corda.testing.node.StartedMockNode
-import net.corda.testing.node.TestCordapp
+import net.corda.testing.node.internal.cordappsForPackages
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.TestInstance
@@ -33,6 +34,9 @@ import org.junit.jupiter.api.TestInstance
 abstract class FlowTest {
 
     protected val GREETING_CLAIM by lazy { GreetingClaim(partyA, partyB) }
+
+    protected val ACCOUNT_FOR_PARTY_A by lazy { Account(partyA) }
+    protected val ACCOUNT_FOR_PARTY_B by lazy { Account(partyB) }
 
     private lateinit var _network: MockNetwork
     protected val network: MockNetwork get() = _network
@@ -64,13 +68,14 @@ abstract class FlowTest {
     private fun setup() {
         _network = MockNetwork(
             MockNetworkParameters(
-                cordappsForAllNodes = listOf(
-                    TestCordapp.findCordapp("io.onixlabs.corda.identityframework.contract"),
-                    TestCordapp.findCordapp("io.onixlabs.corda.identityframework.workflow"),
-                    TestCordapp.findCordapp("io.onixlabs.test.cordapp.contract")
-                ),
-                networkParameters = testNetworkParameters(
-                    minimumPlatformVersion = 8
+                networkParameters = testNetworkParameters(minimumPlatformVersion = 10),
+                cordappsForAllNodes = cordappsForPackages(
+                    "io.onixlabs.corda.core.workflow",
+                    "io.onixlabs.corda.identityframework.contract",
+                    "io.onixlabs.corda.identityframework.workflow",
+                    "io.onixlabs.test.cordapp.contract",
+                    "net.corda.testing.internal.vault",
+                    "net.corda.testing.contracts"
                 )
             )
         )

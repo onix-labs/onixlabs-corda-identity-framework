@@ -1,0 +1,14 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="ONIXLabs" id="update-v2-onixlabs_corda_claim_states">
+        <renameTable oldTableName="corda_claim_states" newTableName="onixlabs_corda_claim_states"/>
+        <addColumn tableName="onixlabs_corda_claim_states">
+            <column name="issuer_account_linear_id" type="uuid"/>
+            <column name="issuer_account_external_id" type="nvarchar(256)"/>
+            <column name="holder_account_linear_id" type="uuid"/>
+            <column name="holder_account_external_id" type="nvarchar(256)"/>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

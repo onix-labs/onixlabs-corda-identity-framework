@@ -16,16 +16,11 @@
 
 package io.onixlabs.corda.identityframework.workflow.claims
 
-import io.onixlabs.corda.core.services.equalTo
 import io.onixlabs.corda.core.services.singleOrNull
 import io.onixlabs.corda.core.services.vaultServiceFor
-import io.onixlabs.corda.identityframework.contract.CordaClaim
-import io.onixlabs.corda.identityframework.contract.CordaClaimSchema.CordaClaimEntity
+import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
 import io.onixlabs.corda.identityframework.contract.amend
-import io.onixlabs.corda.identityframework.workflow.AmendClaimFlow
-import io.onixlabs.corda.identityframework.workflow.FlowTest
-import io.onixlabs.corda.identityframework.workflow.IssueClaimFlow
-import io.onixlabs.corda.identityframework.workflow.Pipeline
+import io.onixlabs.corda.identityframework.workflow.*
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.node.services.Vault
 import org.junit.jupiter.api.Test
@@ -55,6 +50,7 @@ class VaultServiceClaimQueryTests : FlowTest() {
             val result = it.services.vaultServiceFor<CordaClaim<String>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
                 linearIds(claim.state.data.linearId)
+                claimType()
             }
 
             assertEquals(claim, result)
@@ -66,7 +62,8 @@ class VaultServiceClaimQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<CordaClaim<String>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                expression(CordaClaimEntity::externalId equalTo claim.state.data.linearId.externalId)
+                externalIds(claim.state.data.linearId.externalId)
+                claimType()
             }
 
             assertEquals(claim, result)
@@ -78,7 +75,8 @@ class VaultServiceClaimQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<CordaClaim<String>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                expression(CordaClaimEntity::issuer equalTo claim.state.data.issuer)
+                claimIssuer(claim.state.data.issuer)
+                claimType()
             }
 
             assertEquals(claim, result)
@@ -90,7 +88,8 @@ class VaultServiceClaimQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<CordaClaim<String>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                expression(CordaClaimEntity::holder equalTo claim.state.data.holder)
+                claimHolder(claim.state.data.holder)
+                claimType()
             }
 
             assertEquals(claim, result)
@@ -102,7 +101,8 @@ class VaultServiceClaimQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<CordaClaim<String>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                expression(CordaClaimEntity::property equalTo claim.state.data.property)
+                claimProperty(claim.state.data.property)
+                claimType()
             }
 
             assertEquals(claim, result)
@@ -114,7 +114,36 @@ class VaultServiceClaimQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<CordaClaim<String>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                expression(CordaClaimEntity::value equalTo claim.state.data.value)
+                claimValue(claim.state.data.value)
+                claimType(CordaClaim::class.java)
+            }
+
+            assertEquals(claim, result)
+        }
+    }
+
+    @Test
+    fun `VaultService equalTo should find the expected claim by value and value type`() {
+        listOf(nodeA, nodeB, nodeC).forEach {
+            val result = it.services.vaultServiceFor<CordaClaim<String>>().singleOrNull {
+                stateStatus(Vault.StateStatus.UNCONSUMED)
+                claimValue(claim.state.data.value)
+                claimValueType(String::class.java)
+                claimType(CordaClaim::class.java)
+            }
+
+            assertEquals(claim, result)
+        }
+    }
+
+    @Test
+    fun `VaultService equalTo should find the expected claim by value and value type (inline)`() {
+        listOf(nodeA, nodeB, nodeC).forEach {
+            val result = it.services.vaultServiceFor<CordaClaim<String>>().singleOrNull {
+                stateStatus(Vault.StateStatus.UNCONSUMED)
+                claimValue(claim.state.data.value)
+                claimValueType<String>()
+                claimType(CordaClaim::class.java)
             }
 
             assertEquals(claim, result)
@@ -126,7 +155,8 @@ class VaultServiceClaimQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<CordaClaim<String>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                expression(CordaClaimEntity::previousStateRef equalTo claim.state.data.previousStateRef.toString())
+                claimPreviousStateRef(claim.state.data.previousStateRef)
+                claimType()
             }
 
             assertEquals(claim, result)
@@ -138,7 +168,8 @@ class VaultServiceClaimQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<CordaClaim<String>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                expression(CordaClaimEntity::isSelfIssued equalTo claim.state.data.isSelfIssued)
+                claimIsSelfIssued(claim.state.data.isSelfIssued)
+                claimType()
             }
 
             assertEquals(claim, result)
@@ -150,7 +181,8 @@ class VaultServiceClaimQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val result = it.services.vaultServiceFor<CordaClaim<String>>().singleOrNull {
                 stateStatus(Vault.StateStatus.UNCONSUMED)
-                expression(CordaClaimEntity::hash equalTo claim.state.data.hash.toString())
+                claimHash(claim.state.data.hash)
+                claimType()
             }
 
             assertEquals(claim, result)

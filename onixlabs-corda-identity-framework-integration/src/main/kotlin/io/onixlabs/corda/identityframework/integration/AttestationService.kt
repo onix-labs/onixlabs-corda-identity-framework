@@ -18,10 +18,12 @@ package io.onixlabs.corda.identityframework.integration
 
 import io.onixlabs.corda.core.integration.RPCService
 import io.onixlabs.corda.identityframework.contract.*
-import io.onixlabs.corda.identityframework.workflow.AmendAttestationFlow
-import io.onixlabs.corda.identityframework.workflow.IssueAttestationFlow
-import io.onixlabs.corda.identityframework.workflow.PublishAttestationFlow
-import io.onixlabs.corda.identityframework.workflow.RevokeAttestationFlow
+import io.onixlabs.corda.identityframework.contract.attestations.Attestation
+import io.onixlabs.corda.identityframework.contract.attestations.AttestationStatus
+import io.onixlabs.corda.identityframework.workflow.attestations.AmendAttestationFlow
+import io.onixlabs.corda.identityframework.workflow.attestations.IssueAttestationFlow
+import io.onixlabs.corda.identityframework.workflow.attestations.PublishAttestationFlow
+import io.onixlabs.corda.identityframework.workflow.attestations.RevokeAttestationFlow
 import net.corda.core.contracts.ContractState
 import net.corda.core.contracts.LinearState
 import net.corda.core.contracts.StateAndRef

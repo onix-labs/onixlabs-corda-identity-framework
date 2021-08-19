@@ -17,10 +17,10 @@
 package io.onixlabs.test.cordapp.workflow.claims
 
 import io.onixlabs.corda.identityframework.contract.amend
-import io.onixlabs.corda.identityframework.workflow.AmendClaimFlow
-import io.onixlabs.corda.identityframework.workflow.IssueClaimFlow
-import io.onixlabs.corda.identityframework.workflow.RevokeClaimFlow
-import io.onixlabs.test.cordapp.contract.GreetingClaim
+import io.onixlabs.corda.identityframework.workflow.claims.AmendClaimFlow
+import io.onixlabs.corda.identityframework.workflow.claims.IssueClaimFlow
+import io.onixlabs.corda.identityframework.workflow.claims.RevokeClaimFlow
+import io.onixlabs.test.cordapp.contract.claims.GreetingClaim
 import io.onixlabs.test.cordapp.workflow.FlowTest
 import io.onixlabs.test.cordapp.workflow.Pipeline
 import net.corda.core.transactions.SignedTransaction

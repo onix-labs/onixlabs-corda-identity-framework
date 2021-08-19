@@ -16,13 +16,12 @@
 
 package io.onixlabs.corda.identityframework.integration
 
-import io.onixlabs.corda.core.services.equalTo
 import io.onixlabs.corda.core.services.singleOrNull
 import io.onixlabs.corda.core.services.vaultServiceFor
-import io.onixlabs.corda.identityframework.contract.Attestation
-import io.onixlabs.corda.identityframework.contract.AttestationSchema
-import io.onixlabs.corda.identityframework.contract.AttestationStatus
-import io.onixlabs.corda.identityframework.contract.CordaClaim
+import io.onixlabs.corda.identityframework.contract.attestations.Attestation
+import io.onixlabs.corda.identityframework.contract.attestations.AttestationStatus
+import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
+import io.onixlabs.corda.identityframework.workflow.attestationPointer
 import net.corda.core.utilities.getOrThrow
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
@@ -52,7 +51,7 @@ class AttestationIntegrationTests : IntegrationTest() {
 
         // Find the issued attestation
         val issuedAttestation = nodeC.rpc.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
-            expression(AttestationSchema.AttestationEntity::pointer equalTo issuedClaim.ref.toString())
+            attestationPointer(issuedClaim.ref)
         } ?: fail("Failed to find issued attestation.")
 
         // Amend the issued attestation
@@ -64,7 +63,7 @@ class AttestationIntegrationTests : IntegrationTest() {
 
         // Find the amended attestation
         val amendedAttestation = nodeC.rpc.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
-            expression(AttestationSchema.AttestationEntity::pointer equalTo issuedClaim.ref.toString())
+            attestationPointer(issuedClaim.ref)
         } ?: fail("Failed to find amended attestation.")
 
         // Publish the amended attestation
@@ -77,7 +76,7 @@ class AttestationIntegrationTests : IntegrationTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             it.waitForTransaction(tx.id)
             it.rpc.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
-                expression(AttestationSchema.AttestationEntity::pointer equalTo issuedClaim.ref.toString())
+                attestationPointer(issuedClaim.ref)
             } ?: fail("Failed to find published attestation.")
         }
 
