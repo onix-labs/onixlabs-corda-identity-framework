@@ -29,9 +29,9 @@ import net.corda.testing.node.internal.cordappsForPackages
 
 abstract class IntegrationTest : AutoCloseable {
 
-    private companion object {
+    protected companion object {
         val RPC_USERS = listOf(User("guest", "letmein", permissions = setOf("ALL")))
-        val log = loggerFor<IntegrationTest>()
+        val logger = loggerFor<IntegrationTest>()
     }
 
     private lateinit var _nodeA: NodeHandle
@@ -48,9 +48,11 @@ abstract class IntegrationTest : AutoCloseable {
 
     fun start(action: () -> Unit) {
         val parameters = DriverParameters(
-            isDebug = true,
+            isDebug = false,
             startNodesInProcess = true,
             waitForAllNodesToFinish = false,
+            inMemoryDB = true,
+            premigrateH2Database = true,
             networkParameters = testNetworkParameters(minimumPlatformVersion = 10),
             cordappsForAllNodes = cordappsForPackages(
                 "io.onixlabs.corda.core.workflow",
@@ -71,13 +73,24 @@ abstract class IntegrationTest : AutoCloseable {
             listOf(_nodeA, _nodeB, _nodeC).forEach {
                 val identity = it.nodeInfo.legalIdentities.first()
                 val rpcAddress = it.rpcAddress
-                log.info("Node registered with RPC address '$rpcAddress' for node '$identity'.")
+                logger.info("Node registered with RPC address '$rpcAddress' for node '$identity'.")
             }
 
-            initialize()
-            action()
-            finalize()
-            close()
+            try {
+                logger.info("Initializing test...")
+                initialize()
+
+                logger.info("Performing test action...")
+                action()
+
+                logger.info("Finalizing test...")
+                finalize()
+
+                logger.info("Closing down nodes...")
+                close()
+            } catch (ex: Exception) {
+                logger.error("Test failed with exception type '${ex.javaClass}' and message '${ex.message}'.")
+            }
         }
     }
 
@@ -85,7 +98,16 @@ abstract class IntegrationTest : AutoCloseable {
     protected open fun finalize() = Unit
 
     override fun close() = listOf(nodeA, nodeB, nodeC).forEach {
-        it.stop()
-        it.close()
+        val identity = it.nodeInfo.legalIdentities.first()
+
+        try {
+            logger.info("Stopping node: $identity...")
+            it.stop()
+
+            logger.info("Closing node: $identity...")
+            it.close()
+        } catch (ex: Exception) {
+            logger.error("Node shutdown for '$identity' failed with exception type '${ex.javaClass}' and message '${ex.message}'.")
+        }
     }
 }
