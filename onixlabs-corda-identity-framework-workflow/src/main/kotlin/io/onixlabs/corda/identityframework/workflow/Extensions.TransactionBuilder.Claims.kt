@@ -16,6 +16,7 @@
 
 package io.onixlabs.corda.identityframework.workflow
 
+import co.paralleluniverse.fibers.Suspendable
 import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
 import io.onixlabs.corda.identityframework.contract.claims.CordaClaimContract
 import net.corda.core.contracts.StateAndRef
@@ -27,6 +28,7 @@ import net.corda.core.transactions.TransactionBuilder
  * @param claim The claim state to be created in the transaction.
  * @return Returns the current transaction builder.
  */
+@Suspendable
 fun TransactionBuilder.addIssuedClaim(
     claim: CordaClaim<*>
 ): TransactionBuilder = apply {
@@ -41,6 +43,7 @@ fun TransactionBuilder.addIssuedClaim(
  * @param newClaim The new claim state to be created in the transaction.
  * @return Returns the current transaction builder.
  */
+@Suspendable
 fun TransactionBuilder.addAmendedClaim(
     oldClaim: StateAndRef<CordaClaim<*>>,
     newClaim: CordaClaim<*>
@@ -56,6 +59,7 @@ fun TransactionBuilder.addAmendedClaim(
  * @param claim The claim state to be consumed in the transaction.
  * @return Returns the current transaction builder.
  */
+@Suspendable
 fun TransactionBuilder.addRevokedClaim(
     claim: StateAndRef<CordaClaim<*>>
 ): TransactionBuilder = apply {

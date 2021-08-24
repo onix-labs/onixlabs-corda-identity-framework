@@ -16,6 +16,7 @@
 
 package io.onixlabs.corda.identityframework.workflow
 
+import co.paralleluniverse.fibers.Suspendable
 import io.onixlabs.corda.identityframework.contract.accounts.Account
 import io.onixlabs.corda.identityframework.contract.accounts.AccountContract
 import net.corda.core.contracts.StateAndRef
@@ -27,6 +28,7 @@ import net.corda.core.transactions.TransactionBuilder
  * @param account The account state to be created in the transaction.
  * @return Returns the current transaction builder.
  */
+@Suspendable
 fun TransactionBuilder.addIssuedAccount(
     account: Account
 ): TransactionBuilder = apply {
@@ -41,6 +43,7 @@ fun TransactionBuilder.addIssuedAccount(
  * @param newAccount The new account state to be created in the transaction.
  * @return Returns the current transaction builder.
  */
+@Suspendable
 fun TransactionBuilder.addAmendedAccount(
     oldAccount: StateAndRef<Account>,
     newAccount: Account
@@ -56,6 +59,7 @@ fun TransactionBuilder.addAmendedAccount(
  * @param account The account state to be consumed in the transaction.
  * @return Returns the current transaction builder.
  */
+@Suspendable
 fun TransactionBuilder.addRevokedAccount(
     account: StateAndRef<Account>
 ): TransactionBuilder = apply {

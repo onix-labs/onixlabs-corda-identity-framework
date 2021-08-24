@@ -16,6 +16,7 @@
 
 package io.onixlabs.corda.identityframework.workflow
 
+import co.paralleluniverse.fibers.Suspendable
 import io.onixlabs.corda.identityframework.contract.attestations.Attestation
 import io.onixlabs.corda.identityframework.contract.attestations.AttestationContract
 import net.corda.core.contracts.StateAndRef
@@ -27,6 +28,7 @@ import net.corda.core.transactions.TransactionBuilder
  * @param attestation The attestation state to be created in the transaction.
  * @return Returns the current transaction builder.
  */
+@Suspendable
 fun TransactionBuilder.addIssuedAttestation(
     attestation: Attestation<*>
 ): TransactionBuilder = apply {
@@ -41,6 +43,7 @@ fun TransactionBuilder.addIssuedAttestation(
  * @param newAttestation The new attestation state to be created in the transaction.
  * @return Returns the current transaction builder.
  */
+@Suspendable
 fun TransactionBuilder.addAmendedAttestation(
     oldAttestation: StateAndRef<Attestation<*>>,
     newAttestation: Attestation<*>
@@ -56,6 +59,7 @@ fun TransactionBuilder.addAmendedAttestation(
  * @param attestation The attestation state to be consumed in the transaction.
  * @return Returns the current transaction builder.
  */
+@Suspendable
 fun TransactionBuilder.addRevokedAttestation(
     attestation: StateAndRef<Attestation<*>>
 ): TransactionBuilder = apply {
