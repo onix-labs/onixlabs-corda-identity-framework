@@ -19,38 +19,46 @@ package io.onixlabs.corda.identityframework.workflow
 import io.onixlabs.corda.identityframework.contract.attestations.Attestation
 import io.onixlabs.corda.identityframework.contract.attestations.AttestationContract
 import net.corda.core.contracts.StateAndRef
+import net.corda.core.transactions.TransactionBuilder
 
 /**
  * Adds an attestation for issuance to a transaction builder, including the required command.
  *
- * @param state The attestation state to be created in the transaction.
+ * @param attestation The attestation state to be created in the transaction.
  * @return Returns the current transaction builder.
  */
-fun Builder.addIssuedAttestation(state: Attestation<*>): Builder = apply {
-    addOutputState(state)
-    addCommand(AttestationContract.Issue, state.attestor.owningKey)
+fun TransactionBuilder.addIssuedAttestation(
+    attestation: Attestation<*>
+): TransactionBuilder = apply {
+    addOutputState(attestation)
+    addCommand(AttestationContract.Issue, attestation.attestor.owningKey)
 }
 
 /**
  * Adds an attestation for amendment to a transaction builder, including the required command.
  *
- * @param oldState The old attestation state to be consumed in the transaction.
- * @param newState The new attestation state to be created in the transaction.
+ * @param oldAttestation The old attestation state to be consumed in the transaction.
+ * @param newAttestation The new attestation state to be created in the transaction.
  * @return Returns the current transaction builder.
  */
-fun Builder.addAmendedAttestation(oldState: StateAndRef<Attestation<*>>, newState: Attestation<*>): Builder = apply {
-    addInputState(oldState)
-    addOutputState(newState)
-    addCommand(AttestationContract.Amend, newState.attestor.owningKey)
+fun TransactionBuilder.addAmendedAttestation(
+    oldAttestation: StateAndRef<Attestation<*>>,
+    newAttestation: Attestation<*>
+): TransactionBuilder = apply {
+    addInputState(oldAttestation)
+    addOutputState(newAttestation)
+    addCommand(AttestationContract.Amend, newAttestation.attestor.owningKey)
 }
 
 /**
  * Adds an attestation for revocation to a transaction builder, including the required command.
  *
- * @param state The attestation state to be consumed in the transaction.
+ * @param attestation The attestation state to be consumed in the transaction.
  * @return Returns the current transaction builder.
  */
-fun Builder.addRevokedAttestation(state: StateAndRef<Attestation<*>>): Builder = apply {
-    addInputState(state)
-    addCommand(AttestationContract.Revoke, state.state.data.attestor.owningKey)
+fun TransactionBuilder.addRevokedAttestation(
+    attestation: StateAndRef<Attestation<*>>
+): TransactionBuilder = apply {
+    addInputState(attestation)
+    addCommand(AttestationContract.Revoke, attestation.state.data.attestor.owningKey)
 }

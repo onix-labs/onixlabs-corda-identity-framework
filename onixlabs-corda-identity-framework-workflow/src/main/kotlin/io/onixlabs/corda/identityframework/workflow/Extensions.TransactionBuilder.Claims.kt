@@ -19,38 +19,46 @@ package io.onixlabs.corda.identityframework.workflow
 import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
 import io.onixlabs.corda.identityframework.contract.claims.CordaClaimContract
 import net.corda.core.contracts.StateAndRef
+import net.corda.core.transactions.TransactionBuilder
 
 /**
  * Adds a claim for issuance to a transaction builder, including the required command.
  *
- * @param state The claim state to be created in the transaction.
+ * @param claim The claim state to be created in the transaction.
  * @return Returns the current transaction builder.
  */
-fun Builder.addIssuedClaim(state: CordaClaim<*>): Builder = apply {
-    addOutputState(state)
-    addCommand(CordaClaimContract.Issue, state.issuer.owningKey)
+fun TransactionBuilder.addIssuedClaim(
+    claim: CordaClaim<*>
+): TransactionBuilder = apply {
+    addOutputState(claim)
+    addCommand(CordaClaimContract.Issue, claim.issuer.owningKey)
 }
 
 /**
  * Adds a claim for amendment to a transaction builder, including the required command.
  *
- * @param oldState The old claim state to be consumed in the transaction.
- * @param newState The new claim state to be created in the transaction.
+ * @param oldClaim The old claim state to be consumed in the transaction.
+ * @param newClaim The new claim state to be created in the transaction.
  * @return Returns the current transaction builder.
  */
-fun Builder.addAmendedClaim(oldState: StateAndRef<CordaClaim<*>>, newState: CordaClaim<*>): Builder = apply {
-    addInputState(oldState)
-    addOutputState(newState)
-    addCommand(CordaClaimContract.Amend, newState.issuer.owningKey)
+fun TransactionBuilder.addAmendedClaim(
+    oldClaim: StateAndRef<CordaClaim<*>>,
+    newClaim: CordaClaim<*>
+): TransactionBuilder = apply {
+    addInputState(oldClaim)
+    addOutputState(newClaim)
+    addCommand(CordaClaimContract.Amend, newClaim.issuer.owningKey)
 }
 
 /**
  * Adds a claim for revocation to a transaction builder, including the required command.
  *
- * @param state The claim state to be consumed in the transaction.
+ * @param claim The claim state to be consumed in the transaction.
  * @return Returns the current transaction builder.
  */
-fun Builder.addRevokedClaim(state: StateAndRef<CordaClaim<*>>): Builder = apply {
-    addInputState(state)
-    addCommand(CordaClaimContract.Revoke, state.state.data.issuer.owningKey)
+fun TransactionBuilder.addRevokedClaim(
+    claim: StateAndRef<CordaClaim<*>>
+): TransactionBuilder = apply {
+    addInputState(claim)
+    addCommand(CordaClaimContract.Revoke, claim.state.data.issuer.owningKey)
 }

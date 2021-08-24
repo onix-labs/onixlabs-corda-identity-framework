@@ -19,38 +19,46 @@ package io.onixlabs.corda.identityframework.workflow
 import io.onixlabs.corda.identityframework.contract.accounts.Account
 import io.onixlabs.corda.identityframework.contract.accounts.AccountContract
 import net.corda.core.contracts.StateAndRef
+import net.corda.core.transactions.TransactionBuilder
 
 /**
  * Adds an account for issuance to a transaction builder, including the required command.
  *
- * @param state The account state to be created in the transaction.
+ * @param account The account state to be created in the transaction.
  * @return Returns the current transaction builder.
  */
-fun Builder.addIssuedAccount(state: Account): Builder = apply {
-    addOutputState(state)
-    addCommand(AccountContract.Issue, state.owner.owningKey)
+fun TransactionBuilder.addIssuedAccount(
+    account: Account
+): TransactionBuilder = apply {
+    addOutputState(account)
+    addCommand(AccountContract.Issue, account.owner.owningKey)
 }
 
 /**
  * Adds an account for amendment to a transaction builder, including the required command.
  *
- * @param oldState The old account state to be consumed in the transaction.
- * @param newState The new account state to be created in the transaction.
+ * @param oldAccount The old account state to be consumed in the transaction.
+ * @param newAccount The new account state to be created in the transaction.
  * @return Returns the current transaction builder.
  */
-fun Builder.addAmendedAccount(oldState: StateAndRef<Account>, newState: Account): Builder = apply {
-    addInputState(oldState)
-    addOutputState(newState)
-    addCommand(AccountContract.Amend, newState.owner.owningKey)
+fun TransactionBuilder.addAmendedAccount(
+    oldAccount: StateAndRef<Account>,
+    newAccount: Account
+): TransactionBuilder = apply {
+    addInputState(oldAccount)
+    addOutputState(newAccount)
+    addCommand(AccountContract.Amend, newAccount.owner.owningKey)
 }
 
 /**
  * Adds an account for revocation to a transaction builder, including the required command.
  *
- * @param state The account state to be consumed in the transaction.
+ * @param account The account state to be consumed in the transaction.
  * @return Returns the current transaction builder.
  */
-fun Builder.addRevokedAccount(state: StateAndRef<Account>): Builder = apply {
-    addInputState(state)
-    addCommand(AccountContract.Revoke, state.state.data.owner.owningKey)
+fun TransactionBuilder.addRevokedAccount(
+    account: StateAndRef<Account>
+): TransactionBuilder = apply {
+    addInputState(account)
+    addCommand(AccountContract.Revoke, account.state.data.owner.owningKey)
 }
