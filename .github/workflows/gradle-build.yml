@@ -27,4 +27,7 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Build with Gradle
+      env:
+        GHA_USERNAME: ${{ secrets.GHA_USERNAME }}
+        GHA_TOKEN: ${{ secrets.GHA_TOKEN }}
       run: ./gradlew build
