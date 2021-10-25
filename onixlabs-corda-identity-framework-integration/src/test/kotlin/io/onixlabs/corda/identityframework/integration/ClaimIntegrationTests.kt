@@ -18,7 +18,7 @@ package io.onixlabs.corda.identityframework.integration
 
 import io.onixlabs.corda.core.services.singleOrNull
 import io.onixlabs.corda.core.services.vaultServiceFor
-import io.onixlabs.corda.identityframework.contract.CordaClaim
+import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
 import net.corda.core.utilities.getOrThrow
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
@@ -29,7 +29,7 @@ class ClaimIntegrationTests : IntegrationTest() {
     fun `Claim integration service tests`() = start {
 
         // Issue a claim
-        nodeA.claimService.issueClaim(
+        val claimIssuanceTransaction = nodeA.claimService.issueClaim(
             property = "example",
             value = "Hello, World!",
             linearId = ID,
@@ -37,30 +37,32 @@ class ClaimIntegrationTests : IntegrationTest() {
         ).returnValue.getOrThrow()
 
         // Find the issued claim
+        nodeA.waitForTransaction(claimIssuanceTransaction.id)
         val issuedClaim = nodeA.rpc.vaultServiceFor<CordaClaim<String>>().singleOrNull {
             linearIds(ID)
         } ?: fail("Failed to find issued claim.")
 
         // Amend the claim
-        nodeA.claimService.amendClaim(
+        val claimAmendmentTransaction = nodeA.claimService.amendClaim(
             claim = issuedClaim,
             value = "Goodbye, World!"
         ).returnValue.getOrThrow()
 
         // Find the amended claim
+        nodeA.waitForTransaction(claimAmendmentTransaction.id)
         val amendedClaim = nodeA.rpc.vaultServiceFor<CordaClaim<String>>().singleOrNull {
             linearIds(ID)
         } ?: fail("Failed to find amended claim.")
 
         // Publish the amended claim
-        val tx = nodeA.claimService.publishClaim(
+        val claimPublicationTransaction = nodeA.claimService.publishClaim(
             claim = amendedClaim,
             observers = setOf(partyB, partyC)
         ).returnValue.getOrThrow()
 
         // Find the published claim
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.waitForTransaction(tx.id)
+            it.waitForTransaction(claimPublicationTransaction.id)
             it.rpc.vaultServiceFor<CordaClaim<String>>().singleOrNull {
                 linearIds(ID)
             } ?: fail("Failed to find sent claim.")
@@ -71,5 +73,7 @@ class ClaimIntegrationTests : IntegrationTest() {
             claim = amendedClaim,
             observers = setOf(partyB, partyC)
         ).returnValue.getOrThrow()
+
+        logger.info("Claim tests complete!")
     }
 }

@@ -1,0 +1,54 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+    <changeSet author="ONIXLabs" id="create-onixlabs_account_states">
+        <createTable tableName="onixlabs_account_states">
+            <column name="output_index" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="transaction_id" type="nvarchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="linear_id" type="uuid">
+                <constraints nullable="false"/>
+            </column>
+            <column name="external_id" type="nvarchar(256)"/>
+            <column name="owner" type="nvarchar(256)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="output_index, transaction_id"
+                       constraintName="PK_onixlabs_account_states"
+                       tableName="onixlabs_account_states"/>
+    </changeSet>
+    <changeSet author="ONIXLabs" id="create-onixlabs_account_claims">
+        <createTable tableName="onixlabs_account_claims">
+            <column name="output_index" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="transaction_id" type="nvarchar(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="id" type="uuid">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="property" type="nvarchar(256)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value" type="clob">
+                <constraints nullable="false"/>
+            </column>
+            <column name="hash" type="nvarchar(64)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="id"
+                       constraintName="PK_onixlabs_account_claims"
+                       tableName="onixlabs_account_claims"/>
+        <createIndex tableName="onixlabs_account_claims" indexName="IDX_transaction_reference">
+            <column name="output_index"/>
+            <column name="transaction_id"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>

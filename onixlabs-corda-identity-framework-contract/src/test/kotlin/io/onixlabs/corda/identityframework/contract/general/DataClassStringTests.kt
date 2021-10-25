@@ -16,7 +16,9 @@
 
 package io.onixlabs.corda.identityframework.contract.general
 
-import io.onixlabs.corda.identityframework.contract.Claim
+import io.onixlabs.corda.identityframework.contract.ExampleNumberClaim
+import io.onixlabs.corda.identityframework.contract.ExampleStringClaim
+import io.onixlabs.corda.identityframework.contract.claims.Claim
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -33,10 +35,20 @@ class DataClassStringTests {
     }
 
     @Test
-    fun `toDataClassString called on GreetingClaim should produce the expected result`() {
-        val claim = GreetingClaim("John")
+    fun `toDataClassString called on ExampleStringClaim should produce the expected result`() {
+        val claim = ExampleStringClaim("Name", "John Smith")
 
-        val expected = "GreetingClaim(greeter = John, property = Greeting, value = Hello, World!)"
+        val expected = "ExampleStringClaim(property = Name, value = John Smith)"
+        val actual = claim.toString()
+
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `toDataClassString called on ExampleNumberClaim should produce the expected result`() {
+        val claim = ExampleNumberClaim("Name", 123)
+
+        val expected = "ExampleNumberClaim(property = Name, value = 123)"
         val actual = claim.toString()
 
         assertEquals(expected, actual)

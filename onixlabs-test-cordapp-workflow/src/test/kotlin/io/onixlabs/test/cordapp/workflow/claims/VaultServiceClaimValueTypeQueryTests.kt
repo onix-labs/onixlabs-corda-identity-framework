@@ -16,13 +16,14 @@
 
 package io.onixlabs.test.cordapp.workflow.claims
 
-import io.onixlabs.corda.core.services.equalTo
 import io.onixlabs.corda.core.services.filter
 import io.onixlabs.corda.core.services.vaultServiceFor
-import io.onixlabs.corda.identityframework.contract.CordaClaim
-import io.onixlabs.corda.identityframework.contract.CordaClaimSchema
-import io.onixlabs.corda.identityframework.workflow.IssueClaimFlow
-import io.onixlabs.test.cordapp.contract.GreetingClaim
+import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
+import io.onixlabs.corda.identityframework.workflow.claims.IssueClaimFlow
+import io.onixlabs.corda.identityframework.workflow.claimProperty
+import io.onixlabs.corda.identityframework.workflow.claimType
+import io.onixlabs.corda.identityframework.workflow.claimValueType
+import io.onixlabs.test.cordapp.contract.claims.GreetingClaim
 import io.onixlabs.test.cordapp.workflow.FlowTest
 import io.onixlabs.test.cordapp.workflow.Pipeline
 import net.corda.core.node.services.Vault
@@ -56,8 +57,8 @@ class VaultServiceClaimValueTypeQueryTests : FlowTest() {
     fun `VaultService equalTo should only return only the claims where the claim type is specified`() {
         val results = nodeA.services.vaultServiceFor<CordaClaim<String>>().filter {
             stateStatus(Vault.StateStatus.ALL)
-            expression(CordaClaimSchema.CordaClaimEntity::property equalTo "greeting")
-            expression(CordaClaimSchema.CordaClaimEntity::claimType equalTo CordaClaim::class.java.canonicalName)
+            claimProperty("greeting")
+            claimType(CordaClaim::class.java)
         }
 
         assertEquals(3, results.count())
@@ -67,9 +68,9 @@ class VaultServiceClaimValueTypeQueryTests : FlowTest() {
     fun `VaultService equalTo should the correct claim where the claim value type is String`() {
         val results = nodeA.services.vaultServiceFor<CordaClaim<*>>().filter {
             stateStatus(Vault.StateStatus.ALL)
-            expression(CordaClaimSchema.CordaClaimEntity::property equalTo "greeting")
-            expression(CordaClaimSchema.CordaClaimEntity::claimType equalTo CordaClaim::class.java.canonicalName)
-            expression(CordaClaimSchema.CordaClaimEntity::valueType equalTo String::class.java.canonicalName)
+            claimProperty("greeting")
+            claimType(CordaClaim::class.java)
+            claimValueType(String::class.java)
         }
 
         assertEquals(1, results.count())
@@ -80,7 +81,7 @@ class VaultServiceClaimValueTypeQueryTests : FlowTest() {
     fun `VaultService equalTo should the correct claim where the claim type is GreetingClaim`() {
         val results = nodeA.services.vaultServiceFor<GreetingClaim>().filter {
             stateStatus(Vault.StateStatus.ALL)
-            expression(CordaClaimSchema.CordaClaimEntity::property equalTo "greeting")
+            claimProperty("greeting")
         }
 
         assertEquals(1, results.count())

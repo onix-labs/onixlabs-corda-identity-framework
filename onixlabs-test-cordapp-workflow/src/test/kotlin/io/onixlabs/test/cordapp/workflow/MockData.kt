@@ -16,7 +16,7 @@
 
 package io.onixlabs.test.cordapp.workflow
 
-import io.onixlabs.test.cordapp.contract.GreetingClaim
+import io.onixlabs.test.cordapp.contract.claims.GreetingClaim
 import net.corda.core.identity.CordaX500Name
 import net.corda.testing.core.TestIdentity
 

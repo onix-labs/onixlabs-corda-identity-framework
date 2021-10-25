@@ -16,13 +16,12 @@
 
 package io.onixlabs.corda.identityframework.integration
 
-import io.onixlabs.corda.core.services.equalTo
 import io.onixlabs.corda.core.services.singleOrNull
 import io.onixlabs.corda.core.services.vaultServiceFor
-import io.onixlabs.corda.identityframework.contract.Attestation
-import io.onixlabs.corda.identityframework.contract.AttestationSchema
-import io.onixlabs.corda.identityframework.contract.AttestationStatus
-import io.onixlabs.corda.identityframework.contract.CordaClaim
+import io.onixlabs.corda.identityframework.contract.attestations.Attestation
+import io.onixlabs.corda.identityframework.contract.attestations.AttestationStatus
+import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
+import io.onixlabs.corda.identityframework.workflow.attestationPointer
 import net.corda.core.utilities.getOrThrow
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
@@ -33,7 +32,7 @@ class AttestationIntegrationTests : IntegrationTest() {
     fun `Attestation integration service tests`() = start {
 
         // Issue a claim
-        nodeA.claimService.issueClaim(
+        val claimIssuanceTransaction = nodeA.claimService.issueClaim(
             property = "example",
             value = "Hello, World!",
             linearId = ID,
@@ -41,43 +40,46 @@ class AttestationIntegrationTests : IntegrationTest() {
         ).returnValue.getOrThrow()
 
         // Find the issued claim
+        nodeC.waitForTransaction(claimIssuanceTransaction.id)
         val issuedClaim = nodeC.rpc.vaultServiceFor<CordaClaim<String>>().singleOrNull {
             linearIds(ID)
         } ?: fail("Failed to find issued claim.")
 
         // Issue an attestation
-        nodeC.attestationService.issueStaticAttestation(
+        val attestationIssuanceTransaction = nodeC.attestationService.issueStaticAttestation(
             state = issuedClaim
         ).returnValue.getOrThrow()
 
         // Find the issued attestation
+        nodeC.waitForTransaction(attestationIssuanceTransaction.id)
         val issuedAttestation = nodeC.rpc.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
-            expression(AttestationSchema.AttestationEntity::pointer equalTo issuedClaim.ref.toString())
+            attestationPointer(issuedClaim.ref)
         } ?: fail("Failed to find issued attestation.")
 
         // Amend the issued attestation
-        nodeC.attestationService.amendStaticAttestation(
+        val attestationAmendmentTransaction = nodeC.attestationService.amendStaticAttestation(
             oldAttestation = issuedAttestation,
             state = issuedClaim,
             status = AttestationStatus.ACCEPTED
         ).returnValue.getOrThrow()
 
         // Find the amended attestation
+        nodeC.waitForTransaction(attestationAmendmentTransaction.id)
         val amendedAttestation = nodeC.rpc.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
-            expression(AttestationSchema.AttestationEntity::pointer equalTo issuedClaim.ref.toString())
+            attestationPointer(issuedClaim.ref)
         } ?: fail("Failed to find amended attestation.")
 
         // Publish the amended attestation
-        val tx = nodeA.attestationService.publishAttestation(
+        val attestationPublicationTransaction = nodeA.attestationService.publishAttestation(
             attestation = amendedAttestation,
             observers = setOf(partyB)
         ).returnValue.getOrThrow()
 
         // Find the published attestation
         listOf(nodeA, nodeB, nodeC).forEach {
-            it.waitForTransaction(tx.id)
+            it.waitForTransaction(attestationPublicationTransaction.id)
             it.rpc.vaultServiceFor<Attestation<CordaClaim<String>>>().singleOrNull {
-                expression(AttestationSchema.AttestationEntity::pointer equalTo issuedClaim.ref.toString())
+                attestationPointer(issuedClaim.ref)
             } ?: fail("Failed to find published attestation.")
         }
 
@@ -86,5 +88,7 @@ class AttestationIntegrationTests : IntegrationTest() {
             attestation = amendedAttestation,
             observers = setOf(partyB)
         ).returnValue.getOrThrow()
+
+        logger.info("Attestation tests complete!")
     }
 }

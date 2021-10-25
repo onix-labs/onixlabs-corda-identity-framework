@@ -16,8 +16,8 @@
 
 package io.onixlabs.corda.identityframework.contract.general
 
-import io.onixlabs.corda.identityframework.contract.Claim
 import io.onixlabs.corda.identityframework.contract.checkForDuplicateProperties
+import io.onixlabs.corda.identityframework.contract.claims.Claim
 import io.onixlabs.corda.identityframework.contract.containsDuplicateProperties
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -33,7 +33,7 @@ class DuplicatePropertyTests {
         // Arrange
         val claims = listOf(
             Claim("Property1", Unit),
-            Claim("PROPERTY1", Unit), // Not considered duplicate because case is preserved.
+            Claim("PROPERTY1", Unit),
             Claim("Property2", Unit),
             Claim("Property3", Unit)
         )
@@ -51,7 +51,7 @@ class DuplicatePropertyTests {
         // Arrange
         val claims = listOf(
             Claim("Property1", Unit),
-            Claim("PROPERTY1", Unit), // Considered duplicate because case is ignored.
+            Claim("PROPERTY1", Unit),
             Claim("Property2", Unit),
             Claim("Property3", Unit)
         )
@@ -69,7 +69,7 @@ class DuplicatePropertyTests {
         // Arrange
         val claims = listOf(
             Claim("Property1", Unit),
-            Claim("PROPERTY1", Unit), // Not considered duplicate because case is preserved.
+            Claim("PROPERTY1", Unit),
             Claim("Property2", Unit),
             Claim("Property3", Unit)
         )
@@ -87,7 +87,7 @@ class DuplicatePropertyTests {
         // Arrange
         val claims = listOf(
             Claim("Property1", Unit),
-            Claim("PROPERTY1", Unit), // Considered duplicate because case is ignored.
+            Claim("PROPERTY1", Unit),
             Claim("Property2", Unit),
             Claim("Property3", Unit)
         )
@@ -105,7 +105,7 @@ class DuplicatePropertyTests {
         // Arrange
         val claims = listOf(
             Claim("Property1", Unit),
-            Claim("PROPERTY1", Unit), // Considered duplicate because case is ignored.
+            Claim("PROPERTY1", Unit),
             Claim("Property2", Unit),
             Claim("Property3", Unit)
         )
