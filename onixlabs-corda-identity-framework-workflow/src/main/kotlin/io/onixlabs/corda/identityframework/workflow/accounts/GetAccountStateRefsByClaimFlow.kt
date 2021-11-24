@@ -37,7 +37,7 @@ class GetAccountStateRefsByClaimFlow(
     private val property: String? = null,
     private val value: Any? = null,
     private val hash: SecureHash? = null
-) : FlowLogic<List<StateRef>>() {
+) : FlowLogic<List<StateRef>?>() {
 
     private companion object {
 
@@ -53,8 +53,8 @@ class GetAccountStateRefsByClaimFlow(
     }
 
     @Suspendable
-    override fun call(): List<StateRef> {
-        return if (property == null && value == null && hash == null) emptyList() else executeQuery()
+    override fun call(): List<StateRef>? {
+        return if (property == null && value == null && hash == null) null else executeQuery()
     }
 
     /**
