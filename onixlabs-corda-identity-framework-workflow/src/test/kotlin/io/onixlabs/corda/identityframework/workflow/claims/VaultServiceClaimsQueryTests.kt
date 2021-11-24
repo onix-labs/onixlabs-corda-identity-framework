@@ -98,7 +98,7 @@ class VaultServiceClaimsQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<CordaClaim<*>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                externalIds(CLAIM_1.linearId.externalId)
+                externalIds(CLAIM_1.linearId.externalId!!)
                 claimType()
             }
 
