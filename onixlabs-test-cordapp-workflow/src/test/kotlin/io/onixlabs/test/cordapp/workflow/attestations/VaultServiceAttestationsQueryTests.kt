@@ -81,7 +81,7 @@ class VaultServiceAttestationsQueryTests : FlowTest() {
         listOf(nodeA, nodeB, nodeC).forEach {
             val results = it.services.vaultServiceFor<Attestation<*>>().filter {
                 stateStatus(Vault.StateStatus.ALL)
-                externalIds(attestation.state.data.linearId.externalId)
+                externalIds(attestation.state.data.linearId.externalId!!)
                 attestationType()
             }
 

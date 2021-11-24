@@ -242,7 +242,7 @@ class VaultServiceAccountClaimQueryTests : FlowTest() {
         property: String? = null,
         value: Any? = null,
         hash: SecureHash? = null
-    ): List<StateRef> {
+    ): List<StateRef>? {
         return Pipeline
             .create(network)
             .run(this) { GetAccountStateRefsByClaimFlow(property, value, hash) }
