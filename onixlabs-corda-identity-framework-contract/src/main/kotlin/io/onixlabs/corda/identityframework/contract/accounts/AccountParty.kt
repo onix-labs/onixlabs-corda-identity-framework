@@ -30,15 +30,15 @@ import java.util.*
 /**
  * Represents a party that resolves back to an account.
  *
- * @property party The underlying party that owns the account.
+ * @property owner The underlying party that owns the account.
  * @property accountLinearId The linear ID of the account associated with this party.
  * @property accountType The type of the account associated with this party.
  */
 class AccountParty internal constructor(
-    private val party: AbstractParty,
+    val owner: AbstractParty,
     val accountLinearId: UniqueIdentifier,
     val accountType: Class<out Account>
-) : AbstractParty(party.owningKey) {
+) : AbstractParty(owner.owningKey) {
 
     /**
      * Gets an account resolver to resolve this [AccountParty] back to the associated [Account].
@@ -70,7 +70,7 @@ class AccountParty internal constructor(
      * @return Returns the name of the account owner; or null if the account owner is unknown.
      */
     override fun nameOrNull(): CordaX500Name? {
-        return party.nameOrNull()
+        return owner.nameOrNull()
     }
 
     /**
@@ -80,7 +80,7 @@ class AccountParty internal constructor(
      * @return Returns a party and reference of this object instance.
      */
     override fun ref(bytes: OpaqueBytes): PartyAndReference {
-        return party.ref(bytes)
+        return owner.ref(bytes)
     }
 
     /**
@@ -91,7 +91,7 @@ class AccountParty internal constructor(
      */
     override fun equals(other: Any?): Boolean {
         return if (other !is AccountParty) super.equals(other)
-        else other.party == party && other.accountLinearId == accountLinearId && other.accountType == accountType
+        else other.owner == owner && other.accountLinearId == accountLinearId && other.accountType == accountType
     }
 
     /**
@@ -100,7 +100,7 @@ class AccountParty internal constructor(
      * @return Returns a hash code for the current object.
      */
     override fun hashCode(): Int {
-        return Objects.hash(party, accountLinearId, accountType)
+        return Objects.hash(owner, accountLinearId, accountType)
     }
 
     /**
@@ -109,7 +109,7 @@ class AccountParty internal constructor(
      * @return Returns a string that represents the current object.
      */
     override fun toString(): String {
-        return "$accountLinearId@$party"
+        return "$accountLinearId@$owner"
     }
 
     /**
