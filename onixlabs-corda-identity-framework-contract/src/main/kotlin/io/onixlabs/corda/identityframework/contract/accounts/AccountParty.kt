@@ -40,8 +40,21 @@ class AccountParty(
     val accountType: Class<out Account>
 ) : AbstractParty(owner.owningKey) {
 
+    /**
+     * @property DELIMITER The delimiter that will be used to format the account party.
+     */
     companion object {
         const val DELIMITER = '@'
+    }
+
+    /**
+     * Determines whether this [AccountParty] owns the specified [Account].
+     *
+     * @param account The account for which to determine ownership.
+     * @return Returns true if this [AccountParty] owns the specified [Account]; otherwise, false.
+     */
+    fun owns(account: Account): Boolean {
+        return this == account.toAccountParty()
     }
 
     /**
