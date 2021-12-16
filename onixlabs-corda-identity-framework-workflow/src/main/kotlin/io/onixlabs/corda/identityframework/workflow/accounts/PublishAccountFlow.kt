@@ -19,6 +19,7 @@ package io.onixlabs.corda.identityframework.workflow.accounts
 import co.paralleluniverse.fibers.Suspendable
 import io.onixlabs.corda.core.workflow.*
 import io.onixlabs.corda.identityframework.contract.accounts.Account
+import io.onixlabs.corda.identityframework.workflow.FLOW_VERSION_1
 import io.onixlabs.corda.identityframework.workflow.SendAccountTransactionStep
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.flows.*
@@ -46,8 +47,6 @@ class PublishAccountFlow(
             InitializeFlowStep,
             SendAccountTransactionStep
         )
-
-        private const val FLOW_VERSION_1 = 1
     }
 
     @Suspendable

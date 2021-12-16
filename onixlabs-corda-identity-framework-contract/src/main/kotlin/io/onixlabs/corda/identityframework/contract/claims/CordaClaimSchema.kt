@@ -16,6 +16,7 @@
 
 package io.onixlabs.corda.identityframework.contract.claims
 
+import io.onixlabs.corda.identityframework.contract.accountLinearId
 import net.corda.core.crypto.NullKeys.NULL_PARTY
 import net.corda.core.identity.AbstractParty
 import net.corda.core.schemas.MappedSchema
@@ -78,5 +79,23 @@ object CordaClaimSchema {
 
         @Column(name = "claim_type", nullable = false)
         val claimType: String = ""
-    ) : PersistentState()
+    ) : PersistentState() {
+        internal constructor(claim: CordaClaim<*>) : this(
+            linearId = claim.linearId.id,
+            externalId = claim.linearId.externalId,
+            issuer = claim.issuer,
+            issuerAccountLinearId = claim.issuer.accountLinearId?.id,
+            issuerAccountExternalId = claim.issuer.accountLinearId?.externalId,
+            holder = claim.holder,
+            holderAccountLinearId = claim.holder.accountLinearId?.id,
+            holderAccountExternalId = claim.holder.accountLinearId?.externalId,
+            property = claim.property,
+            value = claim.value.toString(),
+            valueType = claim.value.javaClass.canonicalName,
+            previousStateRef = claim.previousStateRef?.toString(),
+            isSelfIssued = claim.isSelfIssued,
+            hash = claim.hash.toString(),
+            claimType = claim.javaClass.canonicalName
+        )
+    }
 }

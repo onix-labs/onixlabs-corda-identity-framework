@@ -34,11 +34,15 @@ import java.util.*
  * @property accountLinearId The linear ID of the account associated with this party.
  * @property accountType The type of the account associated with this party.
  */
-class AccountParty internal constructor(
+class AccountParty(
     val owner: AbstractParty,
     val accountLinearId: UniqueIdentifier,
     val accountType: Class<out Account>
 ) : AbstractParty(owner.owningKey) {
+
+    companion object {
+        const val DELIMITER = '@'
+    }
 
     /**
      * Gets an account resolver to resolve this [AccountParty] back to the associated [Account].
@@ -90,8 +94,10 @@ class AccountParty internal constructor(
      * @return Returns true if the specified object is equal to the current object; otherwise, false.
      */
     override fun equals(other: Any?): Boolean {
-        return if (other !is AccountParty) super.equals(other)
-        else other.owner == owner && other.accountLinearId == accountLinearId && other.accountType == accountType
+        return this === other || (other is AccountParty
+                && other.owner == owner
+                && other.accountLinearId == accountLinearId
+                && other.accountType == accountType)
     }
 
     /**
@@ -109,7 +115,7 @@ class AccountParty internal constructor(
      * @return Returns a string that represents the current object.
      */
     override fun toString(): String {
-        return "$accountLinearId@$owner"
+        return "$accountLinearId$DELIMITER$owner"
     }
 
     /**

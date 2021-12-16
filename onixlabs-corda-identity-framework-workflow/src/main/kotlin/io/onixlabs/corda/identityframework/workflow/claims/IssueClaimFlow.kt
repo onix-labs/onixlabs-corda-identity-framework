@@ -19,9 +19,8 @@ package io.onixlabs.corda.identityframework.workflow.claims
 import co.paralleluniverse.fibers.Suspendable
 import io.onixlabs.corda.core.workflow.*
 import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
-import io.onixlabs.corda.identityframework.workflow.addIssuedClaim
-import io.onixlabs.corda.identityframework.workflow.checkAccountExists
-import io.onixlabs.corda.identityframework.workflow.checkClaimExists
+import io.onixlabs.corda.identityframework.workflow.*
+import io.onixlabs.corda.identityframework.workflow.FLOW_VERSION_1
 import net.corda.core.flows.*
 import net.corda.core.identity.Party
 import net.corda.core.transactions.SignedTransaction
@@ -53,14 +52,12 @@ class IssueClaimFlow(
             SendStatesToRecordStep,
             FinalizeTransactionStep
         )
-
-        private const val FLOW_VERSION_1 = 1
     }
 
     @Suspendable
     override fun call(): SignedTransaction {
         currentStep(InitializeFlowStep)
-        checkSufficientSessions(sessions, claim)
+        checkSufficientSessionsWithAccounts(sessions, claim)
         checkClaimExists(claim)
         checkAccountExists(claim.issuer)
         checkAccountExists(claim.holder)
@@ -83,7 +80,7 @@ class IssueClaimFlow(
      */
     @StartableByRPC
     @StartableByService
-    @InitiatingFlow(FLOW_VERSION_1)
+    @InitiatingFlow(version = FLOW_VERSION_1)
     class Initiator(
         private val claim: CordaClaim<*>,
         private val notary: Party? = null,

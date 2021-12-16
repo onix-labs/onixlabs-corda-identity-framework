@@ -19,6 +19,7 @@ package io.onixlabs.corda.identityframework.workflow.attestations
 import co.paralleluniverse.fibers.Suspendable
 import io.onixlabs.corda.core.workflow.*
 import io.onixlabs.corda.identityframework.contract.attestations.Attestation
+import io.onixlabs.corda.identityframework.workflow.FLOW_VERSION_1
 import io.onixlabs.corda.identityframework.workflow.SendAttestationTransactionStep
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.flows.*
@@ -46,8 +47,6 @@ class PublishAttestationFlow(
             InitializeFlowStep,
             SendAttestationTransactionStep
         )
-
-        private const val FLOW_VERSION_1 = 1
     }
 
     @Suspendable
@@ -65,7 +64,7 @@ class PublishAttestationFlow(
      */
     @StartableByRPC
     @StartableByService
-    @InitiatingFlow(FLOW_VERSION_1)
+    @InitiatingFlow(version = FLOW_VERSION_1)
     class Initiator(
         private val attestation: StateAndRef<Attestation<*>>,
         private val observers: Set<Party>

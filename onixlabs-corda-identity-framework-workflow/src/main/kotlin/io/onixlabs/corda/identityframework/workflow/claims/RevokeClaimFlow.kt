@@ -19,7 +19,9 @@ package io.onixlabs.corda.identityframework.workflow.claims
 import co.paralleluniverse.fibers.Suspendable
 import io.onixlabs.corda.core.workflow.*
 import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
+import io.onixlabs.corda.identityframework.workflow.FLOW_VERSION_1
 import io.onixlabs.corda.identityframework.workflow.addRevokedClaim
+import io.onixlabs.corda.identityframework.workflow.checkSufficientSessionsWithAccounts
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.flows.*
 import net.corda.core.identity.Party
@@ -50,14 +52,12 @@ class RevokeClaimFlow(
             SendStatesToRecordStep,
             FinalizeTransactionStep
         )
-
-        private const val FLOW_VERSION_1 = 1
     }
 
     @Suspendable
     override fun call(): SignedTransaction {
         currentStep(InitializeFlowStep)
-        checkSufficientSessions(sessions, claim.state.data)
+        checkSufficientSessionsWithAccounts(sessions, claim.state.data)
 
         val transaction = buildTransaction(claim.state.notary) {
             addRevokedClaim(claim)
@@ -76,7 +76,7 @@ class RevokeClaimFlow(
      */
     @StartableByRPC
     @StartableByService
-    @InitiatingFlow(FLOW_VERSION_1)
+    @InitiatingFlow(version = FLOW_VERSION_1)
     class Initiator(
         private val claim: StateAndRef<CordaClaim<*>>,
         private val observers: Set<Party> = emptySet()

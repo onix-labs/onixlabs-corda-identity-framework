@@ -16,6 +16,7 @@
 
 package io.onixlabs.corda.identityframework.contract.attestations
 
+import io.onixlabs.corda.identityframework.contract.accountLinearId
 import net.corda.core.crypto.NullKeys.NULL_PARTY
 import net.corda.core.identity.AbstractParty
 import net.corda.core.schemas.MappedSchema
@@ -68,5 +69,20 @@ object AttestationSchema {
 
         @Column(name = "attestation_type", nullable = false)
         val attestationType: String = ""
-    ) : PersistentState()
+    ) : PersistentState() {
+        internal constructor(attestation: Attestation<*>) : this(
+            linearId = attestation.linearId.id,
+            externalId = attestation.linearId.externalId,
+            attestor = attestation.attestor,
+            attestorAccountLinearId = attestation.attestor.accountLinearId?.id,
+            attestorAccountExternalId = attestation.attestor.accountLinearId?.externalId,
+            pointer = attestation.pointer.statePointer.toString(),
+            pointerStateType = attestation.pointer.stateType.canonicalName,
+            pointerHash = attestation.pointer.hash.toString(),
+            status = attestation.status,
+            previousStateRef = attestation.previousStateRef?.toString(),
+            hash = attestation.hash.toString(),
+            attestationType = attestation.javaClass.canonicalName
+        )
+    }
 }
