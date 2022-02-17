@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 ONIXLabs
+ * Copyright 2020-2022 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,8 @@
 package io.onixlabs.corda.identityframework.workflow
 
 import co.paralleluniverse.fibers.Suspendable
-import io.onixlabs.corda.core.workflow.checkSufficientSessions
+import io.onixlabs.corda.core.workflow.checkSufficientSessionsForContractStates
+import io.onixlabs.corda.core.workflow.checkSufficientSessionsForTransactionBuilder
 import io.onixlabs.corda.identityframework.contract.accounts.AccountParty
 import net.corda.core.contracts.ContractState
 import net.corda.core.flows.FlowLogic
@@ -26,19 +27,23 @@ import net.corda.core.identity.AbstractParty
 import net.corda.core.transactions.TransactionBuilder
 
 @Suspendable
-fun FlowLogic<*>.checkSufficientSessionsWithAccounts(sessions: Iterable<FlowSession>, states: Iterable<ContractState>) {
-    checkSufficientSessions(sessions, states) { it.getAccountOwningPartyOrThis() }
-}
+fun FlowLogic<*>.checkSufficientSessionsForAccounts(
+    sessions: Iterable<FlowSession>,
+    states: Iterable<ContractState>
+) = checkSufficientSessionsForContractStates(sessions, states) { it.getAccountOwningPartyOrThis() }
 
 @Suspendable
-fun FlowLogic<*>.checkSufficientSessionsWithAccounts(sessions: Iterable<FlowSession>, vararg states: ContractState) {
-    checkSufficientSessions(sessions, *states) { it.getAccountOwningPartyOrThis() }
-}
+fun FlowLogic<*>.checkSufficientSessionsForAccounts(
+    sessions: Iterable<FlowSession>,
+    vararg states: ContractState
+) = checkSufficientSessionsForContractStates(sessions, *states) { it.getAccountOwningPartyOrThis() }
+
 
 @Suspendable
-fun FlowLogic<*>.checkSufficientSessions(sessions: Iterable<FlowSession>, transaction: TransactionBuilder) {
-    checkSufficientSessions(sessions, transaction) { it.getAccountOwningPartyOrThis() }
-}
+fun FlowLogic<*>.checkSufficientSessionsForTransactionBuilder(
+    sessions: Iterable<FlowSession>,
+    transaction: TransactionBuilder
+) = checkSufficientSessionsForTransactionBuilder(sessions, transaction) { it.getAccountOwningPartyOrThis() }
 
 private fun AbstractParty.getAccountOwningPartyOrThis(): AbstractParty {
     return if (this is AccountParty) owner else this

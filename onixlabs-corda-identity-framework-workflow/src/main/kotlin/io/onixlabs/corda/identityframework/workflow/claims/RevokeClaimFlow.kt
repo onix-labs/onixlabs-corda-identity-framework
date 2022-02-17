@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 ONIXLabs
+ * Copyright 2020-2022 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import io.onixlabs.corda.core.workflow.*
 import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
 import io.onixlabs.corda.identityframework.workflow.FLOW_VERSION_1
 import io.onixlabs.corda.identityframework.workflow.addRevokedClaim
-import io.onixlabs.corda.identityframework.workflow.checkSufficientSessionsWithAccounts
+import io.onixlabs.corda.identityframework.workflow.checkSufficientSessionsForAccounts
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.flows.*
 import net.corda.core.identity.Party
@@ -57,7 +57,7 @@ class RevokeClaimFlow(
     @Suspendable
     override fun call(): SignedTransaction {
         currentStep(InitializeFlowStep)
-        checkSufficientSessionsWithAccounts(sessions, claim.state.data)
+        checkSufficientSessionsForAccounts(sessions, claim.state.data)
 
         val transaction = buildTransaction(claim.state.notary) {
             addRevokedClaim(claim)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 ONIXLabs
+ * Copyright 2020-2022 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,13 +60,30 @@ fun FlowLogic<*>.checkClaimExists(claim: CordaClaim<*>) {
 }
 
 /**
- * Checks whether the specified attestation already exists.
+ * Performs a pre-issuance check to determine whether the specified attestation has already been issued.
  *
  * @param attestation The attestation to check for existence.
- * @throws FlowException if the claim already exists.
+ * @throws FlowException if the attestation already exists.
  */
 @Suspendable
-fun FlowLogic<*>.checkAttestationExists(attestation: Attestation<*>) {
+fun FlowLogic<*>.checkAttestationExistsForIssuance(attestation: Attestation<*>) {
+    val attestationExists = serviceHub.vaultServiceFor(attestation.javaClass).any {
+        linearIds(attestation.linearId)
+    }
+
+    if (attestationExists) {
+        throw FlowException("An unconsumed attestation with the specified linear ID already exists: ${attestation.linearId}.")
+    }
+}
+
+/**
+ * Performs a pre-amendment check to determine whether the specified attestation has already been issued.
+ *
+ * @param attestation The attestation to check for existence.
+ * @throws FlowException if the attestation already exists.
+ */
+@Suspendable
+fun FlowLogic<*>.checkAttestationExistsForAmendment(attestation: Attestation<*>) {
     val attestationExists = serviceHub.vaultServiceFor(attestation.javaClass).any {
         attestationType(attestation.javaClass)
         attestationPointerType(attestation.pointer.stateType)

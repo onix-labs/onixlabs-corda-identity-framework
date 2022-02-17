@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 ONIXLabs
+ * Copyright 2020-2022 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ class IssueClaimFlow(
     @Suspendable
     override fun call(): SignedTransaction {
         currentStep(InitializeFlowStep)
-        checkSufficientSessionsWithAccounts(sessions, claim)
+        checkSufficientSessionsForAccounts(sessions, claim)
         checkClaimExists(claim)
         checkAccountExists(claim.issuer)
         checkAccountExists(claim.holder)

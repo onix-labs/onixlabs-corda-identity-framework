@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 ONIXLabs
+ * Copyright 2020-2022 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,9 +58,9 @@ class AmendAttestationFlow(
     @Suspendable
     override fun call(): SignedTransaction {
         currentStep(InitializeFlowStep)
-        checkSufficientSessionsWithAccounts(sessions, oldAttestation.state.data, newAttestation)
+        checkSufficientSessionsForAccounts(sessions, oldAttestation.state.data, newAttestation)
         checkHasAttestedStateBeenWitnessed(newAttestation)
-        checkAttestationExists(newAttestation)
+        checkAttestationExistsForAmendment(newAttestation)
 
         val transaction = buildTransaction(oldAttestation.state.notary) {
             addAmendedAttestation(oldAttestation, newAttestation)
