@@ -25,6 +25,12 @@ import net.corda.core.identity.CordaX500Name
 import net.corda.core.node.ServiceHub
 import net.corda.core.utilities.parsePublicKeyBase58
 
+/**
+ * Determines whether the current Corda node owns the specified party identity.
+ *
+ * @param party The identity to determine is owned by the current Corda node.
+ * @return Returns true if the current Corda node owns the specified party identity; otherwise, false.
+ */
 fun ServiceHub.ownsLegalIdentity(party: AbstractParty): Boolean {
     val partyToResolve = if (party is AccountParty) party.owner else party
     val wellKnownParty = identityService.wellKnownPartyFromAnonymous(partyToResolve)
@@ -32,10 +38,25 @@ fun ServiceHub.ownsLegalIdentity(party: AbstractParty): Boolean {
     return wellKnownParty in myInfo.legalIdentities
 }
 
+/**
+ * Resolves the specified value to an [AbstractParty].
+ *
+ * @param value The value to resolve to an [AbstractParty].
+ * @param type The type of account to resolve, if the value represents an [AccountParty].
+ * @return Returns an [AbstractParty] resolved from the specified value.
+ * @throws IllegalArgumentException if the specified value cannot be resolved to an [AbstractParty].
+ */
 fun ServiceHub.resolveParty(value: String, type: Class<out Account> = Account::class.java): AbstractParty {
     return if (AccountParty.DELIMITER in value) resolveAccountParty(value, type) else resolveAbstractParty(value)
 }
 
+/**
+ * Resolves the specified value to an [AbstractParty].
+ *
+ * @param value The value to resolve to an [AbstractParty].
+ * @return Returns an [AbstractParty] resolved from the specified value.
+ * @throws IllegalArgumentException if the specified value cannot be resolved to an [AbstractParty].
+ */
 fun ServiceHub.resolveAbstractParty(value: String): AbstractParty {
     return try {
         val parsedCordaX500Name = CordaX500Name.parse(value)
@@ -46,6 +67,14 @@ fun ServiceHub.resolveAbstractParty(value: String): AbstractParty {
     } ?: throw IllegalArgumentException("Failed to resolve '$value' to party.")
 }
 
+/**
+ * Resolves the specified value to an [AccountParty].
+ *
+ * @param value The value to resolve to an [AccountParty].
+ * @param type The type of account to resolve.
+ * @return Returns an [AccountParty] resolved from the specified value.
+ * @throws IllegalArgumentException if the specified value cannot be resolved to an [AccountParty].
+ */
 fun ServiceHub.resolveAccountParty(value: String, type: Class<out Account> = Account::class.java): AccountParty {
     val identityComponent = value.substringAfter(AccountParty.DELIMITER)
     val linearIdComponent = value.substringBefore(AccountParty.DELIMITER)

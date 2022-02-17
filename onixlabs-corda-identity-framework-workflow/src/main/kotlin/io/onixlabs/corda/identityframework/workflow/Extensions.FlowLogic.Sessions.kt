@@ -21,30 +21,54 @@ import io.onixlabs.corda.core.workflow.checkSufficientSessionsForContractStates
 import io.onixlabs.corda.core.workflow.checkSufficientSessionsForTransactionBuilder
 import io.onixlabs.corda.identityframework.contract.accounts.AccountParty
 import net.corda.core.contracts.ContractState
+import net.corda.core.flows.FlowException
 import net.corda.core.flows.FlowLogic
 import net.corda.core.flows.FlowSession
 import net.corda.core.identity.AbstractParty
 import net.corda.core.transactions.TransactionBuilder
 
+/**
+ * Checks that sufficient flow sessions have been provided for the account identities of the specified states.
+ *
+ * @param sessions The flow sessions that have been provided to the flow.
+ * @param states The states that will be used as input or output states in a transaction.
+ * @throws FlowException if a required counter-party session is missing for a state participant.
+ */
 @Suspendable
 fun FlowLogic<*>.checkSufficientSessionsForAccounts(
     sessions: Iterable<FlowSession>,
     states: Iterable<ContractState>
 ) = checkSufficientSessionsForContractStates(sessions, states) { it.getAccountOwningPartyOrThis() }
 
+/**
+ * Checks that sufficient flow sessions have been provided for the account identities of the specified states.
+ *
+ * @param sessions The flow sessions that have been provided to the flow.
+ * @param states The states that will be used as input or output states in a transaction.
+ * @throws FlowException if a required counter-party session is missing for a state participant.
+ */
 @Suspendable
 fun FlowLogic<*>.checkSufficientSessionsForAccounts(
     sessions: Iterable<FlowSession>,
     vararg states: ContractState
 ) = checkSufficientSessionsForContractStates(sessions, *states) { it.getAccountOwningPartyOrThis() }
 
-
+/**
+ * Checks that sufficient flow sessions have been provided for the specified transaction.
+ *
+ * @param sessions The flow sessions that have been provided to the flow.
+ * @param transaction The transaction for which to check that sufficient flow sessions exist.
+ * @throws FlowException if a required counter-party session is missing for a state participant.
+ */
 @Suspendable
 fun FlowLogic<*>.checkSufficientSessionsForTransactionBuilder(
     sessions: Iterable<FlowSession>,
     transaction: TransactionBuilder
 ) = checkSufficientSessionsForTransactionBuilder(sessions, transaction) { it.getAccountOwningPartyOrThis() }
 
+/**
+ * Gets the underlying account owner identity, or returns the current identity if it is not an [AccountParty].
+ */
 private fun AbstractParty.getAccountOwningPartyOrThis(): AbstractParty {
     return if (this is AccountParty) owner else this
 }
