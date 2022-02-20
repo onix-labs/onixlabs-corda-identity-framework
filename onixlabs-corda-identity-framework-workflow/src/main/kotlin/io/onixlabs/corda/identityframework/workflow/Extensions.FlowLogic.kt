@@ -67,12 +67,10 @@ fun FlowLogic<*>.checkClaimExists(claim: CordaClaim<*>) {
  */
 @Suspendable
 fun FlowLogic<*>.checkAttestationExistsForIssuance(attestation: Attestation<*>) {
-    val attestationExists = serviceHub.vaultServiceFor(attestation.javaClass).any {
-        linearIds(attestation.linearId)
-    }
-
-    if (attestationExists) {
-        throw FlowException("An unconsumed attestation with the specified linear ID already exists: ${attestation.linearId}.")
+    with(serviceHub.vaultServiceFor(attestation.javaClass)) {
+        checkAttestationExistsWithIdenticalLinearId(attestation)
+        checkAttestationWithIdenticalStatePointerExists(attestation)
+        checkAttestationWithIdenticalPointerIdentifierExists(attestation)
     }
 }
 
@@ -84,14 +82,8 @@ fun FlowLogic<*>.checkAttestationExistsForIssuance(attestation: Attestation<*>) 
  */
 @Suspendable
 fun FlowLogic<*>.checkAttestationExistsForAmendment(attestation: Attestation<*>) {
-    val attestationExists = serviceHub.vaultServiceFor(attestation.javaClass).any {
-        attestationType(attestation.javaClass)
-        attestationPointerType(attestation.pointer.stateType)
-        attestationHash(attestation.hash)
-    }
-
-    if (attestationExists) {
-        throw FlowException("An attestation with the specified hash already exists: ${attestation.hash}.")
+    with(serviceHub.vaultServiceFor(attestation.javaClass)) {
+        checkAttestationWithIdenticalHashExists(attestation)
     }
 }
 
@@ -104,11 +96,7 @@ fun FlowLogic<*>.checkAttestationExistsForAmendment(attestation: Attestation<*>)
  */
 @Suspendable
 fun FlowLogic<*>.checkAccountExists(party: AbstractParty) {
-    if (party is AccountParty) {
-        val accountDoesNotExist = party.getAccountResolver(party.accountType).resolve(serviceHub) == null
-
-        if (accountDoesNotExist) {
-            throw FlowException("An attestation with the specified linear ID does not exist: ${party.accountLinearId}.")
-        }
+    if (party is AccountParty && party.getAccountResolver(party.accountType).resolve(serviceHub) == null) {
+        throw FlowException("An account with the specified linear ID does not exist: ${party.accountLinearId}.")
     }
 }

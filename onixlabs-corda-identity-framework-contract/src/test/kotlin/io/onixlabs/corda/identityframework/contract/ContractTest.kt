@@ -72,7 +72,8 @@ abstract class ContractTest {
 
     fun <T : LinearState> StateAndRef<Attestation<T>>.withInvalidPointer(): Attestation<T> {
         return with(state.data) {
-            val invalidPointer = LinearAttestationPointer(pointer.stateType, UniqueIdentifier())
+            val invalidLinearId = UniqueIdentifier()
+            val invalidPointer = LinearAttestationPointer(pointer.stateType, invalidLinearId, invalidLinearId.toString())
             Attestation(attestor, attestees, invalidPointer, status, metadata, linearId, null)
         }
     }

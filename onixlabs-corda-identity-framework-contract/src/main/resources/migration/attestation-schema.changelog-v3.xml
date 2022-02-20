@@ -2,7 +2,9 @@
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
-    <include file="migration/attestation-schema.changelog-v1.xml"/>
-    <include file="migration/attestation-schema.changelog-v2.xml"/>
-    <include file="migration/attestation-schema.changelog-v3.xml"/>
+    <changeSet author="ONIXLabs" id="update-v3-onixlabs_attestation_states">
+        <addColumn tableName="onixlabs_attestation_states">
+            <column name="pointer_identifier" type="nvarchar(1024)"/>
+        </addColumn>
+    </changeSet>
 </databaseChangeLog>

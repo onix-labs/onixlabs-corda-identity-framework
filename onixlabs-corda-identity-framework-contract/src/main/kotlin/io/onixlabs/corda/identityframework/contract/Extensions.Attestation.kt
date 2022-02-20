@@ -53,7 +53,7 @@ inline fun <reified T : ContractState, reified U : Attestation<T>> StateAndRef<U
     status: AttestationStatus,
     stateAndRef: StateAndRef<T>,
     metadata: Map<String, String> = emptyMap()
-): U = amendAttestation(status, stateAndRef.toStaticAttestationPointer(), metadata)
+): U = amendAttestation(status, stateAndRef.toStaticAttestationPointer(state.data.pointer.identifier), metadata)
 
 /**
  * Amends an attestation of a [LinearState].
@@ -69,7 +69,7 @@ inline fun <reified T : LinearState, reified U : Attestation<T>> StateAndRef<U>.
     status: AttestationStatus,
     stateAndRef: StateAndRef<T>,
     metadata: Map<String, String> = emptyMap()
-): U = amendAttestation(status, stateAndRef.toLinearAttestationPointer(), metadata)
+): U = amendAttestation(status, stateAndRef.toLinearAttestationPointer(state.data.pointer.identifier), metadata)
 
 /**
  * Accepts an attestation.
@@ -97,7 +97,7 @@ inline fun <T : ContractState, reified U : Attestation<T>> StateAndRef<U>.accept
 inline fun <T : ContractState, reified U : Attestation<T>> StateAndRef<U>.acceptStaticAttestation(
     stateAndRef: StateAndRef<T>,
     metadata: Map<String, String> = emptyMap()
-): U = amendAttestation(AttestationStatus.ACCEPTED, stateAndRef.toStaticAttestationPointer(), metadata)
+): U = amendAttestation(AttestationStatus.ACCEPTED, stateAndRef.toStaticAttestationPointer(state.data.pointer.identifier), metadata)
 
 /**
  * Accepts an attestation of a [LinearState].
@@ -111,7 +111,7 @@ inline fun <T : ContractState, reified U : Attestation<T>> StateAndRef<U>.accept
 inline fun <T : LinearState, reified U : Attestation<T>> StateAndRef<U>.acceptLinearAttestation(
     stateAndRef: StateAndRef<T>,
     metadata: Map<String, String> = emptyMap()
-): U = amendAttestation(AttestationStatus.ACCEPTED, stateAndRef.toLinearAttestationPointer(), metadata)
+): U = amendAttestation(AttestationStatus.ACCEPTED, stateAndRef.toLinearAttestationPointer(state.data.pointer.identifier), metadata)
 
 /**
  * Rejects an attestation.
@@ -139,7 +139,7 @@ inline fun <T : ContractState, reified U : Attestation<T>> StateAndRef<U>.reject
 inline fun <T : ContractState, reified U : Attestation<T>> StateAndRef<U>.rejectStaticAttestation(
     stateAndRef: StateAndRef<T>,
     metadata: Map<String, String> = emptyMap()
-): U = amendAttestation(AttestationStatus.REJECTED, stateAndRef.toStaticAttestationPointer(), metadata)
+): U = amendAttestation(AttestationStatus.REJECTED, stateAndRef.toStaticAttestationPointer(state.data.pointer.identifier), metadata)
 
 /**
  * Rejects an attestation of a [LinearState].
@@ -153,4 +153,4 @@ inline fun <T : ContractState, reified U : Attestation<T>> StateAndRef<U>.reject
 inline fun <T : LinearState, reified U : Attestation<T>> StateAndRef<U>.rejectLinearAttestation(
     stateAndRef: StateAndRef<T>,
     metadata: Map<String, String> = emptyMap()
-): U = amendAttestation(AttestationStatus.REJECTED, stateAndRef.toLinearAttestationPointer(), metadata)
+): U = amendAttestation(AttestationStatus.REJECTED, stateAndRef.toLinearAttestationPointer(state.data.pointer.identifier), metadata)

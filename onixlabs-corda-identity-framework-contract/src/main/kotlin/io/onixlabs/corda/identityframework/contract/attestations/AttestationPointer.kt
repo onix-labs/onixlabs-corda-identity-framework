@@ -37,6 +37,7 @@ import java.util.*
  * @param T The underlying [ContractState] type.
  * @property stateType The [Class] of the witnessed state being attested.
  * @property statePointer The pointer to the witnessed state being attested.
+ * @property identifier Provides an additional, external identifier which can be used to track states across state transitions.
  * @property hash The hash of the attestation pointer.
  *
  * Note that attestation pointer hashes should be unique for static attestation pointers since they point to the
@@ -47,9 +48,10 @@ import java.util.*
 sealed class AttestationPointer<T : ContractState> : SingularResolvable<T>, Hashable {
     abstract val stateType: Class<T>
     abstract val statePointer: Any
+    abstract val identifier: String?
 
     final override val hash: SecureHash
-        get() = SecureHash.sha256("$stateType$statePointer")
+        get() = SecureHash.sha256("$stateType$statePointer$identifier")
 
     /**
      * Determines whether the specified object is equal to the current object.
@@ -121,14 +123,20 @@ sealed class AttestationPointer<T : ContractState> : SingularResolvable<T>, Hash
  * @param T The underlying [LinearState] type.
  * @property stateType The [Class] of the witnessed state being attested.
  * @property statePointer The pointer to the witnessed state being attested.
+ * @property identifier Provides an additional, external identifier which can be used to track states across state transitions.
  * @property hash The hash of the attestation pointer.
  */
 class LinearAttestationPointer<T : LinearState> internal constructor(
     override val stateType: Class<T>,
-    override val statePointer: UniqueIdentifier
+    override val statePointer: UniqueIdentifier,
+    override val identifier: String?
 ) : AttestationPointer<T>() {
 
-    constructor(stateAndRef: StateAndRef<T>) : this(stateAndRef.state.data.javaClass, stateAndRef.state.data.linearId)
+    constructor(stateAndRef: StateAndRef<T>, identifier: String?) : this(
+        stateType = stateAndRef.state.data.javaClass,
+        statePointer = stateAndRef.state.data.linearId,
+        identifier = identifier
+    )
 
     private val criteria: QueryCriteria = vaultQuery(stateType) {
         stateStatus(Vault.StateStatus.UNCONSUMED)
@@ -193,6 +201,7 @@ class LinearAttestationPointer<T : LinearState> internal constructor(
         return other is LinearAttestationPointer<*>
                 && other.stateType == stateType
                 && other.statePointer == statePointer
+                && other.identifier == identifier
     }
 }
 
@@ -209,14 +218,20 @@ class LinearAttestationPointer<T : LinearState> internal constructor(
  * @param T The underlying [LinearState] type.
  * @property stateType The [Class] of the witnessed state being attested.
  * @property statePointer The pointer to the witnessed state being attested.
+ * @property identifier Provides an additional, external identifier which can be used to track states across state transitions.
  * @property hash The hash of the attestation pointer.
  */
 class StaticAttestationPointer<T : ContractState> internal constructor(
     override val stateType: Class<T>,
-    override val statePointer: StateRef
+    override val statePointer: StateRef,
+    override val identifier: String?
 ) : AttestationPointer<T>() {
 
-    constructor(stateAndRef: StateAndRef<T>) : this(stateAndRef.state.data.javaClass, stateAndRef.ref)
+    constructor(stateAndRef: StateAndRef<T>, identifier: String?) : this(
+        stateType = stateAndRef.state.data.javaClass,
+        statePointer = stateAndRef.ref,
+        identifier = identifier
+    )
 
     private val criteria: QueryCriteria = vaultQuery(stateType) {
         stateStatus(Vault.StateStatus.ALL)
@@ -280,5 +295,6 @@ class StaticAttestationPointer<T : ContractState> internal constructor(
     override fun immutableEquals(other: AttestationPointer<T>): Boolean {
         return other is StaticAttestationPointer<*>
                 && other.stateType == stateType
+                && other.identifier == identifier
     }
 }

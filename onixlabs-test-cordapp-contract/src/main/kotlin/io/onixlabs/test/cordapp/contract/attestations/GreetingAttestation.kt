@@ -47,7 +47,7 @@ class GreetingAttestation private constructor(
     ) : this(
         attestor,
         greeting.state.data.participants.toSet(),
-        StaticAttestationPointer(greeting),
+        StaticAttestationPointer(greeting, null),
         status,
         metadata,
         linearId,

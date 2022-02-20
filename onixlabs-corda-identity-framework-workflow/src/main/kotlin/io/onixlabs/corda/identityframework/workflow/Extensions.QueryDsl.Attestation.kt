@@ -60,6 +60,16 @@ fun <T : Attestation<*>> QueryDsl<in T>.attestationPointerType(value: Class<out 
 }
 
 /**
+ * Adds a vault query expression to filter by attestation pointer identifier equal to the specified value.
+ *
+ * @param value The value to filter by in the vault query expression.
+ */
+@QueryDslContext
+fun <T : Attestation<*>> QueryDsl<in T>.attestationPointerIdentifier(value: String?) {
+    value?.let { expression(AttestationEntity::pointerIdentifier equalTo it) }
+}
+
+/**
  * Adds a vault query expression to filter by attestation pointer hash equal to the specified value.
  *
  * @param value The value to filter by in the vault query expression.

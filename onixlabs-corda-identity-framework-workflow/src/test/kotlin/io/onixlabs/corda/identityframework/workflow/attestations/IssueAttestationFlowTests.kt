@@ -18,10 +18,11 @@ package io.onixlabs.corda.identityframework.workflow.attestations
 
 import io.onixlabs.corda.identityframework.contract.attestations.Attestation
 import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
-import io.onixlabs.corda.identityframework.contract.createAcceptedLinearAttestation
+import io.onixlabs.corda.identityframework.contract.createAcceptedStaticAttestation
 import io.onixlabs.corda.identityframework.workflow.FlowTest
-import io.onixlabs.corda.identityframework.workflow.claims.IssueClaimFlow
 import io.onixlabs.corda.identityframework.workflow.Pipeline
+import io.onixlabs.corda.identityframework.workflow.claims.IssueClaimFlow
+import net.corda.core.contracts.StateAndRef
 import net.corda.core.transactions.SignedTransaction
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
@@ -30,6 +31,7 @@ import kotlin.test.assertEquals
 class IssueAttestationFlowTests : FlowTest() {
 
     private lateinit var transaction: SignedTransaction
+    private lateinit var claim: StateAndRef<CordaClaim<String>>
     private lateinit var attestation: Attestation<CordaClaim<String>>
 
     override fun initialize() {
@@ -39,8 +41,8 @@ class IssueAttestationFlowTests : FlowTest() {
                 IssueClaimFlow.Initiator(CLAIM_1, observers = setOf(partyC))
             }
             .run(nodeC) {
-                val issuedClaim = it.tx.outRefsOfType<CordaClaim<String>>().single()
-                attestation = issuedClaim.createAcceptedLinearAttestation(partyC)
+                claim = it.tx.outRefsOfType<CordaClaim<String>>().single()
+                attestation = claim.createAcceptedStaticAttestation(partyC)
                 IssueAttestationFlow.Initiator(attestation)
             }
             .finally { transaction = it }
