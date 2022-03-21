@@ -30,22 +30,20 @@ import net.corda.core.identity.AbstractParty
  * Creates a static attestation pointer from a [StateAndRef].
  *
  * @param T The underlying [ContractState] type.
- * @param identifier Provides an additional, external identifier which can be used to track states across state transitions.
  * @return Returns a static attestation pointer for the specified [StateAndRef].
  */
-fun <T : ContractState> StateAndRef<T>.toStaticAttestationPointer(identifier: String? = null): StaticAttestationPointer<T> {
-    return StaticAttestationPointer(this, identifier)
+fun <T : ContractState> StateAndRef<T>.toStaticAttestationPointer(): StaticAttestationPointer<T> {
+    return StaticAttestationPointer(this)
 }
 
 /**
  * Creates a linear attestation pointer from a [StateAndRef].
  *
  * @param T The underlying [LinearState] type.
- * @param identifier Provides an additional, external identifier which can be used to track states across state transitions.
  * @return Returns a linear attestation pointer for the specified [StateAndRef].
  */
-fun <T : LinearState> StateAndRef<T>.toLinearAttestationPointer(identifier: String? = state.data.linearId.toString()): LinearAttestationPointer<T> {
-    return LinearAttestationPointer(this, identifier)
+fun <T : LinearState> StateAndRef<T>.toLinearAttestationPointer(): LinearAttestationPointer<T> {
+    return LinearAttestationPointer(this)
 }
 
 /**
@@ -56,19 +54,17 @@ fun <T : LinearState> StateAndRef<T>.toLinearAttestationPointer(identifier: Stri
  * @param status The status of the attestation.
  * @param metadata Additional information about the attestation.
  * @param linearId The unique identifier of the attestation.
- * @param identifier Provides an additional, external identifier which can be used to track states across state transitions.
  * @return Returns an attestation for the specified [StateAndRef].
  */
 fun <T : ContractState> StateAndRef<T>.createStaticAttestation(
     attestor: AbstractParty,
     status: AttestationStatus,
     metadata: Map<String, String> = emptyMap(),
-    linearId: UniqueIdentifier = UniqueIdentifier(),
-    identifier: String? = null
+    linearId: UniqueIdentifier = UniqueIdentifier()
 ): Attestation<T> = Attestation(
     attestor,
     state.data.participants.toSet(),
-    toStaticAttestationPointer(identifier),
+    toStaticAttestationPointer(),
     status,
     metadata,
     linearId,
@@ -82,15 +78,13 @@ fun <T : ContractState> StateAndRef<T>.createStaticAttestation(
  * @param attestor The attestor of the witnessed state.
  * @param metadata Additional information about the attestation.
  * @param linearId The unique identifier of the attestation.
- * @param identifier Provides an additional, external identifier which can be used to track states across state transitions.
  * @return Returns an accepted attestation for the specified [StateAndRef].
  */
 fun <T : ContractState> StateAndRef<T>.createAcceptedStaticAttestation(
     attestor: AbstractParty,
     metadata: Map<String, String> = emptyMap(),
-    linearId: UniqueIdentifier = UniqueIdentifier(),
-    identifier: String? = null
-): Attestation<T> = createStaticAttestation(attestor, AttestationStatus.ACCEPTED, metadata, linearId, identifier)
+    linearId: UniqueIdentifier = UniqueIdentifier()
+): Attestation<T> = createStaticAttestation(attestor, AttestationStatus.ACCEPTED, metadata, linearId)
 
 /**
  * Creates a rejected attestation from the specified [StateAndRef].
@@ -99,15 +93,13 @@ fun <T : ContractState> StateAndRef<T>.createAcceptedStaticAttestation(
  * @param attestor The attestor of the witnessed state.
  * @param metadata Additional information about the attestation.
  * @param linearId The unique identifier of the attestation.
- * @param identifier Provides an additional, external identifier which can be used to track states across state transitions.
  * @return Returns an rejected attestation for the specified [StateAndRef].
  */
 fun <T : ContractState> StateAndRef<T>.createRejectedStaticAttestation(
     attestor: AbstractParty,
     metadata: Map<String, String> = emptyMap(),
-    linearId: UniqueIdentifier = UniqueIdentifier(),
-    identifier: String? = null
-): Attestation<T> = createStaticAttestation(attestor, AttestationStatus.REJECTED, metadata, linearId, identifier)
+    linearId: UniqueIdentifier = UniqueIdentifier()
+): Attestation<T> = createStaticAttestation(attestor, AttestationStatus.REJECTED, metadata, linearId)
 
 /**
  * Creates an attestation from the specified [StateAndRef].
@@ -117,19 +109,17 @@ fun <T : ContractState> StateAndRef<T>.createRejectedStaticAttestation(
  * @param status The status of the attestation.
  * @param metadata Additional information about the attestation.
  * @param linearId The unique identifier of the attestation.
- * @param identifier Provides an additional, external identifier which can be used to track states across state transitions.
  * @return Returns an attestation for the specified [StateAndRef].
  */
 fun <T : LinearState> StateAndRef<T>.createLinearAttestation(
     attestor: AbstractParty,
     status: AttestationStatus,
     metadata: Map<String, String> = emptyMap(),
-    linearId: UniqueIdentifier = UniqueIdentifier(),
-    identifier: String? = state.data.linearId.toString()
+    linearId: UniqueIdentifier = UniqueIdentifier()
 ): Attestation<T> = Attestation(
     attestor,
     state.data.participants.toSet(),
-    toLinearAttestationPointer(identifier),
+    toLinearAttestationPointer(),
     status,
     metadata,
     linearId,
@@ -143,15 +133,13 @@ fun <T : LinearState> StateAndRef<T>.createLinearAttestation(
  * @param attestor The attestor of the witnessed state.
  * @param metadata Additional information about the attestation.
  * @param linearId The unique identifier of the attestation.
- * @param identifier Provides an additional, external identifier which can be used to track states across state transitions.
  * @return Returns an accepted attestation for the specified [StateAndRef].
  */
 fun <T : LinearState> StateAndRef<T>.createAcceptedLinearAttestation(
     attestor: AbstractParty,
     metadata: Map<String, String> = emptyMap(),
-    linearId: UniqueIdentifier = UniqueIdentifier(),
-    identifier: String? = state.data.linearId.toString()
-): Attestation<T> = createLinearAttestation(attestor, AttestationStatus.ACCEPTED, metadata, linearId, identifier)
+    linearId: UniqueIdentifier = UniqueIdentifier()
+): Attestation<T> = createLinearAttestation(attestor, AttestationStatus.ACCEPTED, metadata, linearId)
 
 /**
  * Creates a rejected attestation from the specified [StateAndRef].
@@ -160,12 +148,10 @@ fun <T : LinearState> StateAndRef<T>.createAcceptedLinearAttestation(
  * @param attestor The attestor of the witnessed state.
  * @param metadata Additional information about the attestation.
  * @param linearId The unique identifier of the attestation.
- * @param identifier Provides an additional, external identifier which can be used to track states across state transitions.
  * @return Returns an rejected attestation for the specified [StateAndRef].
  */
 fun <T : LinearState> StateAndRef<T>.createRejectedLinearAttestation(
     attestor: AbstractParty,
     metadata: Map<String, String> = emptyMap(),
-    linearId: UniqueIdentifier = UniqueIdentifier(),
-    identifier: String? = state.data.linearId.toString()
-): Attestation<T> = createLinearAttestation(attestor, AttestationStatus.REJECTED, metadata, linearId, identifier)
+    linearId: UniqueIdentifier = UniqueIdentifier()
+): Attestation<T> = createLinearAttestation(attestor, AttestationStatus.REJECTED, metadata, linearId)

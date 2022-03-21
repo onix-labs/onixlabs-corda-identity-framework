@@ -18,7 +18,7 @@ package io.onixlabs.corda.identityframework.contract.attestations
 
 import io.onixlabs.corda.core.contract.Hashable
 import io.onixlabs.corda.core.contract.SingularResolvable
-import io.onixlabs.corda.core.contract.TransactionResolution
+import io.onixlabs.corda.core.contract.StatePosition
 import io.onixlabs.corda.core.services.vaultQuery
 import io.onixlabs.corda.identityframework.contract.toDataClassString
 import net.corda.core.contracts.*
@@ -37,7 +37,6 @@ import java.util.*
  * @param T The underlying [ContractState] type.
  * @property stateType The [Class] of the witnessed state being attested.
  * @property statePointer The pointer to the witnessed state being attested.
- * @property identifier Provides an additional, external identifier which can be used to track states across state transitions.
  * @property hash The hash of the attestation pointer.
  *
  * Note that attestation pointer hashes should be unique for static attestation pointers since they point to the
@@ -48,10 +47,9 @@ import java.util.*
 sealed class AttestationPointer<T : ContractState> : SingularResolvable<T>, Hashable {
     abstract val stateType: Class<T>
     abstract val statePointer: Any
-    abstract val identifier: String?
 
     final override val hash: SecureHash
-        get() = SecureHash.sha256("$stateType$statePointer$identifier")
+        get() = SecureHash.sha256("$stateType$statePointer")
 
     /**
      * Determines whether the specified object is equal to the current object.
@@ -123,20 +121,15 @@ sealed class AttestationPointer<T : ContractState> : SingularResolvable<T>, Hash
  * @param T The underlying [LinearState] type.
  * @property stateType The [Class] of the witnessed state being attested.
  * @property statePointer The pointer to the witnessed state being attested.
- * @property identifier Provides an additional, external identifier which can be used to track states across state transitions.
  * @property hash The hash of the attestation pointer.
  */
 class LinearAttestationPointer<T : LinearState> internal constructor(
     override val stateType: Class<T>,
-    override val statePointer: UniqueIdentifier,
-    override val identifier: String?
+    override val statePointer: UniqueIdentifier
 ) : AttestationPointer<T>() {
 
-    constructor(stateAndRef: StateAndRef<T>, identifier: String?) : this(
-        stateType = stateAndRef.state.data.javaClass,
-        statePointer = stateAndRef.state.data.linearId,
-        identifier = identifier
-    )
+    constructor(state: T) : this(state.javaClass, state.linearId)
+    constructor(stateAndRef: StateAndRef<T>) : this(stateAndRef.state.data)
 
     private val criteria: QueryCriteria = vaultQuery(stateType) {
         stateStatus(Vault.StateStatus.UNCONSUMED)
@@ -178,16 +171,11 @@ class LinearAttestationPointer<T : LinearState> internal constructor(
      * Resolves a [ContractState] using a [LedgerTransaction] instance.
      *
      * @param transaction The [LedgerTransaction] instance to use to resolve the state.
-     * @param resolution The transaction resolution method to use to resolve the [ContractState] instance.
+     * @param position The position of the [ContractState]  instance to resolve in the transaction.
      * @return Returns the resolved [ContractState], or null if no matching state is found.
      */
-    override fun resolve(transaction: LedgerTransaction, resolution: TransactionResolution): StateAndRef<T>? {
-        val states: List<StateAndRef<T>> = when (resolution) {
-            TransactionResolution.INPUT -> transaction.inRefsOfType(stateType)
-            TransactionResolution.OUTPUT -> transaction.outRefsOfType(stateType)
-            TransactionResolution.REFERENCE -> transaction.referenceInputRefsOfType(stateType)
-        }
-
+    override fun resolve(transaction: LedgerTransaction, position: StatePosition): StateAndRef<T>? {
+        val states = position.getStateAndRefs(transaction, stateType)
         return getOrThrow(states.singleOrNull { isPointingTo(it) })
     }
 
@@ -201,7 +189,6 @@ class LinearAttestationPointer<T : LinearState> internal constructor(
         return other is LinearAttestationPointer<*>
                 && other.stateType == stateType
                 && other.statePointer == statePointer
-                && other.identifier == identifier
     }
 }
 
@@ -218,20 +205,14 @@ class LinearAttestationPointer<T : LinearState> internal constructor(
  * @param T The underlying [LinearState] type.
  * @property stateType The [Class] of the witnessed state being attested.
  * @property statePointer The pointer to the witnessed state being attested.
- * @property identifier Provides an additional, external identifier which can be used to track states across state transitions.
  * @property hash The hash of the attestation pointer.
  */
 class StaticAttestationPointer<T : ContractState> internal constructor(
     override val stateType: Class<T>,
-    override val statePointer: StateRef,
-    override val identifier: String?
+    override val statePointer: StateRef
 ) : AttestationPointer<T>() {
 
-    constructor(stateAndRef: StateAndRef<T>, identifier: String?) : this(
-        stateType = stateAndRef.state.data.javaClass,
-        statePointer = stateAndRef.ref,
-        identifier = identifier
-    )
+    constructor(stateAndRef: StateAndRef<T>) : this(stateAndRef.state.data.javaClass, stateAndRef.ref)
 
     private val criteria: QueryCriteria = vaultQuery(stateType) {
         stateStatus(Vault.StateStatus.ALL)
@@ -273,16 +254,11 @@ class StaticAttestationPointer<T : ContractState> internal constructor(
      * Resolves a [ContractState] using a [LedgerTransaction] instance.
      *
      * @param transaction The [LedgerTransaction] instance to use to resolve the state.
-     * @param resolution The transaction resolution method to use to resolve the [ContractState] instance.
+     * @param position The position of the [ContractState]  instance to resolve in the transaction.
      * @return Returns the resolved [ContractState], or null if no matching state is found.
      */
-    override fun resolve(transaction: LedgerTransaction, resolution: TransactionResolution): StateAndRef<T>? {
-        val states: List<StateAndRef<T>> = when (resolution) {
-            TransactionResolution.INPUT -> transaction.inRefsOfType(stateType)
-            TransactionResolution.OUTPUT -> transaction.outRefsOfType(stateType)
-            TransactionResolution.REFERENCE -> transaction.referenceInputRefsOfType(stateType)
-        }
-
+    override fun resolve(transaction: LedgerTransaction, position: StatePosition): StateAndRef<T>? {
+        val states = position.getStateAndRefs(transaction, stateType)
         return getOrThrow(states.singleOrNull { isPointingTo(it) })
     }
 
@@ -293,8 +269,6 @@ class StaticAttestationPointer<T : ContractState> internal constructor(
      * @return Returns true if the immutable properties remain unchanged; otherwise, false.
      */
     override fun immutableEquals(other: AttestationPointer<T>): Boolean {
-        return other is StaticAttestationPointer<*>
-                && other.stateType == stateType
-                && other.identifier == identifier
+        return other is StaticAttestationPointer<*> && other.stateType == stateType
     }
 }

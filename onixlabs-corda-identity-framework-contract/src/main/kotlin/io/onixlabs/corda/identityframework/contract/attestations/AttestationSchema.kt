@@ -54,9 +54,6 @@ object AttestationSchema {
         @Column(name = "pointer_state_type", nullable = false)
         val pointerStateType: String = "",
 
-        @Column(name = "pointer_identifier", nullable = true)
-        val pointerIdentifier: String? = null,
-
         @Column(name = "pointer_hash", nullable = false)
         val pointerHash: String = "",
 
@@ -81,7 +78,6 @@ object AttestationSchema {
             attestorAccountExternalId = attestation.attestor.accountLinearId?.externalId,
             pointer = attestation.pointer.statePointer.toString(),
             pointerStateType = attestation.pointer.stateType.canonicalName,
-            pointerIdentifier = attestation.pointer.identifier,
             pointerHash = attestation.pointer.hash.toString(),
             status = attestation.status,
             previousStateRef = attestation.previousStateRef?.toString(),

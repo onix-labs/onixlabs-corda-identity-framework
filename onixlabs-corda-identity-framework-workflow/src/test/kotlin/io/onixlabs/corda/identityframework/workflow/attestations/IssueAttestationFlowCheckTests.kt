@@ -48,13 +48,7 @@ class IssueAttestationFlowCheckTests : FlowTest() {
             }
             .run(nodeC) {
                 claim2 = it.tx.outRefsOfType<CordaClaim<Int>>().single()
-
-                val attestation = claim1.createAcceptedStaticAttestation(
-                    attestor = partyC,
-                    linearId = linearId,
-                    identifier = identifier
-                )
-
+                val attestation = claim1.createAcceptedStaticAttestation(attestor = partyC, linearId = linearId)
                 IssueAttestationFlow.Initiator(attestation)
             }
     }
@@ -85,19 +79,5 @@ class IssueAttestationFlowCheckTests : FlowTest() {
         }
 
         assertEquals("An unconsumed attestation with an identical state pointer already exists: ${claim1.ref}.", exception.message)
-    }
-
-    @Test
-    fun `IssueAttestationFlow should fail when an unconsumed attestation with an identical pointer identifier already exists`() {
-        val exception = assertFailsWith<FlowException> {
-            Pipeline
-                .create(network)
-                .run(nodeC) {
-                    val attestation = claim2.createAcceptedStaticAttestation(partyC, identifier = identifier)
-                    IssueAttestationFlow.Initiator(attestation)
-                }
-        }
-
-        assertEquals("An unconsumed attestation with an identical pointer identifier already exists: $identifier.", exception.message)
     }
 }

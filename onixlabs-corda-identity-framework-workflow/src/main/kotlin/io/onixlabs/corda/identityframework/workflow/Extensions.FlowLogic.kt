@@ -70,7 +70,6 @@ fun FlowLogic<*>.checkAttestationExistsForIssuance(attestation: Attestation<*>) 
     with(serviceHub.vaultServiceFor(attestation.javaClass)) {
         checkAttestationExistsWithIdenticalLinearId(attestation)
         checkAttestationWithIdenticalStatePointerExists(attestation)
-        checkAttestationWithIdenticalPointerIdentifierExists(attestation)
     }
 }
 

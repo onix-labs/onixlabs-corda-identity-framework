@@ -38,13 +38,6 @@ internal fun VaultService<Attestation<*>>.checkAttestationWithIdenticalStatePoin
 }
 
 @Suspendable
-internal fun VaultService<Attestation<*>>.checkAttestationWithIdenticalPointerIdentifierExists(attestation: Attestation<*>) {
-    if (any { attestationPointerIdentifier(attestation.pointer.identifier) }) {
-        throw FlowException("An unconsumed attestation with an identical pointer identifier already exists: ${attestation.pointer.identifier}.")
-    }
-}
-
-@Suspendable
 internal fun VaultService<Attestation<*>>.checkAttestationWithIdenticalHashExists(attestation: Attestation<*>) {
     if (any { stateStatus(Vault.StateStatus.ALL); relevancyStatus(Vault.RelevancyStatus.ALL); attestationHash(attestation.hash) }) {
         throw FlowException("An attestation with an identical hash already exists: ${attestation.pointer.hash}.")

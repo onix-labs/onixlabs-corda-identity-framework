@@ -78,7 +78,7 @@ open class AttestationContract : Contract {
             "On attestation amending, only one attestation state must be created."
 
         internal const val CONTRACT_RULE_CHANGES =
-            "On attestation amending, the attestor, linear ID, pointer class and pointer identifier must not change."
+            "On attestation amending, the attestor, linear ID and pointer class must not change."
 
         internal const val CONTRACT_RULE_STATE_REF =
             "On attestation amending, the created attestation state must point to the consumed attestation state."
