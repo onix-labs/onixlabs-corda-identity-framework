@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 ONIXLabs
+ * Copyright 2020-2022 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,6 +64,12 @@ open class AccountContract : Contract {
         internal const val CONTRACT_RULE_OUTPUTS =
             "On account issuing, at least one account state must be created."
 
+        internal const val CONTRACT_RULE_OWNER_DELIMITER =
+            "On account issuing, the account owner name must not contain an @ symbol."
+
+        internal const val CONTRACT_RULE_LINEAR_ID_DELIMITER =
+            "On account issuing, the account linear ID must not contain an @ symbol."
+
         internal const val CONTRACT_RULE_PARTICIPANTS =
             "On account issuing, the owner of each created account must be a participant."
 
@@ -80,6 +86,12 @@ open class AccountContract : Contract {
 
         internal const val CONTRACT_RULE_OUTPUTS =
             "On account amending, at least one account state must be created."
+
+        internal const val CONTRACT_RULE_OWNER_DELIMITER =
+            "On account amending, the account owner name must not contain an @ symbol."
+
+        internal const val CONTRACT_RULE_LINEAR_ID_DELIMITER =
+            "On account amending, the account linear ID must not contain an @ symbol."
 
         internal const val CONTRACT_RULE_PARTICIPANTS =
             "On account amending, the owner of each created account must be a participant."
@@ -138,6 +150,8 @@ open class AccountContract : Contract {
 
         Issue.CONTRACT_RULE_INPUTS using (accountInputs.isEmpty())
         Issue.CONTRACT_RULE_OUTPUTS using (accountOutputs.isNotEmpty())
+        Issue.CONTRACT_RULE_OWNER_DELIMITER using (accountOutputs.all { AccountParty.DELIMITER !in it.owner.toString() })
+        Issue.CONTRACT_RULE_LINEAR_ID_DELIMITER using (accountOutputs.all { AccountParty.DELIMITER !in it.linearId.toString() })
         Issue.CONTRACT_RULE_PARTICIPANTS using (accountOutputs.all { it.owner in it.participants })
         Issue.CONTRACT_RULE_SIGNERS using (accountOutputs.all { it.owner.owningKey in signers })
 
@@ -156,6 +170,8 @@ open class AccountContract : Contract {
 
         Amend.CONTRACT_RULE_INPUTS using (accountInputs.isNotEmpty())
         Amend.CONTRACT_RULE_OUTPUTS using (accountOutputs.isNotEmpty())
+        Amend.CONTRACT_RULE_OWNER_DELIMITER using (accountOutputs.all { AccountParty.DELIMITER !in it.owner.toString() })
+        Amend.CONTRACT_RULE_LINEAR_ID_DELIMITER using (accountOutputs.all { AccountParty.DELIMITER !in it.linearId.toString() })
         Amend.CONTRACT_RULE_PARTICIPANTS using (accountOutputs.all { it.owner in it.participants })
         Amend.CONTRACT_RULE_SIGNERS using (accountOutputs.all { it.owner.owningKey in signers })
 

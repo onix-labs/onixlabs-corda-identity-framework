@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 ONIXLabs
+ * Copyright 2020-2022 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,10 @@ package io.onixlabs.corda.identityframework.contract.attestations
 
 import io.onixlabs.corda.core.contract.ContractID
 import io.onixlabs.corda.core.contract.isPointingTo
-import net.corda.core.contracts.*
+import net.corda.core.contracts.CommandData
+import net.corda.core.contracts.Contract
+import net.corda.core.contracts.requireSingleCommand
+import net.corda.core.contracts.requireThat
 import net.corda.core.transactions.LedgerTransaction
 import java.security.PublicKey
 
@@ -75,7 +78,7 @@ open class AttestationContract : Contract {
             "On attestation amending, only one attestation state must be created."
 
         internal const val CONTRACT_RULE_CHANGES =
-            "On attestation amending, the attestor, linear ID, pointer class and pointer linear ID must not change."
+            "On attestation amending, the attestor, linear ID and pointer class must not change."
 
         internal const val CONTRACT_RULE_STATE_REF =
             "On attestation amending, the created attestation state must point to the consumed attestation state."

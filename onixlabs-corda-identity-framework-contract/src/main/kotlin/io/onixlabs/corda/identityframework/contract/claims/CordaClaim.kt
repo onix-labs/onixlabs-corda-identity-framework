@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 ONIXLabs
+ * Copyright 2020-2022 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package io.onixlabs.corda.identityframework.contract.claims
 
 import io.onixlabs.corda.core.contract.ChainState
 import io.onixlabs.corda.core.contract.Hashable
-import io.onixlabs.corda.identityframework.contract.accountLinearId
 import io.onixlabs.corda.identityframework.contract.claims.CordaClaimSchema.CordaClaimEntity
 import io.onixlabs.corda.identityframework.contract.claims.CordaClaimSchema.CordaClaimSchemaV1
 import net.corda.core.contracts.BelongsToContract
@@ -98,23 +97,7 @@ open class CordaClaim<T : Any>(
      * @return Returns a persistent state entity.
      */
     override fun generateMappedObject(schema: MappedSchema): PersistentState = when (schema) {
-        is CordaClaimSchemaV1 -> CordaClaimEntity(
-            linearId = linearId.id,
-            externalId = linearId.externalId,
-            issuer = issuer,
-            issuerAccountLinearId = issuer.accountLinearId?.id,
-            issuerAccountExternalId = issuer.accountLinearId?.externalId,
-            holder = holder,
-            holderAccountLinearId = holder.accountLinearId?.id,
-            holderAccountExternalId = holder.accountLinearId?.externalId,
-            property = property,
-            value = value.toString(),
-            valueType = value.javaClass.canonicalName,
-            previousStateRef = previousStateRef?.toString(),
-            isSelfIssued = isSelfIssued,
-            hash = hash.toString(),
-            claimType = javaClass.canonicalName
-        )
+        is CordaClaimSchemaV1 -> CordaClaimEntity(this)
         else -> throw IllegalArgumentException("Unrecognised schema: $schema.")
     }
 

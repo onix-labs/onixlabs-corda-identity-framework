@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 ONIXLabs
+ * Copyright 2020-2022 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,9 @@ package io.onixlabs.corda.identityframework.workflow.accounts
 import co.paralleluniverse.fibers.Suspendable
 import io.onixlabs.corda.core.workflow.*
 import io.onixlabs.corda.identityframework.contract.accounts.Account
+import io.onixlabs.corda.identityframework.workflow.FLOW_VERSION_1
 import io.onixlabs.corda.identityframework.workflow.addIssuedAccount
+import io.onixlabs.corda.identityframework.workflow.checkSufficientSessionsForAccounts
 import net.corda.core.flows.*
 import net.corda.core.identity.Party
 import net.corda.core.transactions.SignedTransaction
@@ -51,14 +53,12 @@ class IssueAccountFlow(
             SendStatesToRecordStep,
             FinalizeTransactionStep
         )
-
-        private const val FLOW_VERSION_1 = 1
     }
 
     @Suspendable
     override fun call(): SignedTransaction {
         currentStep(InitializeFlowStep)
-        checkSufficientSessions(sessions, account)
+        checkSufficientSessionsForAccounts(sessions, account)
 
         val transaction = buildTransaction(notary) {
             addIssuedAccount(account)
