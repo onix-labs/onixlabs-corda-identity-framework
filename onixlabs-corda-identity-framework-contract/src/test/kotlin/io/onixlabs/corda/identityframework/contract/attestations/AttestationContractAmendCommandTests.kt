@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 ONIXLabs
+ * Copyright 2020-2022 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ class AttestationContractAmendCommandTests : ContractTest() {
     }
 
     @Test
-    fun `On attestation amending, the attestor, linear ID, pointer class and pointer linear ID must not change (wrong attestor)`() {
+    fun `On attestation amending, the attestor, linear ID, pointer class and pointer identifier must not change (wrong attestor)`() {
         services.ledger {
             transaction {
                 val issuedClaim1 = issue(CLAIM_1)
@@ -87,7 +87,7 @@ class AttestationContractAmendCommandTests : ContractTest() {
     }
 
     @Test
-    fun `On attestation amending, the attestor, linear ID, pointer class and pointer linear ID must not change (wrong pointer)`() {
+    fun `On attestation amending, the attestor, linear ID, pointer class and pointer identifier must not change (wrong pointer)`() {
         services.ledger {
             transaction {
                 val issuedClaim1 = issue(CLAIM_1)

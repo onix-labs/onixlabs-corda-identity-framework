@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 ONIXLabs
+ * Copyright 2020-2022 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package io.onixlabs.corda.identityframework.workflow.claims
 import co.paralleluniverse.fibers.Suspendable
 import io.onixlabs.corda.core.workflow.*
 import io.onixlabs.corda.identityframework.contract.claims.CordaClaim
+import io.onixlabs.corda.identityframework.workflow.FLOW_VERSION_1
 import io.onixlabs.corda.identityframework.workflow.SendClaimTransactionStep
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.flows.*
@@ -43,8 +44,6 @@ class PublishClaimFlow(
     companion object {
         @JvmStatic
         fun tracker() = ProgressTracker(InitializeFlowStep, SendClaimTransactionStep)
-
-        private const val FLOW_VERSION_1 = 1
     }
 
     @Suspendable
@@ -62,7 +61,7 @@ class PublishClaimFlow(
      */
     @StartableByRPC
     @StartableByService
-    @InitiatingFlow(FLOW_VERSION_1)
+    @InitiatingFlow(version = FLOW_VERSION_1)
     class Initiator(
         private val claim: StateAndRef<CordaClaim<*>>,
         private val observers: Set<Party>

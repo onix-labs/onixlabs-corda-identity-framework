@@ -14,17 +14,6 @@
  * limitations under the License.
  */
 
-package io.onixlabs.corda.identityframework.contract
+package io.onixlabs.corda.identityframework.workflow
 
-import java.time.Instant
-
-/**
- * Defines the instants that express when an object becomes valid.
- *
- * @property issued The instant that expresses when the object was issued.
- * @property validFrom The instant that expresses when the object becomes valid.
- */
-interface Issuable {
-    val issued: Instant?
-    val validFrom: Instant?
-}
+internal const val FLOW_VERSION_1 = 1

@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 ONIXLabs
+ * Copyright 2020-2022 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,7 @@ package io.onixlabs.corda.identityframework.workflow.attestations
 import co.paralleluniverse.fibers.Suspendable
 import io.onixlabs.corda.core.workflow.*
 import io.onixlabs.corda.identityframework.contract.attestations.Attestation
-import io.onixlabs.corda.identityframework.workflow.addIssuedAttestation
-import io.onixlabs.corda.identityframework.workflow.checkAccountExists
-import io.onixlabs.corda.identityframework.workflow.checkAttestationExists
-import io.onixlabs.corda.identityframework.workflow.checkHasAttestedStateBeenWitnessed
+import io.onixlabs.corda.identityframework.workflow.*
 import net.corda.core.flows.*
 import net.corda.core.identity.Party
 import net.corda.core.transactions.SignedTransaction
@@ -54,16 +51,14 @@ class IssueAttestationFlow(
             SendStatesToRecordStep,
             FinalizeTransactionStep
         )
-
-        private const val FLOW_VERSION_1 = 1
     }
 
     @Suspendable
     override fun call(): SignedTransaction {
         currentStep(InitializeFlowStep)
-        checkSufficientSessions(sessions, attestation)
+        checkSufficientSessionsForAccounts(sessions, attestation)
         checkHasAttestedStateBeenWitnessed(attestation)
-        checkAttestationExists(attestation)
+        checkAttestationExistsForIssuance(attestation)
         checkAccountExists(attestation.attestor)
 
         val transaction = buildTransaction(notary) {
@@ -84,7 +79,7 @@ class IssueAttestationFlow(
      */
     @StartableByRPC
     @StartableByService
-    @InitiatingFlow(FLOW_VERSION_1)
+    @InitiatingFlow(version = FLOW_VERSION_1)
     class Initiator(
         private val attestation: Attestation<*>,
         private val notary: Party? = null,

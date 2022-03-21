@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 ONIXLabs
+ * Copyright 2020-2022 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,7 +72,8 @@ abstract class ContractTest {
 
     fun <T : LinearState> StateAndRef<Attestation<T>>.withInvalidPointer(): Attestation<T> {
         return with(state.data) {
-            val invalidPointer = LinearAttestationPointer(pointer.stateType, UniqueIdentifier())
+            val invalidLinearId = UniqueIdentifier()
+            val invalidPointer = LinearAttestationPointer(pointer.stateType, invalidLinearId)
             Attestation(attestor, attestees, invalidPointer, status, metadata, linearId, null)
         }
     }

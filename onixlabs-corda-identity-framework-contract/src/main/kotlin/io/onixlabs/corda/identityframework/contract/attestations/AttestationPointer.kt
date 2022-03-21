@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 ONIXLabs
+ * Copyright 2020-2022 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package io.onixlabs.corda.identityframework.contract.attestations
 
 import io.onixlabs.corda.core.contract.Hashable
 import io.onixlabs.corda.core.contract.SingularResolvable
-import io.onixlabs.corda.core.contract.TransactionResolution
+import io.onixlabs.corda.core.contract.StatePosition
 import io.onixlabs.corda.core.services.vaultQuery
 import io.onixlabs.corda.identityframework.contract.toDataClassString
 import net.corda.core.contracts.*
@@ -128,7 +128,8 @@ class LinearAttestationPointer<T : LinearState> internal constructor(
     override val statePointer: UniqueIdentifier
 ) : AttestationPointer<T>() {
 
-    constructor(stateAndRef: StateAndRef<T>) : this(stateAndRef.state.data.javaClass, stateAndRef.state.data.linearId)
+    constructor(state: T) : this(state.javaClass, state.linearId)
+    constructor(stateAndRef: StateAndRef<T>) : this(stateAndRef.state.data)
 
     private val criteria: QueryCriteria = vaultQuery(stateType) {
         stateStatus(Vault.StateStatus.UNCONSUMED)
@@ -170,16 +171,11 @@ class LinearAttestationPointer<T : LinearState> internal constructor(
      * Resolves a [ContractState] using a [LedgerTransaction] instance.
      *
      * @param transaction The [LedgerTransaction] instance to use to resolve the state.
-     * @param resolution The transaction resolution method to use to resolve the [ContractState] instance.
+     * @param position The position of the [ContractState]  instance to resolve in the transaction.
      * @return Returns the resolved [ContractState], or null if no matching state is found.
      */
-    override fun resolve(transaction: LedgerTransaction, resolution: TransactionResolution): StateAndRef<T>? {
-        val states: List<StateAndRef<T>> = when (resolution) {
-            TransactionResolution.INPUT -> transaction.inRefsOfType(stateType)
-            TransactionResolution.OUTPUT -> transaction.outRefsOfType(stateType)
-            TransactionResolution.REFERENCE -> transaction.referenceInputRefsOfType(stateType)
-        }
-
+    override fun resolve(transaction: LedgerTransaction, position: StatePosition): StateAndRef<T>? {
+        val states = position.getStateAndRefs(transaction, stateType)
         return getOrThrow(states.singleOrNull { isPointingTo(it) })
     }
 
@@ -258,16 +254,11 @@ class StaticAttestationPointer<T : ContractState> internal constructor(
      * Resolves a [ContractState] using a [LedgerTransaction] instance.
      *
      * @param transaction The [LedgerTransaction] instance to use to resolve the state.
-     * @param resolution The transaction resolution method to use to resolve the [ContractState] instance.
+     * @param position The position of the [ContractState]  instance to resolve in the transaction.
      * @return Returns the resolved [ContractState], or null if no matching state is found.
      */
-    override fun resolve(transaction: LedgerTransaction, resolution: TransactionResolution): StateAndRef<T>? {
-        val states: List<StateAndRef<T>> = when (resolution) {
-            TransactionResolution.INPUT -> transaction.inRefsOfType(stateType)
-            TransactionResolution.OUTPUT -> transaction.outRefsOfType(stateType)
-            TransactionResolution.REFERENCE -> transaction.referenceInputRefsOfType(stateType)
-        }
-
+    override fun resolve(transaction: LedgerTransaction, position: StatePosition): StateAndRef<T>? {
+        val states = position.getStateAndRefs(transaction, stateType)
         return getOrThrow(states.singleOrNull { isPointingTo(it) })
     }
 
@@ -278,7 +269,6 @@ class StaticAttestationPointer<T : ContractState> internal constructor(
      * @return Returns true if the immutable properties remain unchanged; otherwise, false.
      */
     override fun immutableEquals(other: AttestationPointer<T>): Boolean {
-        return other is StaticAttestationPointer<*>
-                && other.stateType == stateType
+        return other is StaticAttestationPointer<*> && other.stateType == stateType
     }
 }

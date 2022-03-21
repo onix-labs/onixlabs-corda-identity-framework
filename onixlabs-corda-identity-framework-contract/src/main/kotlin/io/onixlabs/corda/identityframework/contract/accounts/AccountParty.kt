@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 ONIXLabs
+ * Copyright 2020-2022 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,11 +34,28 @@ import java.util.*
  * @property accountLinearId The linear ID of the account associated with this party.
  * @property accountType The type of the account associated with this party.
  */
-class AccountParty internal constructor(
+class AccountParty(
     val owner: AbstractParty,
     val accountLinearId: UniqueIdentifier,
     val accountType: Class<out Account>
 ) : AbstractParty(owner.owningKey) {
+
+    /**
+     * @property DELIMITER The delimiter that will be used to format the account party.
+     */
+    companion object {
+        const val DELIMITER = '@'
+    }
+
+    /**
+     * Determines whether this [AccountParty] owns the specified [Account].
+     *
+     * @param account The account for which to determine ownership.
+     * @return Returns true if this [AccountParty] owns the specified [Account]; otherwise, false.
+     */
+    fun owns(account: Account): Boolean {
+        return this == account.toAccountParty()
+    }
 
     /**
      * Gets an account resolver to resolve this [AccountParty] back to the associated [Account].
@@ -90,8 +107,10 @@ class AccountParty internal constructor(
      * @return Returns true if the specified object is equal to the current object; otherwise, false.
      */
     override fun equals(other: Any?): Boolean {
-        return if (other !is AccountParty) super.equals(other)
-        else other.owner == owner && other.accountLinearId == accountLinearId && other.accountType == accountType
+        return this === other || (other is AccountParty
+                && other.owner == owner
+                && other.accountLinearId == accountLinearId
+                && other.accountType == accountType)
     }
 
     /**
@@ -109,7 +128,7 @@ class AccountParty internal constructor(
      * @return Returns a string that represents the current object.
      */
     override fun toString(): String {
-        return "$accountLinearId@$owner"
+        return "$accountLinearId$DELIMITER$owner"
     }
 
     /**

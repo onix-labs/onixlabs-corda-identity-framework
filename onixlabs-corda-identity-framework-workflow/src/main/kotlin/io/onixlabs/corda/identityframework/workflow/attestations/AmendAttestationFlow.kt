@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 ONIXLabs
+ * Copyright 2020-2022 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,8 @@ package io.onixlabs.corda.identityframework.workflow.attestations
 import co.paralleluniverse.fibers.Suspendable
 import io.onixlabs.corda.core.workflow.*
 import io.onixlabs.corda.identityframework.contract.attestations.Attestation
-import io.onixlabs.corda.identityframework.workflow.addAmendedAttestation
-import io.onixlabs.corda.identityframework.workflow.checkAttestationExists
-import io.onixlabs.corda.identityframework.workflow.checkHasAttestedStateBeenWitnessed
+import io.onixlabs.corda.identityframework.workflow.*
+import io.onixlabs.corda.identityframework.workflow.FLOW_VERSION_1
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.flows.*
 import net.corda.core.identity.Party
@@ -54,16 +53,14 @@ class AmendAttestationFlow(
             SendStatesToRecordStep,
             FinalizeTransactionStep
         )
-
-        private const val FLOW_VERSION_1 = 1
     }
 
     @Suspendable
     override fun call(): SignedTransaction {
         currentStep(InitializeFlowStep)
-        checkSufficientSessions(sessions, oldAttestation.state.data, newAttestation)
+        checkSufficientSessionsForAccounts(sessions, oldAttestation.state.data, newAttestation)
         checkHasAttestedStateBeenWitnessed(newAttestation)
-        checkAttestationExists(newAttestation)
+        checkAttestationExistsForAmendment(newAttestation)
 
         val transaction = buildTransaction(oldAttestation.state.notary) {
             addAmendedAttestation(oldAttestation, newAttestation)
@@ -83,7 +80,7 @@ class AmendAttestationFlow(
      */
     @StartableByRPC
     @StartableByService
-    @InitiatingFlow(FLOW_VERSION_1)
+    @InitiatingFlow(version = FLOW_VERSION_1)
     class Initiator(
         private val oldAttestation: StateAndRef<Attestation<*>>,
         private val newAttestation: Attestation<*>,

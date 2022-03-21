@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 ONIXLabs
+ * Copyright 2020-2022 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package io.onixlabs.corda.identityframework.contract.claims
 
 import io.onixlabs.corda.core.contract.SingularResolvable
-import io.onixlabs.corda.core.contract.TransactionResolution
+import io.onixlabs.corda.core.contract.StatePosition
 import io.onixlabs.corda.core.services.vaultQuery
 import net.corda.core.contracts.ContractState
 import net.corda.core.contracts.StateAndRef
@@ -159,16 +159,11 @@ class LinearClaimPointer<T : CordaClaim<*>> private constructor(
      * Resolves a [ContractState] using a [LedgerTransaction] instance.
      *
      * @param transaction The [LedgerTransaction] instance to use to resolve the state.
-     * @param resolution The transaction resolution method to use to resolve the [ContractState] instance.
+     * @param position The position of the [ContractState]  instance to resolve in the transaction.
      * @return Returns the resolved [ContractState], or null if no matching state is found.
      */
-    override fun resolve(transaction: LedgerTransaction, resolution: TransactionResolution): StateAndRef<T>? {
-        val states: List<StateAndRef<T>> = when (resolution) {
-            TransactionResolution.INPUT -> transaction.inRefsOfType(claimType)
-            TransactionResolution.OUTPUT -> transaction.outRefsOfType(claimType)
-            TransactionResolution.REFERENCE -> transaction.referenceInputRefsOfType(claimType)
-        }
-
+    override fun resolve(transaction: LedgerTransaction, position: StatePosition): StateAndRef<T>? {
+        val states = position.getStateAndRefs(transaction, claimType)
         return getOrThrow(states.singleOrNull { isPointingTo(it) })
     }
 
@@ -248,16 +243,11 @@ class StaticClaimPointer<T : CordaClaim<*>> private constructor(
      * Resolves a [ContractState] using a [LedgerTransaction] instance.
      *
      * @param transaction The [LedgerTransaction] instance to use to resolve the state.
-     * @param resolution The transaction resolution method to use to resolve the [ContractState] instance.
+     * @param position The position of the [ContractState]  instance to resolve in the transaction.
      * @return Returns the resolved [ContractState], or null if no matching state is found.
      */
-    override fun resolve(transaction: LedgerTransaction, resolution: TransactionResolution): StateAndRef<T>? {
-        val states: List<StateAndRef<T>> = when (resolution) {
-            TransactionResolution.INPUT -> transaction.inRefsOfType(claimType)
-            TransactionResolution.OUTPUT -> transaction.outRefsOfType(claimType)
-            TransactionResolution.REFERENCE -> transaction.referenceInputRefsOfType(claimType)
-        }
-
+    override fun resolve(transaction: LedgerTransaction, position: StatePosition): StateAndRef<T>? {
+        val states = position.getStateAndRefs(transaction, claimType)
         return getOrThrow(states.singleOrNull { isPointingTo(it) })
     }
 

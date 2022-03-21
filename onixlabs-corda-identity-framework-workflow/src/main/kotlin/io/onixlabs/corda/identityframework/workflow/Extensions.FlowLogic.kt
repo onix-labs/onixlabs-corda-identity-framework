@@ -1,5 +1,5 @@
 /*
- * Copyright 2020-2021 ONIXLabs
+ * Copyright 2020-2022 ONIXLabs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,21 +60,29 @@ fun FlowLogic<*>.checkClaimExists(claim: CordaClaim<*>) {
 }
 
 /**
- * Checks whether the specified attestation already exists.
+ * Performs a pre-issuance check to determine whether the specified attestation has already been issued.
  *
  * @param attestation The attestation to check for existence.
- * @throws FlowException if the claim already exists.
+ * @throws FlowException if the attestation already exists.
  */
 @Suspendable
-fun FlowLogic<*>.checkAttestationExists(attestation: Attestation<*>) {
-    val attestationExists = serviceHub.vaultServiceFor(attestation.javaClass).any {
-        attestationType(attestation.javaClass)
-        attestationPointerType(attestation.pointer.stateType)
-        attestationHash(attestation.hash)
+fun FlowLogic<*>.checkAttestationExistsForIssuance(attestation: Attestation<*>) {
+    with(serviceHub.vaultServiceFor(attestation.javaClass)) {
+        checkAttestationExistsWithIdenticalLinearId(attestation)
+        checkAttestationWithIdenticalStatePointerExists(attestation)
     }
+}
 
-    if (attestationExists) {
-        throw FlowException("An attestation with the specified hash already exists: ${attestation.hash}.")
+/**
+ * Performs a pre-amendment check to determine whether the specified attestation has already been issued.
+ *
+ * @param attestation The attestation to check for existence.
+ * @throws FlowException if the attestation already exists.
+ */
+@Suspendable
+fun FlowLogic<*>.checkAttestationExistsForAmendment(attestation: Attestation<*>) {
+    with(serviceHub.vaultServiceFor(attestation.javaClass)) {
+        checkAttestationWithIdenticalHashExists(attestation)
     }
 }
 
@@ -87,11 +95,7 @@ fun FlowLogic<*>.checkAttestationExists(attestation: Attestation<*>) {
  */
 @Suspendable
 fun FlowLogic<*>.checkAccountExists(party: AbstractParty) {
-    if (party is AccountParty) {
-        val accountDoesNotExist = party.getAccountResolver(party.accountType).resolve(serviceHub) == null
-
-        if (accountDoesNotExist) {
-            throw FlowException("An attestation with the specified linear ID does not exist: ${party.accountLinearId}.")
-        }
+    if (party is AccountParty && party.getAccountResolver(party.accountType).resolve(serviceHub) == null) {
+        throw FlowException("An account with the specified linear ID does not exist: ${party.accountLinearId}.")
     }
 }
