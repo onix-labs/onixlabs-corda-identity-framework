@@ -146,6 +146,7 @@ class AccountParty(
         override val contractStateType: Class<T>
             get() = accountType
 
+        @Transient
         override val criteria = vaultQuery(accountType) {
             contractStateTypes(accountType)
             linearIds(accountLinearId)

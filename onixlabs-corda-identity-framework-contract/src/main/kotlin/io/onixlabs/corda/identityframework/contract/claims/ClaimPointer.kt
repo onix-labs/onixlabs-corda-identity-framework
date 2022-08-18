@@ -129,6 +129,7 @@ class LinearClaimPointer<T : CordaClaim<*>> private constructor(
         valueType = claim.value.javaClass
     )
 
+    @Transient
     private val criteria = vaultQuery(claimType) {
         stateStatus(Vault.StateStatus.UNCONSUMED)
         relevancyStatus(Vault.RelevancyStatus.ALL)
@@ -213,6 +214,7 @@ class StaticClaimPointer<T : CordaClaim<*>> private constructor(
         valueType = claim.state.data.value.javaClass
     )
 
+    @Transient
     private val criteria = vaultQuery(claimType) {
         stateStatus(Vault.StateStatus.ALL)
         relevancyStatus(Vault.RelevancyStatus.ALL)
