@@ -131,8 +131,7 @@ class LinearAttestationPointer<T : LinearState> internal constructor(
     constructor(state: T) : this(state.javaClass, state.linearId)
     constructor(stateAndRef: StateAndRef<T>) : this(stateAndRef.state.data)
 
-    @Transient
-    private val criteria: QueryCriteria = vaultQuery(stateType) {
+    private val criteria: QueryCriteria get() = vaultQuery(stateType) {
         stateStatus(Vault.StateStatus.UNCONSUMED)
         relevancyStatus(Vault.RelevancyStatus.ALL)
         linearIds(statePointer)
@@ -215,8 +214,7 @@ class StaticAttestationPointer<T : ContractState> internal constructor(
 
     constructor(stateAndRef: StateAndRef<T>) : this(stateAndRef.state.data.javaClass, stateAndRef.ref)
 
-    @Transient
-    private val criteria: QueryCriteria = vaultQuery(stateType) {
+    private val criteria: QueryCriteria get() = vaultQuery(stateType) {
         stateStatus(Vault.StateStatus.ALL)
         relevancyStatus(Vault.RelevancyStatus.ALL)
         stateRefs(statePointer)
