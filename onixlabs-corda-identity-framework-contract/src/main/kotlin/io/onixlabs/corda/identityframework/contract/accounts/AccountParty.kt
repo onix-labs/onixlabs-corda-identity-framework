@@ -143,11 +143,9 @@ class AccountParty(
         private val accountType: Class<T>
     ) : AbstractSingularResolvable<T>() {
 
-        override val contractStateType: Class<T>
-            get() = accountType
+        override val contractStateType: Class<T> get() = accountType
 
-        @Transient
-        override val criteria = vaultQuery(accountType) {
+        override val criteria get() = vaultQuery(accountType) {
             contractStateTypes(accountType)
             linearIds(accountLinearId)
         }
